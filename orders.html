@@ -109,4 +109,550 @@ button:disabled{opacity:.6}
 
 <form id="orderForm">
 
-<label for="customerName">الاسم بالكامل
+<label for="customerName">الاسم بالكامل *</label>
+<input id="customerName" name="customerName"
+ autocomplete="name" required minlength="2" maxlength="100"
+ placeholder="اكتب اسمك">
+
+<label for="phone">رقم الموبايل *</label>
+<input id="phone" name="phone" type="tel"
+ inputmode="tel" autocomplete="tel" required maxlength="20"
+ placeholder="رقم نقدر نتواصل معاك عليه">
+
+<label for="address">عنوان التوصيل بالتفصيل *</label>
+<textarea id="address" name="address" autocomplete="street-address"
+ required minlength="5" maxlength="500"
+ placeholder="المنطقة والشارع وأقرب علامة مميزة"></textarea>
+
+<div class="section">
+<h2>🐟 اختار السمك والكميات</h2>
+<p class="muted">الأسعار للكيلو. اكتب كمية كل صنف بالكيلو، واترك الصنف بدون كمية لو مش عايزه.</p>
+<div id="fishList" class="empty">جاري تحميل أصناف السمك...</div>
+</div>
+
+<div class="section">
+<h2>🍳 تجهيزات السمك</h2>
+<p class="muted">اختار التجهيز المناسب لكل صنف. سعر التجهيز لكل كيلو بيتحسب حسب كمية السمك المختارة.</p>
+<div id="prepList" class="empty">جاري تحميل التجهيزات...</div>
+</div>
+
+<div class="section">
+<h2>🍚 إضافات بسعر ثابت للطلب</h2>
+<p class="muted">الأرز والشوربة والسلطة والطحينة، وأي تجهيز مسجل بسعر ثابت، بيتحسب مرة واحدة لكل طلب.</p>
+<div id="fixedList" class="empty">جاري تحميل الإضافات...</div>
+</div>
+
+<div class="total-box">
+<h2 style="margin:0 0 12px">🧾 حساب التكلفة التقديرية</h2>
+<div class="total-line">
+<span>إجمالي السمك</span><strong id="fishTotal">0 جنيه</strong>
+</div>
+<div class="total-line">
+<span>إجمالي تجهيز السمك</span><strong id="prepTotal">0 جنيه</strong>
+</div>
+<div class="total-line">
+<span>الإضافات ثابتة السعر</span><strong id="fixedTotal">0 جنيه</strong>
+</div>
+<div class="total-line grand-total">
+<span>الإجمالي التقديري</span><strong id="grandTotal">0 جنيه</strong>
+</div>
+<p class="muted">
+الحساب حسب الأسعار المسجلة حاليًا. سعر التوصيل، إن وجد، غير محسوب هنا.
+السعر النهائي والتوافر يؤكدهما فريق المرسي.
+</p>
+</div>
+
+<label for="delivery">طريقة الاستلام</label>
+<select id="delivery" name="delivery">
+<option value="delivery">توصيل لحد باب البيت</option>
+<option value="pickup">استلام من المحل</option>
+</select>
+
+<label for="notes">ملاحظات إضافية (اختياري)</label>
+<textarea id="notes" name="notes" maxlength="1000"
+ placeholder="أي تفاصيل إضافية عن الطلب"></textarea>
+
+<p class="muted">
+راجع الأصناف والكميات والتكلفة قبل إرسال الطلب.
+</p>
+
+<button id="submitBtn" type="submit">إرسال الطلب</button>
+<div id="status" class="status" role="status" aria-live="polite"></div>
+
+</form>
+
+<div class="contact">
+المرسي للأسماك — الإسماعيلية، طريق البلاجات، سوق السمك
+</div>
+
+</section>
+</main>
+
+<script type="module">
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+
+import {
+  getFirestore, collection, addDoc, serverTimestamp, onSnapshot
+} from
+"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCviWU0LzDbUn8M7ETIXorU_kNTSgnwjhc",
+  authDomain: "al-morsy-fish.firebaseapp.com",
+  projectId: "al-morsy-fish",
+  storageBucket: "al-morsy-fish.firebasestorage.app",
+  messagingSenderId: "826154741509",
+  appId: "1:826154741509:web:9cb852e4a7bbe5aaacd16c"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const $ = id => document.getElementById(id);
+
+const form = $("orderForm");
+const btn = $("submitBtn");
+const statusBox = $("status");
+
+let fishItems = [];
+let prepItems = [];
+let catalogLoaded = false;
+let prepLoaded = false;
+let sending = false;
+
+function money(value) {
+  return Number(value || 0).toLocaleString("ar-EG", {
+    maximumFractionDigits: 2
+  }) + " جنيه";
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+function readName(d) {
+  return String(d.name ?? d.title ?? d.itemName ?? "").trim();
+}
+
+function readPrice(d) {
+  const value = Number(d.price ?? d.pricePerKg ?? d.amount);
+  return Number.isFinite(value) && value >= 0 ? value : NaN;
+}
+
+function isAvailable(d) {
+  if (typeof d.available === "boolean") return d.available;
+  if (typeof d.isAvailable === "boolean") return d.isAvailable;
+  if (typeof d.active === "boolean") return d.active;
+  if (typeof d.enabled === "boolean") return d.enabled;
+
+  const state = String(d.status ?? d.state ?? "").toLowerCase();
+  if (["unavailable", "inactive", "disabled", "غير متاح", "متوقف"].includes(state)) {
+    return false;
+  }
+
+  if (["available", "active", "متاح", "متاح اليوم"].includes(state)) {
+    return true;
+  }
+
+  return true;
+}
+
+function isFixed(d) {
+  const value = String(
+    d.calcType ?? d.calculationType ?? d.pricingType ??
+    d.type ?? d.mode ?? ""
+  ).toLowerCase();
+
+  return [
+    "fixed", "perorder", "per_order", "flat",
+    "سعر ثابت", "سعر ثابت للطلب", "ثابت"
+  ].includes(value.replace(/\s+/g, ""))
+    || ["fixed", "perorder", "per_order", "flat",
+        "سعر ثابت", "سعر ثابت للطلب", "ثابت"].includes(value);
+}
+
+function showError(message) {
+  statusBox.className = "status err";
+  statusBox.textContent = message;
+}
+
+function showSuccess(message) {
+  statusBox.className = "status ok";
+  statusBox.textContent = message;
+}
+
+function renderFish() {
+  const box = $("fishList");
+  const available = fishItems.filter(x => isAvailable(x.data));
+
+  if (!available.length) {
+    box.className = "empty";
+    box.textContent = catalogLoaded
+      ? "لا توجد أصناف متاحة حاليًا. برجاء التواصل مع المحل."
+      : "جاري تحميل أصناف السمك...";
+    updateTotals();
+    return;
+  }
+
+  box.className = "";
+  box.innerHTML = available.map(item => `
+    <div class="item">
+      <div class="item-head">
+        <span class="item-name">${escapeHTML(item.name)}</span>
+        <span class="price">${money(item.price)} / كيلو</span>
+      </div>
+      <div class="qty-row">
+        <label for="qty_${escapeHTML(item.id)}">الكمية بالكيلو</label>
+        <input
+          id="qty_${escapeHTML(item.id)}"
+          type="number" min="0" max="500" step="0.25"
+          value="0" inputmode="decimal"
+          data-fish-id="${escapeHTML(item.id)}"
+          aria-label="كمية ${escapeHTML(item.name)} بالكيلو">
+      </div>
+    </div>
+  `).join("");
+
+  box.querySelectorAll("[data-fish-id]").forEach(input => {
+    input.addEventListener("input", updateTotals);
+  });
+
+  updateTotals();
+}
+
+function renderPrep() {
+  const perKg = prepItems.filter(x =>
+    isAvailable(x.data) && !isFixed(x.data)
+  );
+  const fixed = prepItems.filter(x =>
+    isAvailable(x.data) && isFixed(x.data)
+  );
+
+  const prepBox = $("prepList");
+  const fixedBox = $("fixedList");
+
+  prepBox.innerHTML = perKg.length ? perKg.map(item => `
+    <div class="item">
+      <label class="check-row">
+        <input type="checkbox" data-prep-id="${escapeHTML(item.id)}">
+        <span>
+          <strong>${escapeHTML(item.name)}</strong>
+          <span class="price"> — ${money(item.price)} / كيلو</span>
+        </span>
+      </label>
+    </div>
+  `).join("") : '<div class="empty">لا توجد تجهيزات متاحة لكل كيلو حاليًا.</div>';
+
+  fixedBox.innerHTML = fixed.length ? fixed.map(item => `
+    <div class="item">
+      <label class="check-row">
+        <input type="checkbox" data-fixed-id="${escapeHTML(item.id)}">
+        <span>
+          <strong>${escapeHTML(item.name)}</strong>
+          <span class="price"> — ${money(item.price)} للطلب</span>
+        </span>
+      </label>
+    </div>
+  `).join("") : '<div class="empty">لا توجد إضافات ثابتة السعر مسجلة حاليًا.</div>';
+
+  prepBox.querySelectorAll("input").forEach(el =>
+    el.addEventListener("change", updateTotals)
+  );
+  fixedBox.querySelectorAll("input").forEach(el =>
+    el.addEventListener("change", updateTotals)
+  );
+
+  updateTotals();
+}
+
+function getQuantities() {
+  const result = [];
+
+  document.querySelectorAll("[data-fish-id]").forEach(input => {
+    const qty = Number(input.value);
+    if (qty > 0) {
+      const item = fishItems.find(x => x.id === input.dataset.fishId);
+      if (item && isAvailable(item.data)) {
+        result.push({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: qty,
+          total: Math.round(item.price * qty * 100) / 100
+        });
+      }
+    }
+  });
+
+  return result;
+}
+
+function getSelectedPreps() {
+  const result = [];
+
+  document.querySelectorAll("[data-prep-id]:checked").forEach(input => {
+    const item = prepItems.find(x => x.id === input.dataset.prepId);
+    if (item && isAvailable(item.data) && !isFixed(item.data)) {
+      result.push({
+        id: item.id,
+        name: item.name,
+        price: item.price
+      });
+    }
+  });
+
+  return result;
+}
+
+function getSelectedFixed() {
+  const result = [];
+
+  document.querySelectorAll("[data-fixed-id]:checked").forEach(input => {
+    const item = prepItems.find(x => x.id === input.dataset.fixedId);
+    if (item && isAvailable(item.data) && isFixed(item.data)) {
+      result.push({
+        id: item.id,
+        name: item.name,
+        price: item.price
+      });
+    }
+  });
+
+  return result;
+}
+
+function calculate() {
+  const fish = getQuantities();
+  const perKgPreps = getSelectedPreps();
+  const fixed = getSelectedFixed();
+
+  const fishTotal = fish.reduce((sum, x) => sum + x.total, 0);
+  const totalKg = fish.reduce((sum, x) => sum + x.quantity, 0);
+
+  const prepTotal = perKgPreps.reduce(
+    (sum, x) => sum + x.price * totalKg, 0
+  );
+
+  const fixedTotal = fixed.reduce((sum, x) => sum + x.price, 0);
+
+  return {
+    fish,
+    perKgPreps,
+    fixed,
+    totalKg,
+    fishTotal: Math.round(fishTotal * 100) / 100,
+    prepTotal: Math.round(prepTotal * 100) / 100,
+    fixedTotal: Math.round(fixedTotal * 100) / 100,
+    totalAmount: Math.round((fishTotal + prepTotal + fixedTotal) * 100) / 100
+  };
+}
+
+function updateTotals() {
+  const result = calculate();
+
+  $("fishTotal").textContent = money(result.fishTotal);
+  $("prepTotal").textContent = money(result.prepTotal);
+  $("fixedTotal").textContent = money(result.fixedTotal);
+  $("grandTotal").textContent = money(result.totalAmount);
+}
+
+function makeItemsText(result) {
+  return result.fish.map(x =>
+    `${x.quantity} كيلو ${x.name} × ${money(x.price)} = ${money(x.total)}`
+  ).join("، ");
+}
+
+function makePrepText(result) {
+  const names = result.perKgPreps.map(x => x.name);
+  const fixedNames = result.fixed.map(x => x.name);
+  return [...names, ...fixedNames].join("، ") || "بدون تجهيز";
+}
+
+function catalogSnapshotIsValid(result) {
+  if (!catalogLoaded || !prepLoaded) {
+    showError("لسه بنحمّل الأسعار. استنى لحظة وجرب تاني.");
+    return false;
+  }
+
+  if (!result.fish.length) {
+    showError("من فضلك اختار صنف سمك واحد على الأقل وحدد الكمية.");
+    return false;
+  }
+
+  if (result.fish.some(x =>
+    !Number.isFinite(x.quantity) || x.quantity <= 0 || x.quantity > 500
+  )) {
+    showError("راجع كميات السمك. الكمية لازم تكون أكبر من صفر.");
+    return false;
+  }
+
+  if (result.totalAmount < 0 || !Number.isFinite(result.totalAmount)) {
+    showError("حصل خطأ في حساب الإجمالي. راجع الكميات والأسعار.");
+    return false;
+  }
+
+  return true;
+}
+
+onSnapshot(collection(db, "daily_catalog"), snapshot => {
+  fishItems = snapshot.docs.map(docSnap => {
+    const data = docSnap.data();
+    return {
+      id: docSnap.id,
+      data,
+      name: readName(data),
+      price: readPrice(data)
+    };
+  }).filter(x => x.name && Number.isFinite(x.price));
+
+  catalogLoaded = true;
+  renderFish();
+}, error => {
+  console.error("Catalog loading error:", error);
+  $("fishList").className = "empty";
+  $("fishList").textContent = "تعذر تحميل أصناف السمك. حاول تحديث الصفحة.";
+});
+
+onSnapshot(collection(db, "prep_prices"), snapshot => {
+  prepItems = snapshot.docs.map(docSnap => {
+    const data = docSnap.data();
+    return {
+      id: docSnap.id,
+      data,
+      name: readName(data),
+      price: readPrice(data)
+    };
+  }).filter(x => x.name && Number.isFinite(x.price));
+
+  prepLoaded = true;
+  renderPrep();
+}, error => {
+  console.error("Preparation loading error:", error);
+  $("prepList").textContent = "تعذر تحميل التجهيزات.";
+  $("fixedList").textContent = "تعذر تحميل الإضافات.";
+});
+
+form.addEventListener("submit", async event => {
+  event.preventDefault();
+  if (sending) return;
+
+  statusBox.className = "status";
+  statusBox.textContent = "";
+
+  const data = new FormData(form);
+
+  const customerName = String(data.get("customerName") || "").trim();
+  const phone = String(data.get("phone") || "").trim();
+  const address = String(data.get("address") || "").trim();
+  const delivery = String(data.get("delivery") || "");
+  const notes = String(data.get("notes") || "").trim();
+
+  if (customerName.length < 2 || customerName.length > 100) {
+    showError("من فضلك اكتب اسمك بالكامل بشكل صحيح.");
+    return;
+  }
+
+  if (phone.replace(/\D/g, "").length < 8 || phone.length > 20) {
+    showError("من فضلك راجع رقم الموبايل.");
+    return;
+  }
+
+  if (address.length < 5 || address.length > 500) {
+    showError("من فضلك اكتب عنوان التوصيل بالتفصيل.");
+    return;
+  }
+
+  if (!["delivery", "pickup"].includes(delivery)) {
+    showError("من فضلك اختار طريقة الاستلام.");
+    return;
+  }
+
+  if (notes.length > 1000) {
+    showError("الملاحظات أطول من المسموح به.");
+    return;
+  }
+
+  const result = calculate();
+  if (!catalogSnapshotIsValid(result)) return;
+
+  const items = makeItemsText(result);
+  const prep = makePrepText(result);
+
+  if (items.length < 2 || items.length > 1500) {
+    showError("تفاصيل الأصناف طويلة جدًا. قلل عدد الأصناف أو راجع الكميات.");
+    return;
+  }
+
+  if (prep.length > 100) {
+    showError("تفاصيل التجهيزات طويلة جدًا. قلل عدد التجهيزات المختارة.");
+    return;
+  }
+
+  sending = true;
+  btn.disabled = true;
+  btn.textContent = "جارٍ إرسال الطلب...";
+
+  try {
+    const order = {
+      customerName,
+      phone,
+      address,
+      items,
+      delivery,
+      prep,
+      notes,
+      status: "new",
+      source: "website",
+      createdAt: serverTimestamp(),
+
+      // لقطة أسعار محفوظة مع الطلب وقت إرساله
+      fishDetails: JSON.stringify(result.fish),
+      prepDetails: JSON.stringify(result.perKgPreps),
+      fixedDetails: JSON.stringify(result.fixed),
+      fishTotal: result.fishTotal,
+      prepTotal: result.prepTotal,
+      fixedTotal: result.fixedTotal,
+      totalAmount: result.totalAmount,
+      totalKg: result.totalKg
+    };
+
+    const docRef = await addDoc(collection(db, "orders"), order);
+
+    showSuccess(
+      "تم تسجيل طلبك بنجاح ❤️\n" +
+      "رقم الطلب: " + docRef.id + "\n" +
+      "الأصناف: " + items + "\n" +
+      "التجهيزات: " + prep + "\n" +
+      "إجمالي السمك: " + money(result.fishTotal) + "\n" +
+      "إجمالي تجهيز السمك: " + money(result.prepTotal) + "\n" +
+      "الإضافات: " + money(result.fixedTotal) + "\n" +
+      "الإجمالي التقديري: " + money(result.totalAmount) + "\n" +
+      "فريق المرسي هيتواصل معاك لتأكيد التفاصيل."
+    );
+
+    form.reset();
+    updateTotals();
+
+  } catch (error) {
+    console.error("Order submission failed:", error);
+    showError(
+      error?.code === "permission-denied"
+        ? "تعذر حفظ الطلب بسبب صلاحيات Firebase. لازم تحديث قواعد الطلبات قبل تجربة الإرسال."
+        : "حصلت مشكلة أثناء إرسال الطلب. حاول مرة أخرى."
+    );
+  } finally {
+    sending = false;
+    btn.disabled = false;
+    btn.textContent = "إرسال الطلب";
+  }
+});
+</script>
+</body>
+</html>
