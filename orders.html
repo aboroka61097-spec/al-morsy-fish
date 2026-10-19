@@ -14,62 +14,86 @@
 }
 *{box-sizing:border-box}
 body{
-  margin:0;
-  padding:16px;
+  margin:0;padding:14px;
   background:linear-gradient(160deg,#e0f2fe,#f8fafc 55%,#dbeafe);
   min-height:100vh
 }
-main{max-width:650px;margin:0 auto}
+main{max-width:700px;margin:auto}
 .card{
-  background:#fff;
-  border:1px solid #dbeafe;
-  border-radius:20px;
-  padding:22px;
+  background:#fff;border:1px solid #dbeafe;
+  border-radius:20px;padding:20px;
   box-shadow:0 10px 30px #0c4a6e12
 }
 .brand{text-align:center;color:#075985}
-.brand img{width:92px;height:92px;object-fit:contain}
-.brand h1{font-size:25px;margin:8px 0}
+.brand h1{font-size:24px;margin:8px 0}
 .brand p{margin:6px 0 18px;color:#456579}
-label{display:block;font-weight:bold;margin:15px 0 7px}
+label{display:block;font-weight:bold;margin:14px 0 7px}
 input,textarea,select{
-  width:100%;
-  font:inherit;
-  padding:12px;
-  border:1px solid #cbd5e1;
-  border-radius:10px;
+  width:100%;font:inherit;padding:12px;
+  border:1px solid #cbd5e1;border-radius:10px;
   background:#fff
 }
-textarea{min-height:85px;resize:vertical}
+textarea{min-height:75px;resize:vertical}
 button{
-  width:100%;
-  border:0;
-  border-radius:12px;
-  padding:14px;
-  font:inherit;
-  font-weight:bold;
-  cursor:pointer;
-  margin-top:18px;
-  background:#075985;
-  color:#fff
+  width:100%;border:0;border-radius:11px;
+  padding:13px;font:inherit;font-weight:bold;
+  cursor:pointer;margin-top:12px;
+  background:#075985;color:white
 }
 button:disabled{opacity:.6}
-.note{font-size:13px;color:#64748b;line-height:1.8}
+.section{
+  margin-top:20px;padding:14px;
+  border:1px solid #dbeafe;border-radius:14px;
+  background:#f8fcff
+}
+.section h2{font-size:18px;margin:0 0 10px;color:#075985}
+.item{
+  background:#fff;border:1px solid #e2e8f0;
+  border-radius:11px;padding:12px;margin:9px 0
+}
+.item-head{
+  display:flex;justify-content:space-between;
+  align-items:center;gap:10px;flex-wrap:wrap
+}
+.item-name{font-weight:bold}
+.price{color:#0369a1;font-size:14px;margin-top:5px}
+.qty-row{
+  display:grid;grid-template-columns:1fr 110px;
+  align-items:center;gap:10px;margin-top:10px
+}
+.qty-row label{margin:0;font-size:14px}
+.qty-row input{padding:9px}
+.check-row{
+  display:flex;align-items:center;gap:9px;
+  font-weight:normal;margin:8px 0
+}
+.check-row input{width:20px;height:20px;flex-shrink:0}
+.check-row label{margin:0;font-weight:normal}
+.muted{font-size:13px;color:#64748b;line-height:1.8}
+.total-box{
+  background:#ecfdf5;border:1px solid #a7f3d0;
+  border-radius:13px;padding:15px;margin-top:18px
+}
+.total-line{
+  display:flex;justify-content:space-between;
+  gap:10px;margin:9px 0
+}
+.grand-total{
+  font-size:21px;font-weight:bold;
+  border-top:1px solid #a7f3d0;padding-top:12px
+}
 .status{
-  display:none;
-  margin-top:15px;
-  padding:12px;
-  border-radius:10px;
-  line-height:1.8;
-  overflow-wrap:anywhere
+  display:none;margin-top:15px;padding:12px;
+  border-radius:10px;line-height:1.9;
+  white-space:pre-line;overflow-wrap:anywhere
 }
 .ok{display:block;background:#dcfce7;color:#166534}
 .err{display:block;background:#fee2e2;color:#991b1b}
-.contact{
-  text-align:center;
-  margin:16px 0 0;
-  color:#456579;
-  font-size:14px
+.contact{text-align:center;margin-top:16px;color:#456579;font-size:14px}
+.empty{padding:10px;color:#64748b;text-align:center}
+@media(max-width:420px){
+  .card{padding:14px}
+  .qty-row{grid-template-columns:1fr 90px}
 }
 </style>
 </head>
@@ -79,250 +103,10 @@ button:disabled{opacity:.6}
 <section class="card">
 
 <header class="brand">
-<img
-  src="file_0000000013708210867485e3523c3f02.png"
-  alt="شعار المرسي للأسماك"
-  onerror="this.style.display='none'">
-
 <h1>🐟 طلب أوردر من المرسي للأسماك</h1>
 <p>من البحر لحد عندك ❤️</p>
 </header>
 
 <form id="orderForm">
 
-<label for="customerName">الاسم بالكامل *</label>
-<input
-  id="customerName"
-  name="customerName"
-  autocomplete="name"
-  required
-  minlength="2"
-  maxlength="100"
-  placeholder="اكتب اسمك">
-
-<label for="phone">رقم الموبايل *</label>
-<input
-  id="phone"
-  name="phone"
-  type="tel"
-  inputmode="tel"
-  autocomplete="tel"
-  required
-  maxlength="20"
-  placeholder="رقم نقدر نتواصل معاك عليه">
-
-<label for="address">عنوان التوصيل بالتفصيل *</label>
-<textarea
-  id="address"
-  name="address"
-  autocomplete="street-address"
-  required
-  minlength="5"
-  maxlength="500"
-  placeholder="المنطقة والشارع وأقرب علامة مميزة"></textarea>
-
-<label for="items">الأصناف والكميات المطلوبة *</label>
-<textarea
-  id="items"
-  name="items"
-  required
-  minlength="2"
-  maxlength="1500"
-  placeholder="مثال: ٢ كيلو شبار وسط، كيلو جمبري..."></textarea>
-
-<label for="prep">طريقة تجهيز السمك *</label>
-<select id="prep" name="prep" required>
-  <option value="بدون تجهيز">بدون تجهيز</option>
-  <option value="تنظيف فقط">تنظيف فقط</option>
-  <option value="قلي">قلي</option>
-  <option value="شوي زيت وليمون">شوي زيت وليمون</option>
-  <option value="سنجاري">سنجاري</option>
-  <option value="باترفلاي">باترفلاي</option>
-  <option value="مدفونة">مدفونة</option>
-  <option value="الخلطة">الخلطة</option>
-  <option value="حسب الاتفاق بالتليفون">حسب الاتفاق بالتليفون</option>
-</select>
-
-<label for="delivery">طريقة الاستلام</label>
-<select id="delivery" name="delivery">
-  <option value="delivery">توصيل لحد باب البيت</option>
-  <option value="pickup">استلام من المحل</option>
-</select>
-
-<label for="notes">ملاحظات إضافية (اختياري)</label>
-<textarea
-  id="notes"
-  name="notes"
-  maxlength="1000"
-  placeholder="أي تفاصيل إضافية عن الطلب"></textarea>
-
-<p class="note">
-إرسال الطلب لا يعني تأكيد السعر أو التوافر؛ فريق المرسي هيتواصل معاك لتأكيد التفاصيل.
-</p>
-
-<button id="submitBtn" type="submit">إرسال الطلب</button>
-
-<div id="status" class="status" role="status" aria-live="polite"></div>
-
-</form>
-
-<div class="contact">
-المرسي للأسماك — الإسماعيلية، طريق البلاجات، سوق السمك
-</div>
-
-</section>
-</main>
-
-<script type="module">
-import {
-  initializeApp
-} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCviWU0LzDbUn8M7ETIXorU_kNTSgnwjhc",
-  authDomain: "al-morsy-fish.firebaseapp.com",
-  projectId: "al-morsy-fish",
-  storageBucket: "al-morsy-fish.firebasestorage.app",
-  messagingSenderId: "826154741509",
-  appId: "1:826154741509:web:9cb852e4a7bbe5aaacd16c"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const form = document.getElementById("orderForm");
-const btn = document.getElementById("submitBtn");
-const statusBox = document.getElementById("status");
-
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-
-  statusBox.className = "status";
-  statusBox.textContent = "";
-
-  const data = new FormData(form);
-
-  const customerName =
-    String(data.get("customerName") || "").trim();
-
-  const phone =
-    String(data.get("phone") || "").trim();
-
-  const address =
-    String(data.get("address") || "").trim();
-
-  const items =
-    String(data.get("items") || "").trim();
-
-  const prep =
-    String(data.get("prep") || "").trim();
-
-  const delivery =
-    String(data.get("delivery") || "");
-
-  const notes =
-    String(data.get("notes") || "").trim();
-
-  if (customerName.length < 2 || customerName.length > 100) {
-    statusBox.className = "status err";
-    statusBox.textContent = "من فضلك اكتب اسمك بالكامل بشكل صحيح.";
-    return;
-  }
-
-  if (phone.replace(/\D/g, "").length < 8 || phone.length > 20) {
-    statusBox.className = "status err";
-    statusBox.textContent = "من فضلك راجع رقم الموبايل.";
-    return;
-  }
-
-  if (address.length < 5 || address.length > 500) {
-    statusBox.className = "status err";
-    statusBox.textContent = "من فضلك اكتب عنوان التوصيل بالتفصيل.";
-    return;
-  }
-
-  if (items.length < 2 || items.length > 1500) {
-    statusBox.className = "status err";
-    statusBox.textContent = "من فضلك اكتب الأصناف والكميات المطلوبة.";
-    return;
-  }
-
-  if (!prep || prep.length > 100) {
-    statusBox.className = "status err";
-    statusBox.textContent = "من فضلك اختر طريقة التجهيز.";
-    return;
-  }
-
-  if (!["delivery", "pickup"].includes(delivery)) {
-    statusBox.className = "status err";
-    statusBox.textContent = "من فضلك اختر طريقة الاستلام.";
-    return;
-  }
-
-  if (notes.length > 1000) {
-    statusBox.className = "status err";
-    statusBox.textContent = "الملاحظات أطول من المسموح به.";
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = "جارٍ إرسال الطلب...";
-
-  try {
-    const order = {
-      customerName,
-      phone,
-      address,
-      items,
-      delivery,
-      prep,
-      notes,
-      status: "new",
-      source: "website",
-      createdAt: serverTimestamp()
-    };
-
-    const docRef = await addDoc(
-      collection(db, "orders"),
-      order
-    );
-
-    statusBox.className = "status ok";
-    statusBox.textContent =
-      "تم تسجيل طلبك بنجاح ❤️\n" +
-      "اسم العميل: " + customerName + "\n" +
-      "التجهيزات: " + prep + "\n" +
-      "رقم الطلب: " + docRef.id + "\n" +
-      "فريق المرسي هيتواصل معاك لتأكيد التفاصيل.";
-
-    form.reset();
-
-  } catch (error) {
-    console.error("Order submission failed:", error);
-
-    statusBox.className = "status err";
-
-    if (error && error.code === "permission-denied") {
-      statusBox.textContent =
-        "تعذر حفظ الطلب بسبب صلاحيات قاعدة البيانات. راجع قواعد Firebase.";
-    } else {
-      statusBox.textContent =
-        "حصلت مشكلة أثناء إرسال الطلب. من فضلك جرّب مرة أخرى أو تواصل مع المحل.";
-    }
-
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "إرسال الطلب";
-  }
-});
-</script>
-
-</body>
-</html>
+<label for="customerName">الاسم بالكامل
