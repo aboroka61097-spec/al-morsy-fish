@@ -1,13 +1,18 @@
 {
-"id": "/al-morsy-fish/",
-"name": "المرسي للأسماك",
-"short_name": "المرسي",
-"description": "المرسي للأسماك ❤️ من البحر لحد عندك.. أسماك قنال طازة من صيادين المرسي في الإسماعيلية، مع قائمة الأسعار والتجهيزات وبيانات التواصل.",
-"start_url": "/al-morsy-fish/",
-"scope": "/al-morsy-fish/",
-"display": "standalone",
-"background_color": "#FFFFFF",
-"theme_color": "#071D3A",
-"lang": "ar",
-"dir": "rtl"
+  "id": "/al-morsy-fish/",
+  "name": "المرسي للأسماك",
+  "short_name": "المرسي",
+  "description": "المرسي للأسماك ❤️ من البحر لحد عندك.. أسماك قنال طازة من صيادين المرسي في الإسماعيلية، مع قائمة الأسعار والتجهيزات وبيانات التواصل.",
+  "start_url": "/al-morsy-fish/",
+  "scope": "/al-morsy-fish/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#071D3A",
+  "lang": "ar",
+  "dir": "rtl",
+  "orientation": "any",
+  "categories": [
+    "food",
+    "shopping"
+  ]
 }
