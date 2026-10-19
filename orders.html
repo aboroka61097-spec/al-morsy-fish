@@ -5,37 +5,65 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#075985">
 <title>طلب أوردر | المرسي للأسماك</title>
+
 <style>
 :root{font-family:Tahoma,Arial,sans-serif;color:#123047;background:#f2f8fb}
-*{box-sizing:border-box}body{margin:0;padding:16px;background:linear-gradient(160deg,#e0f2fe,#f8fafc 55%,#dbeafe);min-height:100vh}
-main{max-width:650px;margin:0 auto}.card{background:#fff;border:1px solid #dbeafe;border-radius:20px;padding:22px;box-shadow:0 10px 30px #0c4a6e12}
-.brand{text-align:center;color:#075985}.brand img{width:92px;height:92px;object-fit:contain}.brand h1{font-size:25px;margin:8px 0}.brand p{margin:6px 0 18px;color:#456579}
-label{display:block;font-weight:bold;margin:15px 0 7px}input,textarea,select{width:100%;font:inherit;padding:12px;border:1px solid #cbd5e1;border-radius:10px;background:#fff}textarea{min-height:85px;resize:vertical}
-button{width:100%;border:0;border-radius:12px;padding:14px;font:inherit;font-weight:bold;cursor:pointer;margin-top:18px;background:#075985;color:#fff}button:disabled{opacity:.6}
-.note{font-size:13px;color:#64748b;line-height:1.8}.status{display:none;margin-top:15px;padding:12px;border-radius:10px;line-height:1.7}.ok{display:block;background:#dcfce7;color:#166534}.err{display:block;background:#fee2e2;color:#991b1b}
+*{box-sizing:border-box}
+body{margin:0;padding:16px;background:linear-gradient(160deg,#e0f2fe,#f8fafc 55%,#dbeafe);min-height:100vh}
+main{max-width:650px;margin:0 auto}
+.card{background:#fff;border:1px solid #dbeafe;border-radius:20px;padding:22px;box-shadow:0 10px 30px #0c4a6e12}
+.brand{text-align:center;color:#075985}
+.brand img{width:92px;height:92px;object-fit:contain}
+.brand h1{font-size:25px;margin:8px 0}
+.brand p{margin:6px 0 18px;color:#456579}
+label{display:block;font-weight:bold;margin:15px 0 7px}
+input,textarea,select{width:100%;font:inherit;padding:12px;border:1px solid #cbd5e1;border-radius:10px;background:#fff}
+textarea{min-height:85px;resize:vertical}
+button{width:100%;border:0;border-radius:12px;padding:14px;font:inherit;font-weight:bold;cursor:pointer;margin-top:18px;background:#075985;color:#fff}
+button:disabled{opacity:.6}
+.note{font-size:13px;color:#64748b;line-height:1.8}
+.status{display:none;margin-top:15px;padding:12px;border-radius:10px;line-height:1.7;overflow-wrap:anywhere}
+.ok{display:block;background:#dcfce7;color:#166534}
+.err{display:block;background:#fee2e2;color:#991b1b}
 .contact{text-align:center;margin:16px 0 0;color:#456579;font-size:14px}
 </style>
 </head>
+
 <body>
 <main>
 <section class="card">
+
 <header class="brand">
-<img src="file_0000000013708210867485e3523c3f02.png" alt="شعار المرسي للأسماك" onerror="this.style.display='none'">
+<img src="file_0000000013708210867485e3523c3f02.png"
+     alt="شعار المرسي للأسماك"
+     onerror="this.style.display='none'">
 <h1>🐟 طلب أوردر من المرسي للأسماك</h1>
 <p>من البحر لحد عندك ❤️</p>
 </header>
+
 <form id="orderForm">
+
 <label for="customerName">الاسم بالكامل *</label>
-<input id="customerName" name="customerName" autocomplete="name" required maxlength="100" placeholder="اكتب اسمك">
+<input id="customerName" name="customerName"
+       autocomplete="name" required maxlength="100"
+       placeholder="اكتب اسمك">
 
 <label for="phone">رقم الموبايل *</label>
-<input id="phone" name="phone" inputmode="tel" autocomplete="tel" required maxlength="20" placeholder="رقم نقدر نتواصل معاك عليه">
+<input id="phone" name="phone" type="tel"
+       inputmode="tel" autocomplete="tel"
+       required maxlength="20"
+       placeholder="رقم نقدر نتواصل معاك عليه">
 
 <label for="address">عنوان التوصيل بالتفصيل *</label>
-<textarea id="address" name="address" autocomplete="street-address" required maxlength="500" placeholder="المنطقة والشارع وأقرب علامة مميزة"></textarea>
+<textarea id="address" name="address"
+          autocomplete="street-address"
+          required maxlength="500"
+          placeholder="المنطقة والشارع وأقرب علامة مميزة"></textarea>
 
 <label for="items">الأصناف والكميات المطلوبة *</label>
-<textarea id="items" name="items" required maxlength="1500" placeholder="مثال: ٢ كيلو شبار وسط، كيلو جمبري..."></textarea>
+<textarea id="items" name="items"
+          required maxlength="1500"
+          placeholder="مثال: ٢ كيلو شبار وسط، كيلو جمبري..."></textarea>
 
 <label for="delivery">طريقة الاستلام</label>
 <select id="delivery" name="delivery">
@@ -44,21 +72,40 @@ button{width:100%;border:0;border-radius:12px;padding:14px;font:inherit;font-wei
 </select>
 
 <label for="notes">ملاحظات إضافية (اختياري)</label>
-<textarea id="notes" name="notes" maxlength="1000" placeholder="طريقة التجهيز أو أي ملاحظات"></textarea>
+<textarea id="notes" name="notes"
+          maxlength="1000"
+          placeholder="طريقة التجهيز أو أي ملاحظات"></textarea>
 
-<p class="note">إرسال الطلب لا يعني تأكيد السعر أو التوافر؛ فريق المرسي هيتواصل معاك لتأكيد التفاصيل.</p>
+<p class="note">
+إرسال الطلب لا يعني تأكيد السعر أو التوافر؛ فريق المرسي هيتواصل معاك لتأكيد التفاصيل.
+</p>
+
 <button id="submitBtn" type="submit">إرسال الطلب</button>
 <div id="status" class="status" role="status" aria-live="polite"></div>
+
 </form>
-<div class="contact">المرسي للأسماك — الإسماعيلية، طريق البلاجات، سوق السمك</div>
+
+<div class="contact">
+المرسي للأسماك — الإسماعيلية، طريق البلاجات، سوق السمك
+</div>
+
 </section>
 </main>
+
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCviWU0LzDbUn8M7ETIXORu_KnTSgnwjhc",
+  apiKey: "AIzaSyCviWU0LzDbUn8M7ETIXorU_kNTSgnwjhc",
   authDomain: "al-morsy-fish.firebaseapp.com",
   projectId: "al-morsy-fish",
   storageBucket: "al-morsy-fish.firebasestorage.app",
@@ -66,58 +113,115 @@ const firebaseConfig = {
   appId: "1:826154741509:web:9cb852e4a7bbe5aaacd16c"
 };
 
-const form = document.getElementById("orderForm");
-const btn = document.getElementById("submitBtn");
-const statusBox = document.getElementById("status");
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+const form = document.getElementById("orderForm");
+const btn = document.getElementById("submitBtn");
+const statusBox = document.getElementById("status");
+
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
+
   statusBox.className = "status";
   statusBox.textContent = "";
-  btn.disabled = true;
-  btn.textContent = "جارٍ إرسال الطلب...";
-  const data = new FormData(form);
-  const phone = String(data.get("phone") || "").trim();
-  const items = String(data.get("items") || "").trim();
 
-  if (phone.replace(/\D/g, "").length < 8 || !items) {
+  const data = new FormData(form);
+
+  const customerName = String(data.get("customerName") || "").trim();
+  const phone = String(data.get("phone") || "").trim();
+  const address = String(data.get("address") || "").trim();
+  const items = String(data.get("items") || "").trim();
+  const delivery = String(data.get("delivery") || "delivery");
+  const notes = String(data.get("notes") || "").trim();
+
+  // التحقق من البيانات قبل الاتصال بقاعدة البيانات
+  if (customerName.length < 2 || customerName.length > 100) {
     statusBox.className = "status err";
-    statusBox.textContent = "من فضلك راجع رقم الموبايل والأصناف المطلوبة.";
-    btn.disabled = false;
-    btn.textContent = "إرسال الطلب";
+    statusBox.textContent = "من فضلك اكتب اسمك بالكامل بشكل صحيح.";
+    document.getElementById("customerName").focus();
     return;
   }
 
+  if (phone.replace(/\D/g, "").length < 8 || phone.length > 20) {
+    statusBox.className = "status err";
+    statusBox.textContent = "من فضلك راجع رقم الموبايل.";
+    document.getElementById("phone").focus();
+    return;
+  }
+
+  if (address.length < 5 || address.length > 500) {
+    statusBox.className = "status err";
+    statusBox.textContent = "من فضلك اكتب عنوان التوصيل بالتفصيل.";
+    document.getElementById("address").focus();
+    return;
+  }
+
+  if (items.length < 2 || items.length > 1500) {
+    statusBox.className = "status err";
+    statusBox.textContent = "من فضلك اكتب الأصناف والكميات المطلوبة.";
+    document.getElementById("items").focus();
+    return;
+  }
+
+  if (!["delivery", "pickup"].includes(delivery)) {
+    statusBox.className = "status err";
+    statusBox.textContent = "من فضلك اختر طريقة الاستلام.";
+    return;
+  }
+
+  if (notes.length > 1000) {
+    statusBox.className = "status err";
+    statusBox.textContent = "الملاحظات أطول من المسموح به.";
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "جارٍ إرسال الطلب...";
+
   try {
-    const docRef = await addDoc(collection(db, "orders"), {
-      customerName: String(data.get("customerName")).trim(),
-      phone,
-      address: String(data.get("address")).trim(),
-      items,
-      delivery: String(data.get("delivery")),
-      notes: String(data.get("notes") || "").trim(),
+    const order = {
+      customerName: customerName,
+      phone: phone,
+      address: address,
+      items: items,
+      delivery: delivery,
+      notes: notes,
       status: "new",
       source: "website",
       createdAt: serverTimestamp()
-    });
+    };
+
+    const docRef = await addDoc(collection(db, "orders"), order);
+
     statusBox.className = "status ok";
-    statusBox.textContent = "تم تسجيل طلبك بنجاح. رقم الطلب: " + docRef.id + " — فريق المرسي هيتواصل معاك للتأكيد.";
+    statusBox.textContent =
+      "تم تسجيل طلبك بنجاح ❤️\n" +
+      "اسم العميل: " + customerName + "\n" +
+      "رقم الطلب: " + docRef.id + "\n" +
+      "فريق المرسي هيتواصل معاك لتأكيد التفاصيل.";
+
     form.reset();
+
   } catch (error) {
     console.error("Order submission failed:", error);
+
     statusBox.className = "status err";
-    if (error && (error.code === "permission-denied" || error.code === "firestore/permission-denied")) {
-      statusBox.textContent = "نموذج الطلب جاهز، لكن حفظ الطلبات لم يُفعّل بعد في قاعدة البيانات. من فضلك تواصل مع المحل مباشرة لحين إكمال الإعداد.";
+
+    if (error && error.code === "permission-denied") {
+      statusBox.textContent =
+        "تعذر حفظ الطلب بسبب صلاحيات قاعدة البيانات. من فضلك تواصل مع المحل.";
     } else {
-      statusBox.textContent = "حصلت مشكلة أثناء إرسال الطلب. من فضلك جرّب مرة أخرى أو تواصل مع المحل مباشرة.";
+      statusBox.textContent =
+        "حصلت مشكلة أثناء إرسال الطلب. من فضلك جرّب مرة أخرى أو تواصل مع المحل.";
     }
+
   } finally {
     btn.disabled = false;
     btn.textContent = "إرسال الطلب";
   }
 });
 </script>
+
 </body>
 </html>
