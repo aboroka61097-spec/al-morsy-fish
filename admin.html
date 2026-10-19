@@ -8,116 +8,69 @@
 
 <style>
 *{box-sizing:border-box}
-
 body{
-  margin:0;
-  padding:16px;
+  margin:0;padding:16px;
   font-family:Tahoma,Arial,sans-serif;
-  background:#eef3f7;
-  color:#10243a;
+  background:#eef3f7;color:#10243a
 }
-
-main{
-  max-width:1000px;
-  margin:auto;
-}
-
+main{max-width:1000px;margin:auto}
 section{
-  background:#fff;
-  border-radius:16px;
-  padding:18px;
-  margin:12px 0;
-  box-shadow:0 5px 18px #0001;
+  background:#fff;border-radius:16px;
+  padding:18px;margin:12px 0;
+  box-shadow:0 5px 18px #0001
 }
-
 h1{color:#071d3a}
-
-label{
-  display:block;
-  margin:10px 0 5px;
-  font-weight:bold;
-}
-
+label{display:block;margin:10px 0 5px;font-weight:bold}
 input,select{
-  width:100%;
-  padding:11px;
-  border:1px solid #ccd5df;
-  border-radius:9px;
-  font:inherit;
-  background:#fff;
+  width:100%;padding:11px;
+  border:1px solid #ccd5df;border-radius:9px;
+  font:inherit;background:#fff
 }
-
 button{
-  padding:11px 16px;
-  border:0;
-  border-radius:9px;
-  background:#0b7751;
-  color:white;
-  font:inherit;
-  font-weight:bold;
-  margin:8px 5px 0 0;
-  cursor:pointer;
+  padding:11px 16px;border:0;border-radius:9px;
+  background:#0b7751;color:white;font:inherit;
+  font-weight:bold;margin:8px 5px 0 0;cursor:pointer
 }
-
 button:disabled{opacity:.6;cursor:wait}
 button.secondary{background:#34485d}
-
-.status{
-  white-space:pre-wrap;
-  line-height:1.8;
-  overflow-wrap:anywhere;
-}
-
+button.call{background:#1769aa}
+button.whatsapp{background:#168a4a}
+.status{white-space:pre-wrap;line-height:1.8;overflow-wrap:anywhere}
 .order{
-  border:1px solid #dce4ed;
-  border-radius:12px;
-  padding:14px;
-  margin:12px 0;
-  background:#fff;
+  border:1px solid #dce4ed;border-radius:12px;
+  padding:14px;margin:12px 0;background:#fff
 }
-
-.order h3{
-  margin-top:0;
-  overflow-wrap:anywhere;
-}
-
-.order p{
-  white-space:pre-wrap;
-  line-height:1.9;
-  overflow-wrap:anywhere;
-}
-
-.meta{
-  color:#586b7e;
-  font-size:13px;
-}
-
+.order h3{margin-top:0;overflow-wrap:anywhere}
+.order p{white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere}
+.meta{color:#586b7e;font-size:13px}
 .statusBox{
-  margin:12px 0;
-  padding:9px;
-  border-radius:8px;
-  background:#eef6ff;
-  line-height:1.8;
+  margin:12px 0;padding:9px;border-radius:8px;
+  background:#eef6ff;line-height:1.8
 }
-
 .statusMessage{
-  margin-top:8px;
-  font-size:13px;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
+  margin-top:8px;font-size:13px;
+  white-space:pre-wrap;overflow-wrap:anywhere
 }
-
+.contactButtons{display:flex;gap:8px;flex-wrap:wrap}
+.contactButtons a{
+  display:inline-block;text-decoration:none;
+  color:white;padding:11px 15px;border-radius:9px;
+  font-weight:bold;text-align:center;margin-top:8px
+}
+.callLink{background:#1769aa}
+.whatsappLink{background:#168a4a}
 @media(max-width:480px){
   body{padding:9px}
   section{padding:13px}
   button{width:100%;margin:8px 0 0}
+  .contactButtons{display:grid;grid-template-columns:1fr 1fr}
+  .contactButtons a{font-size:14px;padding:12px 5px}
 }
 </style>
 </head>
 
 <body>
 <main>
-
 <h1>🐟 لوحة إدارة المرسي للأسماك</h1>
 
 <section>
@@ -137,22 +90,15 @@ button.secondary{background:#34485d}
 
 <section>
 <h3>إدارة الطلبات</h3>
-
-<p class="meta">
-يمكن لحساب الإدارة المصرح له الاطلاع على الطلبات وتحديث حالاتها.
-</p>
+<p class="meta">يمكن لحساب الإدارة المصرح له الاطلاع على الطلبات وتحديث حالاتها والتواصل مع العملاء.</p>
 
 <button id="load">تحديث الطلبات</button>
 <div id="orders" class="status"></div>
 </section>
-
 </main>
 
 <script type="module">
-
-import {
-  initializeApp
-} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 
 import {
   getAuth,
@@ -172,9 +118,7 @@ import {
   updateDoc
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-import {
-  firebaseConfig
-} from "./firebase-config.js";
+import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -186,14 +130,13 @@ const loginButton = document.getElementById("login");
 const logoutButton = document.getElementById("logout");
 const loadButton = document.getElementById("load");
 
-// الحالات المتاحة للطلب
 const statuses = [
-  {value:"new", label:"🆕 جديد"},
-  {value:"contacted", label:"📞 تم التواصل مع العميل"},
-  {value:"preparing", label:"👨‍🍳 جارٍ التجهيز"},
-  {value:"out_for_delivery", label:"🚚 خرج للتوصيل"},
-  {value:"delivered", label:"✅ تم التسليم"},
-  {value:"cancelled", label:"❌ ملغي"}
+  {value:"new",label:"🆕 جديد"},
+  {value:"contacted",label:"📞 تم التواصل مع العميل"},
+  {value:"preparing",label:"👨‍🍳 جارٍ التجهيز"},
+  {value:"out_for_delivery",label:"🚚 خرج للتوصيل"},
+  {value:"delivered",label:"✅ تم التسليم"},
+  {value:"cancelled",label:"❌ ملغي"}
 ];
 
 function statusLabel(value){
@@ -201,6 +144,30 @@ function statusLabel(value){
   return item ? item.label : (value || "غير محدد");
 }
 
+/* تحويل الرقم المصري إلى الصيغة الدولية لواتساب */
+function normalizeEgyptianPhone(value){
+  let phone = String(value || "").replace(/\D/g, "");
+
+  if(phone.startsWith("00")){
+    phone = phone.slice(2);
+  }
+
+  if(phone.startsWith("20") && phone.length === 12){
+    return phone;
+  }
+
+  if(phone.startsWith("0") && phone.length === 11){
+    return "2" + phone;
+  }
+
+  if(phone.length === 10 && phone.startsWith("1")){
+    return "20" + phone;
+  }
+
+  return phone;
+}
+
+/* تسجيل الدخول */
 loginButton.onclick = async () => {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
@@ -223,6 +190,7 @@ loginButton.onclick = async () => {
   }
 };
 
+/* تسجيل الخروج */
 logoutButton.onclick = async () => {
   try{
     await signOut(auth);
@@ -239,6 +207,7 @@ onAuthStateChanged(auth, user => {
     : "لم يتم تسجيل الدخول.";
 });
 
+/* حفظ حالة الطلب */
 async function saveStatus(orderId, select, button, message){
   if(!auth.currentUser){
     message.textContent = "سجّل الدخول أولًا.";
@@ -256,20 +225,55 @@ async function saveStatus(orderId, select, button, message){
     });
 
     message.textContent = "✅ تم حفظ الحالة: " + statusLabel(newStatus);
-
   }catch(e){
     console.error("Status update error:", e);
-
     message.textContent =
-      "تعذر حفظ الحالة.\n" +
-      "رمز الخطأ: " + (e.code || "غير معروف") + "\n" +
-      "التفاصيل: " + (e.message || "لا توجد تفاصيل إضافية");
+      "تعذر حفظ الحالة.\nرمز الخطأ: " +
+      (e.code || "غير معروف") +
+      "\nالتفاصيل: " +
+      (e.message || "لا توجد تفاصيل إضافية");
   }finally{
     button.disabled = false;
     select.disabled = false;
   }
 }
 
+/* إنشاء زر الاتصال والواتساب */
+function createContactButtons(phoneValue){
+  const container = document.createElement("div");
+  container.className = "contactButtons";
+
+  const phone = String(phoneValue || "").trim();
+
+  if(!phone){
+    container.textContent = "لا يوجد رقم موبايل مسجل لهذا الطلب.";
+    return container;
+  }
+
+  const safePhone = phone.replace(/[^\d+]/g, "");
+  const internationalPhone = normalizeEgyptianPhone(phone);
+
+  const callLink = document.createElement("a");
+  callLink.className = "callLink";
+  callLink.href = "tel:" + safePhone;
+  callLink.textContent = "📞 اتصال بالعميل";
+  callLink.setAttribute("aria-label", "الاتصال بالعميل");
+
+  const whatsappLink = document.createElement("a");
+  whatsappLink.className = "whatsappLink";
+  whatsappLink.href =
+    "https://wa.me/" + internationalPhone +
+    "?text=" + encodeURIComponent("أهلًا بحضرتك، معاك المرسي للأسماك بخصوص طلبك 🐟");
+  whatsappLink.target = "_blank";
+  whatsappLink.rel = "noopener noreferrer";
+  whatsappLink.textContent = "🟢 واتساب";
+  whatsappLink.setAttribute("aria-label", "مراسلة العميل على واتساب");
+
+  container.append(callLink, whatsappLink);
+  return container;
+}
+
+/* تحميل الطلبات */
 loadButton.onclick = async () => {
   if(!auth.currentUser){
     output.textContent = "سجّل الدخول أولًا.";
@@ -287,7 +291,6 @@ loadButton.onclick = async () => {
     );
 
     const snap = await getDocs(ordersQuery);
-
     output.replaceChildren();
 
     if(snap.empty){
@@ -307,7 +310,6 @@ loadButton.onclick = async () => {
         (x.customerName || x.name || "بدون اسم");
 
       const body = document.createElement("p");
-
       body.textContent =
         "الموبايل: " + (x.phone || "—") +
         "\nالحالة: " + statusLabel(x.status) +
@@ -315,9 +317,14 @@ loadButton.onclick = async () => {
         "\nالمطلوب: " + (x.items || "—") +
         "\nالتجهيزات: " + (x.prep || "—") +
         "\nطريقة الاستلام: " +
-          (x.delivery === "delivery" ? "توصيل" :
-           x.delivery === "pickup" ? "استلام من المحل" : "—") +
+        (x.delivery === "delivery"
+          ? "توصيل"
+          : x.delivery === "pickup"
+            ? "استلام من المحل"
+            : "—") +
         "\nملاحظات: " + (x.notes || "—");
+
+      const contacts = createContactButtons(x.phone);
 
       const controls = document.createElement("div");
       controls.className = "statusBox";
@@ -335,7 +342,6 @@ loadButton.onclick = async () => {
         select.appendChild(option);
       });
 
-      // دعم الطلبات القديمة ذات الحالات غير المعروفة
       if(!statuses.some(s => s.value === x.status)){
         const oldOption = document.createElement("option");
         oldOption.value = x.status || "new";
@@ -353,12 +359,11 @@ loadButton.onclick = async () => {
       const message = document.createElement("div");
       message.className = "statusMessage";
 
-      saveButton.onclick = () => {
+      saveButton.onclick = () =>
         saveStatus(d.id, select, saveButton, message);
-      };
 
       controls.append(label, select, saveButton, message);
-      card.append(title, body, controls);
+      card.append(title, body, contacts, controls);
       output.appendChild(card);
     });
 
@@ -366,14 +371,14 @@ loadButton.onclick = async () => {
     console.error("Load orders error:", e);
 
     output.textContent =
-      "تعذر تحميل الطلبات.\n" +
-      "رمز الخطأ: " + (e.code || "غير معروف") + "\n" +
-      "التفاصيل: " + (e.message || "لا توجد تفاصيل إضافية");
+      "تعذر تحميل الطلبات.\nرمز الخطأ: " +
+      (e.code || "غير معروف") +
+      "\nالتفاصيل: " +
+      (e.message || "لا توجد تفاصيل إضافية");
   }finally{
     loadButton.disabled = false;
   }
 };
-
 </script>
 </body>
 </html>
