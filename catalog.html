@@ -17,9 +17,9 @@
 </div></main>
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import { firebaseConfig } from './firebase-config.js';
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
-const firebaseConfig={apiKey:'AIzaSyCviWU0LzDbUn8M7ETIXorU_kNTSgnwjhc',authDomain:'al-morsy-fish.firebaseapp.com',projectId:'al-morsy-fish',storageBucket:'al-morsy-fish.firebasestorage.app',messagingSenderId:'826154741509',appId:'1:826154741509:web:9cb852e4a7bbe5aaacd16c'};
 const ADMIN='aboroka61097@gmail.com'; const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app); const $=id=>document.getElementById(id); let fish=[],preps=[],unFish=null,unPrep=null;
 function msg(t,type=''){ $('status').textContent=t;$('status').className='status '+type; }
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
