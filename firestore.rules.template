@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Safe default: all access denied until the admin UID and order-submission flow
+    // are configured and tested. Do NOT replace this with allow read, write: if true.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

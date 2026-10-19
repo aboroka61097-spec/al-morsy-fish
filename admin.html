@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#071d3a"><title>إدارة طلبات المرسي</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:16px;font-family:Tahoma,Arial,sans-serif;background:#eef3f7;color:#10243a}main{max-width:1000px;margin:auto}section{background:#fff;border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 5px 18px #0001}h1{color:#071d3a}label{display:block;margin:10px 0 5px;font-weight:bold}input{width:100%;padding:11px;border:1px solid #ccd5df;border-radius:9px;font:inherit}button{padding:11px 16px;border:0;border-radius:9px;background:#0b7751;color:white;font:inherit;font-weight:bold;margin:8px 5px 0 0}button.secondary{background:#34485d}.status{white-space:pre-wrap;line-height:1.8}.order{border:1px solid #dce4ed;border-radius:12px;padding:12px;margin:10px 0}.meta{color:#586b7e;font-size:13px}
+</style></head><body><main>
+<h1>🐟 لوحة إدارة المرسي للأسماك</h1>
+<section><h3>دخول الإدارة</h3><label>البريد الإلكتروني</label><input id="email" type="email" autocomplete="username"><label>كلمة المرور</label><input id="password" type="password" autocomplete="current-password"><button id="login">دخول</button><button id="logout" class="secondary">تسجيل خروج</button><div id="authMsg" class="status"></div></section>
+<section><h3>الطلبات</h3><p class="meta">لا تظهر الطلبات إلا لحسابات الإدارة التي تُضاف صراحةً في قواعد Firebase الآمنة.</p><button id="load">تحديث الطلبات</button><div id="orders" class="status"></div></section>
+</main>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { firebaseConfig } from "./firebase-config.js";
+const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
+const authMsg=document.getElementById("authMsg"), output=document.getElementById("orders");
+document.getElementById("login").onclick=async()=>{try{await signInWithEmailAndPassword(auth,document.getElementById("email").value.trim(),document.getElementById("password").value);authMsg.textContent="تم تسجيل الدخول. إذا لم تكن صلاحية الإدارة مضافة في القواعد فلن تظهر الطلبات."}catch(e){authMsg.textContent="تعذر تسجيل الدخول: راجع البريد وكلمة المرور."}};
+document.getElementById("logout").onclick=()=>signOut(auth);
+onAuthStateChanged(auth,u=>{authMsg.textContent=u?("مسجل الدخول: "+u.email):"لم يتم تسجيل الدخول";});
+document.getElementById("load").onclick=async()=>{
+ if(!auth.currentUser){output.textContent="سجّل الدخول أولًا.";return}
+ output.textContent="جارٍ تحميل الطلبات…";
+ try{
+  const snap=await getDocs(query(collection(db,"orders"),orderBy("createdAt","desc"),limit(100)));
+  output.replaceChildren();
+  if(snap.empty){output.textContent="لا توجد طلبات مسجلة." ;return}
+  snap.forEach(d=>{
+   const x=d.data(), card=document.createElement("div");card.className="order";
+   const title=document.createElement("strong");title.textContent="طلب "+d.id+" — "+(x.name||"بدون اسم");
+   const body=document.createElement("p");body.textContent="الموبايل: "+(x.phone||"—")+" | الحالة: "+(x.status||"—")+"\nالعنوان: "+(x.address||"—")+"\nالمطلوب: "+(x.items||"—")+"\nالتجهيزات: "+(x.prep||"—")+"\nملاحظات: "+(x.notes||"—");
+   card.append(title,body);output.append(card);
+  });
+ }catch(e){output.textContent="لم يتم عرض الطلبات. غالبًا قواعد الأمان لم تُضبط أو أن حسابك ليس ضمن المشرفين. لا تفتح القواعد للجميع لحل المشكلة."}
+};
+</script></body></html>

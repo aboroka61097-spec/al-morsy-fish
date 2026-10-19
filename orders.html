@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#071d3a">
+<title>طلبك من المرسي للأسماك</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial,sans-serif;background:linear-gradient(160deg,#06162c,#0a3c65 58%,#071d3a);color:#10243a;min-height:100vh;padding:18px}
+main{max-width:620px;margin:auto;background:#fffaf0;border-radius:22px;padding:22px;box-shadow:0 12px 36px #0004}
+h1{text-align:center;color:#071d3a;margin:5px 0}.sub{text-align:center;color:#80601c;margin-bottom:20px}
+label{display:block;font-weight:bold;margin:13px 0 6px}input,textarea,select{width:100%;padding:12px;border:1px solid #cbd5df;border-radius:10px;font:inherit;background:white}
+button{border:0;border-radius:12px;padding:13px 16px;font:inherit;font-weight:bold;cursor:pointer;background:#0b7751;color:white;width:100%;margin-top:18px}
+.small{font-size:13px;line-height:1.8;color:#536477}.status{margin-top:14px;line-height:1.8;white-space:pre-wrap}.track{border-top:1px solid #ddd;margin-top:22px;padding-top:12px}
+</style>
+</head>
+<body><main>
+<h1>🐟 طلبك من المرسي للأسماك</h1>
+<div class="sub">من البحر لحد عندك ❤️</div>
+<p class="small">املأ بياناتك وسيتم تسجيل طلبك. لا تدفع أي مبلغ إلكترونيًا من خلال هذه الصفحة.</p>
+<form id="orderForm">
+<label for="name">الاسم</label><input id="name" required maxlength="100" autocomplete="name">
+<label for="phone">رقم الموبايل</label><input id="phone" required inputmode="tel" autocomplete="tel" maxlength="25" placeholder="01xxxxxxxxx">
+<label for="address">العنوان بالتفصيل</label><textarea id="address" required maxlength="500" autocomplete="street-address" rows="3"></textarea>
+<label for="items">الأسماك والكميات المطلوبة</label><textarea id="items" required maxlength="1500" rows="4" placeholder="مثال: شبار وسط 2 كيلو، طوباره 1 كيلو"></textarea>
+<label for="prep">التجهيزات (اختياري)</label><input id="prep" maxlength="500" placeholder="مثال: تنظيف / سنجاري">
+<label for="notes">ملاحظات (اختياري)</label><textarea id="notes" maxlength="500" rows="2"></textarea>
+<button type="submit">إرسال الطلب</button><div id="msg" class="status" role="status"></div>
+</form>
+<div class="track">
+<h3>متابعة الطلب</h3>
+<label for="trackPhone">رقم الموبايل المستخدم في الطلب</label><input id="trackPhone" inputmode="tel" placeholder="01xxxxxxxxx">
+<label for="trackCode">رقم الطلب</label><input id="trackCode" placeholder="يظهر لك بعد إرسال الطلب">
+<button type="button" id="trackBtn">متابعة الحالة</button><div id="trackMsg" class="status" role="status"></div>
+<p class="small">ملاحظة: متابعة الطلب ستُفعّل بعد إعداد قواعد Firebase الآمنة. لا تدخل أي بيانات حساسة هنا.</p>
+</div>
+</main>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { firebaseConfig } from "./firebase-config.js";
+const app=initializeApp(firebaseConfig), db=getFirestore(app);
+const form=document.getElementById("orderForm"), msg=document.getElementById("msg");
+form.addEventListener("submit",async e=>{
+ e.preventDefault(); msg.textContent="جارٍ إرسال الطلب…";
+ const phone=document.getElementById("phone").value.trim().replace(/[^\d+]/g,"");
+ const data={name:document.getElementById("name").value.trim(),phone,address:document.getElementById("address").value.trim(),items:document.getElementById("items").value.trim(),prep:document.getElementById("prep").value.trim(),notes:document.getElementById("notes").value.trim(),status:"new",createdAt:serverTimestamp()};
+ try{
+  // Intentionally fails until the matching secure Firestore rules and trusted order-submission design are installed.
+  const ref=await addDoc(collection(db,"orders"),data);
+  msg.textContent="تم استلام الطلب مبدئيًا. رقم الطلب: "+ref.id+" — احتفظ به لمتابعة الحالة.";
+  form.reset();
+ }catch(err){
+  console.error(err);
+  msg.textContent="الطلب لم يُسجَّل بعد لأن إعدادات الحماية لم تُربط نهائيًا. اتصل بالمرسي للأسماك أو جرّب لاحقًا. (لم يتم حفظ بياناتك)";
+ }
+});
+document.getElementById("trackBtn").addEventListener("click",()=>{
+ document.getElementById("trackMsg").textContent="ميزة المتابعة لن تُفعّل إلا بعد إعداد تحقق آمن يمنع كشف طلبات العملاء الآخرين.";
+});
+</script>
+</body></html>
