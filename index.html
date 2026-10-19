@@ -68,5 +68,13 @@ function saveContact(name, phone){
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
 </script>
-</body>
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js")
+        .catch((error) => console.error("Service Worker registration failed:", error));
+    });
+  }
+</script>
+    </body>
 </html>
