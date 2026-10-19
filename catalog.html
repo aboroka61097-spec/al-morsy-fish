@@ -1,11 +1,10 @@
 <!doctype html>
+
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>إدارة الأسعار | المرسي للأسماك</title>
-
-<style>
+<title>إدارة الأسعار | المرسي للأسماك</title><style>
 :root {
   font-family: Tahoma, Arial, sans-serif;
   color: #123047;
@@ -107,25 +106,13 @@ button.danger { background: #b91c1c; }
   .item { align-items: flex-start; flex-direction: column; }
   .item button { width: 100%; }
 }
-</style>
-</head>
-
-<body>
-<main class="wrap">
-
-<header class="hero">
+</style></head><body>
+<main class="wrap"><header class="hero">
   <h1>🐟 المرسي للأسماك</h1>
   <p>إدارة الأصناف وأسعار اليوم وأسعار التجهيزات</p>
-</header>
-
-<div id="status" class="status">جارٍ تجهيز الاتصال…</div>
-
-<section id="loginPanel" class="panel">
-  <h2>دخول الإدارة</h2>
-
-  <form id="loginForm">
+</header><div id="status" class="status">جارٍ تجهيز الاتصال…</div><section id="loginPanel" class="panel">
+  <h2>دخول الإدارة</h2>  <form id="loginForm">
     <div class="row">
-
       <div>
         <label for="email">البريد الإلكتروني</label>
         <input
@@ -135,176 +122,120 @@ button.danger { background: #b91c1c; }
           required
           autocomplete="username"
           value="aboroka61097@gmail.com">
-      </div>
+      </div>  <div>
+    <label for="password">كلمة المرور</label>
+    <input
+      id="password"
+      type="password"
+      dir="ltr"
+      style="direction:ltr;text-align:left;unicode-bidi:plaintext;"
+      required
+      autocomplete="current-password"
+      placeholder="كلمة المرور">
+  </div>
+</div>
 
-      <div>
-        <label for="password">كلمة المرور</label>
-        <input
-          id="password"
-          type="password"
-          dir="ltr"
-          style="direction:ltr;text-align:left;unicode-bidi:plaintext;"
-          required
-          autocomplete="current-password"
-          placeholder="كلمة المرور">
-      </div>
+<button id="loginButton" type="submit">دخول</button>
 
-    </div>
-
-    <button type="submit">دخول</button>
-  </form>
-
-  <p class="muted">
+  </form>  <p class="muted">
     الدخول متاح لحساب الإدارة المصرح له فقط.
   </p>
-</section>
-
-<div id="app" class="hidden">
-
-  <section class="panel">
+</section><div id="app" class="hidden">  <section class="panel">
     <div class="section-title">
       <h2>🐟 أصناف السمك وأسعار اليوم</h2>
-      <button
-        id="logout"
-        type="button"
-        class="secondary"
-        style="width:auto">
+      <button id="logout" type="button" class="secondary" style="width:auto">
         تسجيل خروج
       </button>
+    </div><p class="muted">
+  أضف الأصناف المتاحة فقط. تقدر تعدّل السعر أو توقف الصنف من الظهور في قائمة اليوم.
+</p>
+
+<form id="fishForm">
+  <input id="fishId" type="hidden">
+
+  <div class="row">
+    <div>
+      <label for="fishName">اسم الصنف</label>
+      <input id="fishName" required maxlength="80" placeholder="مثال: شبار وسط">
     </div>
 
-    <p class="muted">
-      أضف الأصناف المتاحة فقط. تقدر تعدّل السعر أو توقف الصنف من الظهور في قائمة اليوم.
-    </p>
+    <div>
+      <label for="fishPrice">السعر للكيلو (جنيه)</label>
+      <input id="fishPrice" type="number" required min="0" step="0.01" placeholder="مثال: 150">
+    </div>
 
-    <form id="fishForm">
-      <input id="fishId" type="hidden">
+    <div>
+      <label for="fishActive">الحالة</label>
+      <select id="fishActive">
+        <option value="true">متاح اليوم</option>
+        <option value="false">غير متاح</option>
+      </select>
+    </div>
+  </div>
 
-      <div class="row">
-        <div>
-          <label for="fishName">اسم الصنف</label>
-          <input
-            id="fishName"
-            required
-            maxlength="80"
-            placeholder="مثال: شبار وسط">
-        </div>
+  <div class="actions">
+    <button id="fishSave" type="submit">حفظ الصنف</button>
+    <button type="button" id="fishReset" class="secondary">إلغاء التعديل</button>
+  </div>
+</form>
 
-        <div>
-          <label for="fishPrice">السعر للكيلو (جنيه)</label>
-          <input
-            id="fishPrice"
-            type="number"
-            required
-            min="0"
-            step="0.01"
-            placeholder="مثال: 150">
-        </div>
+<div id="fishList"></div>
 
-        <div>
-          <label for="fishActive">الحالة</label>
-          <select id="fishActive">
-            <option value="true">متاح اليوم</option>
-            <option value="false">غير متاح</option>
-          </select>
-        </div>
-      </div>
+  </section>  <section class="panel">
+    <h2>🍤 أسعار التجهيزات</h2><p class="muted">
+  اختار «لكل كيلو» لتجهيزات السمك، أو «سعر ثابت» للأرز والشوربة والسلطة والطحينة.
+</p>
 
-      <div class="actions">
-        <button id="fishSave" type="submit">حفظ الصنف</button>
-        <button
-          type="button"
-          id="fishReset"
-          class="secondary">
-          إلغاء التعديل
-        </button>
-      </div>
-    </form>
+<form id="prepForm">
+  <input id="prepId" type="hidden">
 
-    <div id="fishList"></div>
-  </section>
+  <div class="row">
+    <div>
+      <label for="prepName">اسم التجهيز</label>
+      <input id="prepName" required maxlength="80" placeholder="مثال: شوي زيت وليمون">
+    </div>
 
-  <section class="panel">
-    <h2>🍤 أسعار التجهيزات</h2>
+    <div>
+      <label for="prepPrice">السعر بالجنيه</label>
+      <input id="prepPrice" type="number" required min="0" step="0.01">
+    </div>
 
-    <p class="muted">
-      اختار «لكل كيلو» لتجهيزات السمك، أو «سعر ثابت» للأرز والشوربة والسلطة والطحينة.
-    </p>
+    <div>
+      <label for="prepMode">طريقة الحساب</label>
+      <select id="prepMode">
+        <option value="per_kg">لكل كيلو</option>
+        <option value="fixed">سعر ثابت للطلب</option>
+      </select>
+    </div>
 
-    <form id="prepForm">
-      <input id="prepId" type="hidden">
+    <div>
+      <label for="prepActive">الحالة</label>
+      <select id="prepActive">
+        <option value="true">متاح</option>
+        <option value="false">غير متاح</option>
+      </select>
+    </div>
+  </div>
 
-      <div class="row">
-        <div>
-          <label for="prepName">اسم التجهيز</label>
-          <input
-            id="prepName"
-            required
-            maxlength="80"
-            placeholder="مثال: شوي زيت وليمون">
-        </div>
+  <div class="actions">
+    <button type="submit">حفظ التجهيز</button>
+    <button type="button" id="prepReset" class="secondary">إلغاء التعديل</button>
+  </div>
+</form>
 
-        <div>
-          <label for="prepPrice">السعر بالجنيه</label>
-          <input
-            id="prepPrice"
-            type="number"
-            required
-            min="0"
-            step="0.01">
-        </div>
+<div id="prepList"></div>
 
-        <div>
-          <label for="prepMode">طريقة الحساب</label>
-          <select id="prepMode">
-            <option value="per_kg">لكل كيلو</option>
-            <option value="fixed">سعر ثابت للطلب</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="prepActive">الحالة</label>
-          <select id="prepActive">
-            <option value="true">متاح</option>
-            <option value="false">غير متاح</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button type="submit">حفظ التجهيز</button>
-        <button
-          type="button"
-          id="prepReset"
-          class="secondary">
-          إلغاء التعديل
-        </button>
-      </div>
-    </form>
-
-    <div id="prepList"></div>
-  </section>
-
-  <section class="panel">
+  </section>  <section class="panel">
     <h3>تنبيه مهم</h3>
     <p>
       هذه الصفحة تحفظ الأسعار في قاعدة بيانات Firebase.
       التعديل هنا يغيّر الأسعار الحالية فقط، ولا يغيّر أسعار الطلبات القديمة.
       حساب تكلفة العميل وتقرير المبيعات اليومية يحتاجان إلى ربطهما في المرحلة التالية.
     </p>
-  </section>
-
-</div>
-</main>
-
-<script type="module">
-import {
-  initializeApp
-} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-
-import {
-  firebaseConfig
-} from './firebase-config.js';
+  </section></div>
+</main><script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import { firebaseConfig } from './firebase-config.js';
 
 import {
   getAuth,
@@ -326,9 +257,9 @@ import {
 
 const ADMIN = 'aboroka61097@gmail.com';
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
 
 const $ = id => document.getElementById(id);
 
@@ -336,6 +267,7 @@ let fish = [];
 let preps = [];
 let unFish = null;
 let unPrep = null;
+let loadingCatalog = false;
 
 function msg(text, type = '') {
   $('status').textContent = text;
@@ -361,40 +293,21 @@ function render(list, container, kind) {
           <small>
             ${
               kind === 'fish'
-                ? 'السعر: ' +
-                  Number(item.price).toLocaleString('ar-EG') +
-                  ' جنيه/كيلو'
-                : 'السعر: ' +
-                  Number(item.price).toLocaleString('ar-EG') +
+                ? 'السعر: ' + Number(item.price).toLocaleString('ar-EG') + ' جنيه/كيلو'
+                : 'السعر: ' + Number(item.price).toLocaleString('ar-EG') +
                   ' جنيه — ' +
-                  (item.mode === 'per_kg'
-                    ? 'لكل كيلو'
-                    : 'سعر ثابت للطلب')
+                  (item.mode === 'per_kg' ? 'لكل كيلو' : 'سعر ثابت للطلب')
             }
             · ${item.active ? 'متاح' : 'غير متاح'}
           </small>
         </div>
 
         <div class="actions">
-          <button
-            type="button"
-            data-edit="${item.id}"
-            data-kind="${kind}"
-            class="secondary">تعديل</button>
-
-          <button
-            type="button"
-            data-toggle="${item.id}"
-            data-kind="${kind}"
-            class="secondary">
+          <button type="button" data-edit="${esc(item.id)}" data-kind="${kind}" class="secondary">تعديل</button>
+          <button type="button" data-toggle="${esc(item.id)}" data-kind="${kind}" class="secondary">
             ${item.active ? 'إيقاف' : 'تفعيل'}
           </button>
-
-          <button
-            type="button"
-            data-delete="${item.id}"
-            data-kind="${kind}"
-            class="danger">حذف</button>
+          <button type="button" data-delete="${esc(item.id)}" data-kind="${kind}" class="danger">حذف</button>
         </div>
       </div>
     `).join('')
@@ -417,78 +330,32 @@ function resetPrep() {
   $('prepActive').value = 'true';
 }
 
-$('loginForm').addEventListener('submit', async event => {
-  event.preventDefault();
-
-  const email = $('email').value.trim();
-  const password = $('password').value;
-
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    $('password').value = '';
-    msg('تم تسجيل الدخول.', 'ok');
-  } catch (error) {
-    msg('تعذر تسجيل الدخول: ' + error.message, 'err');
+function stopListeners() {
+  if (unFish) {
+    unFish();
+    unFish = null;
   }
-});
-
-$('logout').addEventListener('click', async () => {
-  try {
-    await signOut(auth);
-    msg('تم تسجيل الخروج.');
-  } catch (error) {
-    msg('تعذر تسجيل الخروج: ' + error.message, 'err');
+  if (unPrep) {
+    unPrep();
+    unPrep = null;
   }
-});
+}
 
-onAuthStateChanged(auth, user => {
-  const authorized =
-    !!user &&
-    user.email === ADMIN &&
-    user.emailVerified === true;
-
-  $('loginPanel').classList.toggle('hidden', authorized);
-  $('app').classList.toggle('hidden', !authorized);
-
-  if (user && !authorized) {
-    msg(
-      'هذا الحساب غير مصرح له أو البريد الإلكتروني غير مؤكد.',
-      'err'
-    );
-    signOut(auth);
-    return;
-  }
-
-  if (!authorized) {
-    if (unFish) {
-      unFish();
-      unFish = null;
-    }
-
-    if (unPrep) {
-      unPrep();
-      unPrep = null;
-    }
-
-    return;
-  }
-
-  msg('تم الاتصال. يمكنك إدارة الأسعار.', 'ok');
-
-  if (unFish) unFish();
-  if (unPrep) unPrep();
+function startListeners() {
+  stopListeners();
 
   unFish = onSnapshot(
     collection(db, 'daily_catalog'),
     snapshot => {
       fish = snapshot.docs
         .map(item => ({ id: item.id, ...item.data() }))
-        .sort((a, b) => a.name.localeCompare(b.name, 'ar'));
+        .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'ar'));
 
       render(fish, 'fishList', 'fish');
+      msg('تم تحميل الأصناف. جاري التأكد من أسعار التجهيزات...', 'ok');
     },
     error => {
-      msg('خطأ في قراءة الأصناف: ' + error.message, 'err');
+      msg('تعذر تحميل الأصناف: ' + error.message, 'err');
     }
   );
 
@@ -497,18 +364,84 @@ onAuthStateChanged(auth, user => {
     snapshot => {
       preps = snapshot.docs
         .map(item => ({ id: item.id, ...item.data() }))
-        .sort((a, b) => a.name.localeCompare(b.name, 'ar'));
+        .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'ar'));
 
       render(preps, 'prepList', 'prep');
+      msg('تم الاتصال وتحميل بيانات التجهيزات.', 'ok');
     },
     error => {
-      msg('خطأ في قراءة التجهيزات: ' + error.message, 'err');
+      msg('تعذر تحميل التجهيزات: ' + error.message, 'err');
     }
   );
+}
+
+$('loginForm').addEventListener('submit', async event => {
+  event.preventDefault();
+
+  const email = $('email').value.trim().toLowerCase();
+  const password = $('password').value;
+
+  $('loginButton').disabled = true;
+  $('loginButton').textContent = 'جارٍ تسجيل الدخول...';
+  msg('جارٍ التحقق من بيانات الدخول...');
+
+  try {
+    const result = await signInWithEmailAndPassword(auth, email, password);
+    $('password').value = '';
+
+    if (!result.user || result.user.email !== ADMIN) {
+      await signOut(auth);
+      msg('هذا ليس حساب الإدارة المصرح له.', 'err');
+      return;
+    }
+
+    msg('نجح تسجيل الدخول. جاري فتح لوحة الإدارة...', 'ok');
+  } catch (error) {
+    msg('تعذر تسجيل الدخول: ' + error.message, 'err');
+  } finally {
+    $('loginButton').disabled = false;
+    $('loginButton').textContent = 'دخول';
+  }
+});
+
+$('logout').addEventListener('click', async () => {
+  try {
+    stopListeners();
+    await signOut(auth);
+    msg('تم تسجيل الخروج.');
+  } catch (error) {
+    msg('تعذر تسجيل الخروج: ' + error.message, 'err');
+  }
+});
+
+onAuthStateChanged(auth, user => {
+  const authorized = !!user && user.email === ADMIN;
+
+  $('loginPanel').classList.toggle('hidden', authorized);
+  $('app').classList.toggle('hidden', !authorized);
+
+  if (!authorized) {
+    stopListeners();
+
+    if (user) {
+      msg('الحساب الحالي ليس حساب الإدارة المصرح له.', 'err');
+    } else {
+      msg('سجّل الدخول بحساب الإدارة للمتابعة.');
+    }
+    return;
+  }
+
+  msg('تم تسجيل الدخول. جاري تحميل الأصناف والتجهيزات...', 'ok');
+  startListeners();
 });
 
 $('fishForm').addEventListener('submit', async event => {
   event.preventDefault();
+
+  if (!auth.currentUser || auth.currentUser.email !== ADMIN) {
+    msg('سجّل الدخول بحساب الإدارة أولًا.', 'err');
+    return;
+  }
 
   const name = $('fishName').value.trim();
   const price = Number($('fishPrice').value);
@@ -528,30 +461,28 @@ $('fishForm').addEventListener('submit', async event => {
 
   try {
     if ($('fishId').value) {
-      await updateDoc(
-        doc(db, 'daily_catalog', $('fishId').value),
-        data
-      );
+      await updateDoc(doc(db, 'daily_catalog', $('fishId').value), data);
     } else {
-      await addDoc(
-        collection(db, 'daily_catalog'),
-        { ...data, createdAt: serverTimestamp() }
-      );
+      await addDoc(collection(db, 'daily_catalog'), {
+        ...data,
+        createdAt: serverTimestamp()
+      });
     }
 
     resetFish();
     msg('تم حفظ الصنف بنجاح.', 'ok');
   } catch (error) {
-    msg(
-      'لم يتم الحفظ. تأكد من قواعد Firestore. ' +
-      error.message,
-      'err'
-    );
+    msg('لم يتم حفظ الصنف. راجع قواعد Firestore: ' + error.message, 'err');
   }
 });
 
 $('prepForm').addEventListener('submit', async event => {
   event.preventDefault();
+
+  if (!auth.currentUser || auth.currentUser.email !== ADMIN) {
+    msg('سجّل الدخول بحساب الإدارة أولًا.', 'err');
+    return;
+  }
 
   const name = $('prepName').value.trim();
   const price = Number($('prepPrice').value);
@@ -573,25 +504,18 @@ $('prepForm').addEventListener('submit', async event => {
 
   try {
     if ($('prepId').value) {
-      await updateDoc(
-        doc(db, 'prep_prices', $('prepId').value),
-        data
-      );
+      await updateDoc(doc(db, 'prep_prices', $('prepId').value), data);
     } else {
-      await addDoc(
-        collection(db, 'prep_prices'),
-        { ...data, createdAt: serverTimestamp() }
-      );
+      await addDoc(collection(db, 'prep_prices'), {
+        ...data,
+        createdAt: serverTimestamp()
+      });
     }
 
     resetPrep();
     msg('تم حفظ التجهيز بنجاح.', 'ok');
   } catch (error) {
-    msg(
-      'لم يتم الحفظ. تأكد من قواعد Firestore. ' +
-      error.message,
-      'err'
-    );
+    msg('لم يتم حفظ التجهيز. راجع قواعد Firestore: ' + error.message, 'err');
   }
 });
 
@@ -603,19 +527,18 @@ document.addEventListener('click', async event => {
   if (!button) return;
 
   const kind = button.dataset.kind;
-
-  const id =
-    button.dataset.edit ||
-    button.dataset.toggle ||
-    button.dataset.delete;
+  const id = button.dataset.edit || button.dataset.toggle || button.dataset.delete;
 
   if (!kind || !id) return;
 
+  if (!auth.currentUser || auth.currentUser.email !== ADMIN) {
+    msg('انتهت جلسة الإدارة. سجّل الدخول مرة أخرى.', 'err');
+    return;
+  }
+
   const list = kind === 'fish' ? fish : preps;
   const found = list.find(item => item.id === id);
-
-  const collectionName =
-    kind === 'fish' ? 'daily_catalog' : 'prep_prices';
+  const collectionName = kind === 'fish' ? 'daily_catalog' : 'prep_prices';
 
   if (!found) return;
 
@@ -623,28 +546,24 @@ document.addEventListener('click', async event => {
     if (button.dataset.edit) {
       if (kind === 'fish') {
         $('fishId').value = id;
-        $('fishName').value = found.name;
-        $('fishPrice').value = found.price;
-        $('fishActive').value = String(found.active);
+        $('fishName').value = found.name || '';
+        $('fishPrice').value = found.price ?? '';
+        $('fishActive').value = String(found.active !== false);
         $('fishSave').textContent = 'حفظ التعديل';
         $('fishName').focus();
       } else {
         $('prepId').value = id;
-        $('prepName').value = found.name;
-        $('prepPrice').value = found.price;
+        $('prepName').value = found.name || '';
+        $('prepPrice').value = found.price ?? '';
         $('prepMode').value = found.mode || 'per_kg';
-        $('prepActive').value = String(found.active);
+        $('prepActive').value = String(found.active !== false);
         $('prepName').focus();
       }
     } else if (button.dataset.toggle) {
-      await updateDoc(
-        doc(db, collectionName, id),
-        {
-          active: !found.active,
-          updatedAt: serverTimestamp()
-        }
-      );
-
+      await updateDoc(doc(db, collectionName, id), {
+        active: !found.active,
+        updatedAt: serverTimestamp()
+      });
       msg('تم تحديث الحالة.', 'ok');
     } else if (button.dataset.delete) {
       if (confirm('متأكد من حذف ' + found.name + '؟')) {
@@ -656,6 +575,5 @@ document.addEventListener('click', async event => {
     msg('تعذر تنفيذ العملية: ' + error.message, 'err');
   }
 });
-</script>
-</body>
+</script></body>
 </html>
