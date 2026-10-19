@@ -8,63 +8,34 @@
 
 <style>
 *{box-sizing:border-box}
-body{
-  margin:0;padding:16px;
-  font-family:Tahoma,Arial,sans-serif;
-  background:#eef3f7;color:#10243a
-}
+body{margin:0;padding:16px;font-family:Tahoma,Arial,sans-serif;background:#eef3f7;color:#10243a}
 main{max-width:1000px;margin:auto}
-section{
-  background:#fff;border-radius:16px;
-  padding:18px;margin:12px 0;
-  box-shadow:0 5px 18px #0001
-}
+section{background:#fff;border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 5px 18px #0001}
 h1{color:#071d3a}
 label{display:block;margin:10px 0 5px;font-weight:bold}
-input,select{
-  width:100%;padding:11px;
-  border:1px solid #ccd5df;border-radius:9px;
-  font:inherit;background:#fff
-}
-button{
-  padding:11px 16px;border:0;border-radius:9px;
-  background:#0b7751;color:white;font:inherit;
-  font-weight:bold;margin:8px 5px 0 0;cursor:pointer
-}
+input,select{width:100%;padding:11px;border:1px solid #ccd5df;border-radius:9px;font:inherit;background:#fff}
+button{padding:11px 16px;border:0;border-radius:9px;background:#0b7751;color:white;font:inherit;font-weight:bold;margin:8px 5px 0 0;cursor:pointer}
 button:disabled{opacity:.6;cursor:wait}
 button.secondary{background:#34485d}
-button.call{background:#1769aa}
-button.whatsapp{background:#168a4a}
 .status{white-space:pre-wrap;line-height:1.8;overflow-wrap:anywhere}
-.order{
-  border:1px solid #dce4ed;border-radius:12px;
-  padding:14px;margin:12px 0;background:#fff
-}
+.order{border:1px solid #dce4ed;border-radius:12px;padding:14px;margin:12px 0;background:#fff}
 .order h3{margin-top:0;overflow-wrap:anywhere}
 .order p{white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere}
 .meta{color:#586b7e;font-size:13px}
-.statusBox{
-  margin:12px 0;padding:9px;border-radius:8px;
-  background:#eef6ff;line-height:1.8
-}
-.statusMessage{
-  margin-top:8px;font-size:13px;
-  white-space:pre-wrap;overflow-wrap:anywhere
-}
+.statusBox{margin:12px 0;padding:9px;border-radius:8px;background:#eef6ff;line-height:1.8}
+.statusMessage{margin-top:8px;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}
 .contactButtons{display:flex;gap:8px;flex-wrap:wrap}
-.contactButtons a{
-  display:inline-block;text-decoration:none;
-  color:white;padding:11px 15px;border-radius:9px;
-  font-weight:bold;text-align:center;margin-top:8px
-}
+.contactButtons a{display:inline-block;text-decoration:none;color:white;padding:11px 15px;border-radius:9px;font-weight:bold;text-align:center;margin-top:8px}
 .callLink{background:#1769aa}
 .whatsappLink{background:#168a4a}
+.newOrder{border:2px solid #0b7751;background:#f1fff7}
+#liveStatus{font-weight:bold;color:#0b7751}
 @media(max-width:480px){
-  body{padding:9px}
-  section{padding:13px}
-  button{width:100%;margin:8px 0 0}
-  .contactButtons{display:grid;grid-template-columns:1fr 1fr}
-  .contactButtons a{font-size:14px;padding:12px 5px}
+body{padding:9px}
+section{padding:13px}
+button{width:100%;margin:8px 0 0}
+.contactButtons{display:grid;grid-template-columns:1fr 1fr}
+.contactButtons a{font-size:14px;padding:12px 5px}
 }
 </style>
 </head>
@@ -75,7 +46,6 @@ button.whatsapp{background:#168a4a}
 
 <section>
 <h3>دخول الإدارة</h3>
-
 <label for="email">البريد الإلكتروني</label>
 <input id="email" type="email" autocomplete="username">
 
@@ -84,40 +54,28 @@ button.whatsapp{background:#168a4a}
 
 <button id="login">دخول</button>
 <button id="logout" class="secondary">تسجيل خروج</button>
-
 <div id="authMsg" class="status"></div>
 </section>
 
 <section>
 <h3>إدارة الطلبات</h3>
-<p class="meta">يمكن لحساب الإدارة المصرح له الاطلاع على الطلبات وتحديث حالاتها والتواصل مع العملاء.</p>
-
-<button id="load">تحديث الطلبات</button>
+<p class="meta">تحديث تلقائي للطلبات مع تنبيه صوتي عند وصول طلب جديد، طالما اللوحة مفتوحة ومسجّل الدخول.</p>
+<p id="liveStatus">⚪ سجّل الدخول لتشغيل متابعة الطلبات.</p>
+<button id="enableSound" class="secondary">🔔 تفعيل صوت التنبيه</button>
+<button id="load">تحديث الطلبات الآن</button>
 <div id="orders" class="status"></div>
 </section>
 </main>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-
 import {
-  getAuth,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged
+  getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-
 import {
-  getFirestore,
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  limit,
-  doc,
-  updateDoc
+  getFirestore, collection, getDocs, query, orderBy, limit,
+  doc, updateDoc, onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-
 import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
@@ -129,6 +87,8 @@ const output = document.getElementById("orders");
 const loginButton = document.getElementById("login");
 const logoutButton = document.getElementById("logout");
 const loadButton = document.getElementById("load");
+const enableSoundButton = document.getElementById("enableSound");
+const liveStatus = document.getElementById("liveStatus");
 
 const statuses = [
   {value:"new",label:"🆕 جديد"},
@@ -139,46 +99,75 @@ const statuses = [
   {value:"cancelled",label:"❌ ملغي"}
 ];
 
+let unsubscribeOrders = null;
+let knownOrderIds = null;
+let audioContext = null;
+let soundEnabled = false;
+let renderedOrders = new Map();
+
 function statusLabel(value){
   const item = statuses.find(s => s.value === value);
   return item ? item.label : (value || "غير محدد");
 }
 
-/* تحويل الرقم المصري إلى الصيغة الدولية لواتساب */
 function normalizeEgyptianPhone(value){
   let phone = String(value || "").replace(/\D/g, "");
-
-  if(phone.startsWith("00")){
-    phone = phone.slice(2);
-  }
-
-  if(phone.startsWith("20") && phone.length === 12){
-    return phone;
-  }
-
-  if(phone.startsWith("0") && phone.length === 11){
-    return "2" + phone;
-  }
-
-  if(phone.length === 10 && phone.startsWith("1")){
-    return "20" + phone;
-  }
-
+  if(phone.startsWith("00")) phone = phone.slice(2);
+  if(phone.startsWith("20") && phone.length === 12) return phone;
+  if(phone.startsWith("0") && phone.length === 11) return "2" + phone;
+  if(phone.length === 10 && phone.startsWith("1")) return "20" + phone;
   return phone;
 }
 
-/* تسجيل الدخول */
+function playAlert(){
+  if(!soundEnabled || !audioContext) return;
+  try{
+    if(audioContext.state === "suspended") audioContext.resume();
+    const now = audioContext.currentTime;
+    [0, 0.35, 0.7].forEach((delay, index) => {
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.value = index === 1 ? 1100 : 880;
+      gain.gain.setValueAtTime(0.001, now + delay);
+      gain.gain.exponentialRampToValueAtTime(0.25, now + delay + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.22);
+      oscillator.connect(gain);
+      gain.connect(audioContext.destination);
+      oscillator.start(now + delay);
+      oscillator.stop(now + delay + 0.24);
+    });
+  }catch(e){
+    console.warn("تعذر تشغيل الصوت:", e);
+  }
+}
+
+enableSoundButton.onclick = async () => {
+  try{
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if(!AudioContextClass){
+      liveStatus.textContent = "⚠️ المتصفح لا يدعم الصوت المطلوب.";
+      return;
+    }
+    if(!audioContext) audioContext = new AudioContextClass();
+    await audioContext.resume();
+    soundEnabled = true;
+    playAlert();
+    enableSoundButton.textContent = "✅ صوت التنبيه مفعّل";
+    liveStatus.textContent = "🔔 تم تفعيل الصوت. ستسمع تنبيهًا عند وصول طلب جديد واللوحة مفتوحة.";
+  }catch(e){
+    liveStatus.textContent = "⚠️ تعذر تفعيل الصوت. جرّب السماح بالصوت من إعدادات المتصفح.";
+  }
+};
+
 loginButton.onclick = async () => {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
-
   if(!email || !password){
     authMsg.textContent = "اكتب البريد الإلكتروني وكلمة المرور أولًا.";
     return;
   }
-
   loginButton.disabled = true;
-
   try{
     await signInWithEmailAndPassword(auth, email, password);
     authMsg.textContent = "تم تسجيل الدخول بنجاح.";
@@ -190,11 +179,15 @@ loginButton.onclick = async () => {
   }
 };
 
-/* تسجيل الخروج */
 logoutButton.onclick = async () => {
   try{
+    if(unsubscribeOrders) unsubscribeOrders();
+    unsubscribeOrders = null;
+    knownOrderIds = null;
+    renderedOrders.clear();
     await signOut(auth);
     output.replaceChildren();
+    liveStatus.textContent = "⚪ تم إيقاف متابعة الطلبات.";
     authMsg.textContent = "تم تسجيل الخروج.";
   }catch(e){
     authMsg.textContent = "تعذر تسجيل الخروج.";
@@ -205,32 +198,35 @@ onAuthStateChanged(auth, user => {
   authMsg.textContent = user
     ? "مسجل الدخول: " + user.email
     : "لم يتم تسجيل الدخول.";
+
+  if(user){
+    startRealtimeOrders();
+  }else{
+    if(unsubscribeOrders) unsubscribeOrders();
+    unsubscribeOrders = null;
+    knownOrderIds = null;
+    renderedOrders.clear();
+    output.replaceChildren();
+    liveStatus.textContent = "⚪ سجّل الدخول لتشغيل متابعة الطلبات.";
+  }
 });
 
-/* حفظ حالة الطلب */
 async function saveStatus(orderId, select, button, message){
   if(!auth.currentUser){
     message.textContent = "سجّل الدخول أولًا.";
     return;
   }
-
   const newStatus = select.value;
   button.disabled = true;
   select.disabled = true;
   message.textContent = "جارٍ حفظ حالة الطلب...";
-
   try{
-    await updateDoc(doc(db, "orders", orderId), {
-      status: newStatus
-    });
-
+    await updateDoc(doc(db, "orders", orderId), {status:newStatus});
     message.textContent = "✅ تم حفظ الحالة: " + statusLabel(newStatus);
   }catch(e){
     console.error("Status update error:", e);
-    message.textContent =
-      "تعذر حفظ الحالة.\nرمز الخطأ: " +
-      (e.code || "غير معروف") +
-      "\nالتفاصيل: " +
+    message.textContent = "تعذر حفظ الحالة.\nرمز الخطأ: " +
+      (e.code || "غير معروف") + "\nالتفاصيل: " +
       (e.message || "لا توجد تفاصيل إضافية");
   }finally{
     button.disabled = false;
@@ -238,11 +234,9 @@ async function saveStatus(orderId, select, button, message){
   }
 }
 
-/* إنشاء زر الاتصال والواتساب */
 function createContactButtons(phoneValue){
   const container = document.createElement("div");
   container.className = "contactButtons";
-
   const phone = String(phoneValue || "").trim();
 
   if(!phone){
@@ -257,124 +251,178 @@ function createContactButtons(phoneValue){
   callLink.className = "callLink";
   callLink.href = "tel:" + safePhone;
   callLink.textContent = "📞 اتصال بالعميل";
-  callLink.setAttribute("aria-label", "الاتصال بالعميل");
 
   const whatsappLink = document.createElement("a");
   whatsappLink.className = "whatsappLink";
-  whatsappLink.href =
-    "https://wa.me/" + internationalPhone +
+  whatsappLink.href = "https://wa.me/" + internationalPhone +
     "?text=" + encodeURIComponent("أهلًا بحضرتك، معاك المرسي للأسماك بخصوص طلبك 🐟");
   whatsappLink.target = "_blank";
   whatsappLink.rel = "noopener noreferrer";
   whatsappLink.textContent = "🟢 واتساب";
-  whatsappLink.setAttribute("aria-label", "مراسلة العميل على واتساب");
 
   container.append(callLink, whatsappLink);
   return container;
 }
 
-/* تحميل الطلبات */
+function renderOrder(orderId, x, isNew){
+  let card = renderedOrders.get(orderId);
+  if(!card){
+    card = document.createElement("div");
+    renderedOrders.set(orderId, card);
+  }
+
+  card.className = "order" + (isNew ? " newOrder" : "");
+
+  const title = document.createElement("h3");
+  title.textContent = (isNew ? "🆕 طلب جديد — " : "طلب ") +
+    orderId + " — " + (x.customerName || x.name || "بدون اسم");
+
+  const body = document.createElement("p");
+  body.textContent =
+    "الموبايل: " + (x.phone || "—") +
+    "\nالحالة: " + statusLabel(x.status) +
+    "\nالعنوان: " + (x.address || "—") +
+    "\nالمطلوب: " + (x.items || "—") +
+    "\nالتجهيزات: " + (x.prep || "—") +
+    "\nطريقة الاستلام: " +
+    (x.delivery === "delivery" ? "توصيل" :
+     x.delivery === "pickup" ? "استلام من المحل" : "—") +
+    "\nملاحظات: " + (x.notes || "—");
+
+  const contacts = createContactButtons(x.phone);
+
+  const controls = document.createElement("div");
+  controls.className = "statusBox";
+
+  const label = document.createElement("label");
+  label.textContent = "تغيير حالة الطلب";
+
+  const select = document.createElement("select");
+  select.setAttribute("aria-label", "حالة الطلب " + orderId);
+
+  statuses.forEach(s => {
+    const option = document.createElement("option");
+    option.value = s.value;
+    option.textContent = s.label;
+    select.appendChild(option);
+  });
+
+  if(!statuses.some(s => s.value === x.status)){
+    const oldOption = document.createElement("option");
+    oldOption.value = x.status || "new";
+    oldOption.textContent = "الحالة الحالية: " + (x.status || "غير محدد");
+    select.appendChild(oldOption);
+  }
+
+  select.value = statuses.some(s => s.value === x.status)
+    ? x.status : (x.status || "new");
+
+  const saveButton = document.createElement("button");
+  saveButton.textContent = "حفظ الحالة";
+
+  const message = document.createElement("div");
+  message.className = "statusMessage";
+
+  saveButton.onclick = () => saveStatus(orderId, select, saveButton, message);
+
+  controls.append(label, select, saveButton, message);
+  card.replaceChildren(title, body, contacts, controls);
+  return card;
+}
+
+function startRealtimeOrders(){
+  if(!auth.currentUser || unsubscribeOrders) return;
+
+  liveStatus.textContent = "🟡 جارٍ الاتصال بقاعدة الطلبات...";
+  const ordersQuery = query(
+    collection(db, "orders"),
+    orderBy("createdAt", "desc"),
+    limit(100)
+  );
+
+  unsubscribeOrders = onSnapshot(ordersQuery, snapshot => {
+    const currentIds = new Set();
+    let hasNewOrder = false;
+
+    snapshot.docChanges().forEach(change => {
+      const orderId = change.doc.id;
+      const x = change.doc.data();
+      currentIds.add(orderId);
+
+      if(change.type === "added" && knownOrderIds !== null){
+        hasNewOrder = true;
+      }
+
+      const card = renderOrder(orderId, x, change.type === "added" && knownOrderIds !== null);
+
+      if(change.type === "added"){
+        output.prepend(card);
+      }else{
+        const existing = [...output.children].find(el =>
+          el === card
+        );
+        if(!existing) output.appendChild(card);
+      }
+    });
+
+    if(knownOrderIds === null){
+      knownOrderIds = currentIds;
+      liveStatus.textContent = "🟢 المتابعة التلقائية تعمل.";
+    }else{
+      currentIds.forEach(id => {
+        if(!knownOrderIds.has(id)) hasNewOrder = true;
+      });
+      knownOrderIds = currentIds;
+
+      if(hasNewOrder){
+        liveStatus.textContent = "🔔 وصل طلب جديد!";
+        playAlert();
+      }else{
+        liveStatus.textContent = "🟢 المتابعة التلقائية تعمل.";
+      }
+    }
+
+    if(snapshot.empty){
+      output.textContent = "لا توجد طلبات مسجلة.";
+    }else{
+      // إزالة البطاقات التي لم تعد ضمن أحدث 100 طلب
+      [...renderedOrders.keys()].forEach(id => {
+        if(!currentIds.has(id)){
+          renderedOrders.delete(id);
+        }
+      });
+    }
+  }, error => {
+    console.error("Realtime listener error:", error);
+    liveStatus.textContent = "🔴 تعذر تحديث الطلبات تلقائيًا: " +
+      (error.code || error.message || "خطأ غير معروف");
+    unsubscribeOrders = null;
+  });
+}
+
 loadButton.onclick = async () => {
   if(!auth.currentUser){
     output.textContent = "سجّل الدخول أولًا.";
     return;
   }
 
-  output.textContent = "جارٍ تحميل الطلبات...";
   loadButton.disabled = true;
-
   try{
-    const ordersQuery = query(
-      collection(db, "orders"),
-      orderBy("createdAt", "desc"),
-      limit(100)
-    );
-
-    const snap = await getDocs(ordersQuery);
+    const q = query(collection(db, "orders"), orderBy("createdAt", "desc"), limit(100));
+    const snap = await getDocs(q);
     output.replaceChildren();
-
-    if(snap.empty){
-      output.textContent = "لا توجد طلبات مسجلة.";
-      return;
-    }
+    renderedOrders.clear();
 
     snap.forEach(d => {
-      const x = d.data();
-
-      const card = document.createElement("div");
-      card.className = "order";
-
-      const title = document.createElement("h3");
-      title.textContent =
-        "طلب " + d.id + " — " +
-        (x.customerName || x.name || "بدون اسم");
-
-      const body = document.createElement("p");
-      body.textContent =
-        "الموبايل: " + (x.phone || "—") +
-        "\nالحالة: " + statusLabel(x.status) +
-        "\nالعنوان: " + (x.address || "—") +
-        "\nالمطلوب: " + (x.items || "—") +
-        "\nالتجهيزات: " + (x.prep || "—") +
-        "\nطريقة الاستلام: " +
-        (x.delivery === "delivery"
-          ? "توصيل"
-          : x.delivery === "pickup"
-            ? "استلام من المحل"
-            : "—") +
-        "\nملاحظات: " + (x.notes || "—");
-
-      const contacts = createContactButtons(x.phone);
-
-      const controls = document.createElement("div");
-      controls.className = "statusBox";
-
-      const label = document.createElement("label");
-      label.textContent = "تغيير حالة الطلب";
-
-      const select = document.createElement("select");
-      select.setAttribute("aria-label", "حالة الطلب " + d.id);
-
-      statuses.forEach(s => {
-        const option = document.createElement("option");
-        option.value = s.value;
-        option.textContent = s.label;
-        select.appendChild(option);
-      });
-
-      if(!statuses.some(s => s.value === x.status)){
-        const oldOption = document.createElement("option");
-        oldOption.value = x.status || "new";
-        oldOption.textContent = "الحالة الحالية: " + (x.status || "غير محدد");
-        select.appendChild(oldOption);
-      }
-
-      select.value = statuses.some(s => s.value === x.status)
-        ? x.status
-        : (x.status || "new");
-
-      const saveButton = document.createElement("button");
-      saveButton.textContent = "حفظ الحالة";
-
-      const message = document.createElement("div");
-      message.className = "statusMessage";
-
-      saveButton.onclick = () =>
-        saveStatus(d.id, select, saveButton, message);
-
-      controls.append(label, select, saveButton, message);
-      card.append(title, body, contacts, controls);
+      const card = renderOrder(d.id, d.data(), false);
+      renderedOrders.set(d.id, card);
       output.appendChild(card);
     });
 
+    if(snap.empty) output.textContent = "لا توجد طلبات مسجلة.";
   }catch(e){
-    console.error("Load orders error:", e);
-
-    output.textContent =
-      "تعذر تحميل الطلبات.\nرمز الخطأ: " +
-      (e.code || "غير معروف") +
-      "\nالتفاصيل: " +
-      (e.message || "لا توجد تفاصيل إضافية");
+    output.textContent = "تعذر تحميل الطلبات: " +
+      (e.code || e.message || "خطأ غير معروف");
   }finally{
     loadButton.disabled = false;
   }
