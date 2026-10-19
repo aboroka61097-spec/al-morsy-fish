@@ -31,6 +31,12 @@ document.getElementById("load").onclick=async()=>{
    const body=document.createElement("p");body.textContent="الموبايل: "+(x.phone||"—")+" | الحالة: "+(x.status||"—")+"\nالعنوان: "+(x.address||"—")+"\nالمطلوب: "+(x.items||"—")+"\nالتجهيزات: "+(x.prep||"—")+"\nملاحظات: "+(x.notes||"—");
    card.append(title,body);output.append(card);
   });
- }catch(e){output.textContent="لم يتم عرض الطلبات. غالبًا قواعد الأمان لم تُضبط أو أن حسابك ليس ضمن المشرفين. لا تفتح القواعد للجميع لحل المشكلة."}
+}catch(e){
+console.error("خطأ تحميل الطلبات:", e);
+output.textContent =
+"تعذر تحميل الطلبات.\n" +
+"رمز الخطأ: " + (e.code || "غير معروف") + "\n" +
+"التفاصيل: " + (e.message || "لا توجد تفاصيل إضافية");
+}
 };
 </script></body></html>
