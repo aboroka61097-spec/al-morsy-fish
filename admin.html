@@ -4,38 +4,114 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#071d3a">
-<title>إدارة طلبات المرسي</title>
+<title>إدارة طلبات المرسي للأسماك</title>
 
 <style>
 *{box-sizing:border-box}
+
 body{
-  margin:0;padding:16px;font-family:Tahoma,Arial,sans-serif;
-  background:#eef3f7;color:#10243a
+  margin:0;
+  padding:16px;
+  font-family:Tahoma,Arial,sans-serif;
+  background:#eef3f7;
+  color:#10243a;
 }
-main{max-width:1000px;margin:auto}
+
+main{
+  max-width:1000px;
+  margin:auto;
+}
+
 section{
-  background:#fff;border-radius:16px;padding:18px;
-  margin:12px 0;box-shadow:0 5px 18px #0001
+  background:#fff;
+  border-radius:16px;
+  padding:18px;
+  margin:12px 0;
+  box-shadow:0 5px 18px #0001;
 }
+
 h1{color:#071d3a}
-label{display:block;margin:10px 0 5px;font-weight:bold}
-input{
-  width:100%;padding:11px;border:1px solid #ccd5df;
-  border-radius:9px;font:inherit
+
+label{
+  display:block;
+  margin:10px 0 5px;
+  font-weight:bold;
 }
+
+input,select{
+  width:100%;
+  padding:11px;
+  border:1px solid #ccd5df;
+  border-radius:9px;
+  font:inherit;
+  background:#fff;
+}
+
 button{
-  padding:11px 16px;border:0;border-radius:9px;
-  background:#0b7751;color:white;font:inherit;
-  font-weight:bold;margin:8px 5px 0 0;cursor:pointer
+  padding:11px 16px;
+  border:0;
+  border-radius:9px;
+  background:#0b7751;
+  color:white;
+  font:inherit;
+  font-weight:bold;
+  margin:8px 5px 0 0;
+  cursor:pointer;
 }
+
+button:disabled{opacity:.6;cursor:wait}
 button.secondary{background:#34485d}
-.status{white-space:pre-wrap;line-height:1.8}
-.order{
-  border:1px solid #dce4ed;border-radius:12px;
-  padding:12px;margin:10px 0;background:#fff
+
+.status{
+  white-space:pre-wrap;
+  line-height:1.8;
+  overflow-wrap:anywhere;
 }
-.meta{color:#586b7e;font-size:13px}
-.order p{white-space:pre-wrap;line-height:1.9}
+
+.order{
+  border:1px solid #dce4ed;
+  border-radius:12px;
+  padding:14px;
+  margin:12px 0;
+  background:#fff;
+}
+
+.order h3{
+  margin-top:0;
+  overflow-wrap:anywhere;
+}
+
+.order p{
+  white-space:pre-wrap;
+  line-height:1.9;
+  overflow-wrap:anywhere;
+}
+
+.meta{
+  color:#586b7e;
+  font-size:13px;
+}
+
+.statusBox{
+  margin:12px 0;
+  padding:9px;
+  border-radius:8px;
+  background:#eef6ff;
+  line-height:1.8;
+}
+
+.statusMessage{
+  margin-top:8px;
+  font-size:13px;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+
+@media(max-width:480px){
+  body{padding:9px}
+  section{padding:13px}
+  button{width:100%;margin:8px 0 0}
+}
 </style>
 </head>
 
@@ -60,10 +136,10 @@ button.secondary{background:#34485d}
 </section>
 
 <section>
-<h3>الطلبات</h3>
+<h3>إدارة الطلبات</h3>
 
 <p class="meta">
-لا تظهر الطلبات إلا لحساب الإدارة المصرح له في قواعد Firebase.
+يمكن لحساب الإدارة المصرح له الاطلاع على الطلبات وتحديث حالاتها.
 </p>
 
 <button id="load">تحديث الطلبات</button>
@@ -91,7 +167,9 @@ import {
   getDocs,
   query,
   orderBy,
-  limit
+  limit,
+  doc,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 import {
@@ -104,54 +182,96 @@ const db = getFirestore(app);
 
 const authMsg = document.getElementById("authMsg");
 const output = document.getElementById("orders");
-
 const loginButton = document.getElementById("login");
 const logoutButton = document.getElementById("logout");
 const loadButton = document.getElementById("load");
+
+// الحالات المتاحة للطلب
+const statuses = [
+  {value:"new", label:"🆕 جديد"},
+  {value:"contacted", label:"📞 تم التواصل مع العميل"},
+  {value:"preparing", label:"👨‍🍳 جارٍ التجهيز"},
+  {value:"out_for_delivery", label:"🚚 خرج للتوصيل"},
+  {value:"delivered", label:"✅ تم التسليم"},
+  {value:"cancelled", label:"❌ ملغي"}
+];
+
+function statusLabel(value){
+  const item = statuses.find(s => s.value === value);
+  return item ? item.label : (value || "غير محدد");
+}
 
 loginButton.onclick = async () => {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
 
-  if (!email || !password) {
+  if(!email || !password){
     authMsg.textContent = "اكتب البريد الإلكتروني وكلمة المرور أولًا.";
     return;
   }
 
   loginButton.disabled = true;
 
-  try {
+  try{
     await signInWithEmailAndPassword(auth, email, password);
     authMsg.textContent = "تم تسجيل الدخول بنجاح.";
-  } catch (e) {
-    console.error("خطأ تسجيل الدخول:", e);
-    authMsg.textContent =
-      "تعذر تسجيل الدخول. راجع البريد الإلكتروني وكلمة المرور.";
-  } finally {
+  }catch(e){
+    console.error("Login error:", e);
+    authMsg.textContent = "تعذر تسجيل الدخول. راجع البريد الإلكتروني وكلمة المرور.";
+  }finally{
     loginButton.disabled = false;
   }
 };
 
 logoutButton.onclick = async () => {
-  try {
+  try{
     await signOut(auth);
-    output.textContent = "";
+    output.replaceChildren();
     authMsg.textContent = "تم تسجيل الخروج.";
-  } catch (e) {
+  }catch(e){
     authMsg.textContent = "تعذر تسجيل الخروج.";
   }
 };
 
 onAuthStateChanged(auth, user => {
-  if (user) {
-    authMsg.textContent = "مسجل الدخول: " + user.email;
-  } else {
-    authMsg.textContent = "لم يتم تسجيل الدخول.";
-  }
+  authMsg.textContent = user
+    ? "مسجل الدخول: " + user.email
+    : "لم يتم تسجيل الدخول.";
 });
 
+async function saveStatus(orderId, select, button, message){
+  if(!auth.currentUser){
+    message.textContent = "سجّل الدخول أولًا.";
+    return;
+  }
+
+  const newStatus = select.value;
+  button.disabled = true;
+  select.disabled = true;
+  message.textContent = "جارٍ حفظ حالة الطلب...";
+
+  try{
+    await updateDoc(doc(db, "orders", orderId), {
+      status: newStatus
+    });
+
+    message.textContent = "✅ تم حفظ الحالة: " + statusLabel(newStatus);
+
+  }catch(e){
+    console.error("Status update error:", e);
+
+    message.textContent =
+      "تعذر حفظ الحالة.\n" +
+      "رمز الخطأ: " + (e.code || "غير معروف") + "\n" +
+      "التفاصيل: " + (e.message || "لا توجد تفاصيل إضافية");
+  }finally{
+    button.disabled = false;
+    select.disabled = false;
+  }
+}
+
 loadButton.onclick = async () => {
-  if (!auth.currentUser) {
+  if(!auth.currentUser){
     output.textContent = "سجّل الدخول أولًا.";
     return;
   }
@@ -159,7 +279,7 @@ loadButton.onclick = async () => {
   output.textContent = "جارٍ تحميل الطلبات...";
   loadButton.disabled = true;
 
-  try {
+  try{
     const ordersQuery = query(
       collection(db, "orders"),
       orderBy("createdAt", "desc"),
@@ -170,7 +290,7 @@ loadButton.onclick = async () => {
 
     output.replaceChildren();
 
-    if (snap.empty) {
+    if(snap.empty){
       output.textContent = "لا توجد طلبات مسجلة.";
       return;
     }
@@ -181,51 +301,75 @@ loadButton.onclick = async () => {
       const card = document.createElement("div");
       card.className = "order";
 
-      // قاعدة البيانات تحفظ اسم العميل في customerName
-      const customerName =
-        x.customerName || x.name || "بدون اسم";
-
-      const title = document.createElement("strong");
-      title.textContent = "طلب " + d.id + " — " + customerName;
+      const title = document.createElement("h3");
+      title.textContent =
+        "طلب " + d.id + " — " +
+        (x.customerName || x.name || "بدون اسم");
 
       const body = document.createElement("p");
 
-      const phone = x.phone || "—";
-      const status = x.status || "—";
-      const address = x.address || "—";
-      const items = x.items || "—";
-
-      // دعم أكثر من اسم محتمل لحقل التجهيزات
-      const prep =
-        x.prep ||
-        x.preparations ||
-        x.preparation ||
-        x.prepDetails ||
-        "—";
-
-      const notes = x.notes || "—";
-
       body.textContent =
-        "الموبايل: " + phone +
-        " | الحالة: " + status +
-        "\nالعنوان: " + address +
-        "\nالمطلوب: " + items +
-        "\nالتجهيزات: " + prep +
-        "\nملاحظات: " + notes;
+        "الموبايل: " + (x.phone || "—") +
+        "\nالحالة: " + statusLabel(x.status) +
+        "\nالعنوان: " + (x.address || "—") +
+        "\nالمطلوب: " + (x.items || "—") +
+        "\nالتجهيزات: " + (x.prep || "—") +
+        "\nطريقة الاستلام: " +
+          (x.delivery === "delivery" ? "توصيل" :
+           x.delivery === "pickup" ? "استلام من المحل" : "—") +
+        "\nملاحظات: " + (x.notes || "—");
 
-      card.append(title, body);
-      output.append(card);
+      const controls = document.createElement("div");
+      controls.className = "statusBox";
+
+      const label = document.createElement("label");
+      label.textContent = "تغيير حالة الطلب";
+
+      const select = document.createElement("select");
+      select.setAttribute("aria-label", "حالة الطلب " + d.id);
+
+      statuses.forEach(s => {
+        const option = document.createElement("option");
+        option.value = s.value;
+        option.textContent = s.label;
+        select.appendChild(option);
+      });
+
+      // دعم الطلبات القديمة ذات الحالات غير المعروفة
+      if(!statuses.some(s => s.value === x.status)){
+        const oldOption = document.createElement("option");
+        oldOption.value = x.status || "new";
+        oldOption.textContent = "الحالة الحالية: " + (x.status || "غير محدد");
+        select.appendChild(oldOption);
+      }
+
+      select.value = statuses.some(s => s.value === x.status)
+        ? x.status
+        : (x.status || "new");
+
+      const saveButton = document.createElement("button");
+      saveButton.textContent = "حفظ الحالة";
+
+      const message = document.createElement("div");
+      message.className = "statusMessage";
+
+      saveButton.onclick = () => {
+        saveStatus(d.id, select, saveButton, message);
+      };
+
+      controls.append(label, select, saveButton, message);
+      card.append(title, body, controls);
+      output.appendChild(card);
     });
 
-  } catch (e) {
-    console.error("خطأ تحميل الطلبات:", e);
+  }catch(e){
+    console.error("Load orders error:", e);
 
     output.textContent =
       "تعذر تحميل الطلبات.\n" +
       "رمز الخطأ: " + (e.code || "غير معروف") + "\n" +
       "التفاصيل: " + (e.message || "لا توجد تفاصيل إضافية");
-
-  } finally {
+  }finally{
     loadButton.disabled = false;
   }
 };
