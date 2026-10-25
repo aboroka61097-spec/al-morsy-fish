@@ -65,6 +65,16 @@ button.danger{background:#b42318}
   border-radius:12px;padding:14px;margin:10px 0;
   line-height:2;overflow-wrap:anywhere
 }
+.reportTotals{
+  background:#edf9f1;border:1px solid #b8e0c4;
+  border-radius:12px;padding:14px;margin:12px 0;
+  line-height:2.1;overflow-wrap:anywhere
+}
+.reportDay{
+  background:#fff;border:1px solid #dce4ed;
+  border-radius:10px;padding:12px;margin:9px 0;
+  line-height:1.9;overflow-wrap:anywhere
+}
 @media(max-width:480px){
   body{padding:9px}
   section{padding:13px}
@@ -131,6 +141,22 @@ button.danger{background:#b42318}
 <div id="summaries" class="status"></div>
 </section>
 
+<section>
+<h3>📊 تقرير الحسابات الشهري</h3>
+
+<p class="meta">
+يعرض إجمالي المبيعات والطلبات والطلبات الملغاة
+من ملخصات الأيام التي تم إغلاقها وحفظها في Firebase.
+</p>
+
+<label for="reportMonth">اختر الشهر</label>
+<input type="month" id="reportMonth">
+
+<button id="loadMonthlyReport">عرض التقرير الشهري</button>
+
+<div id="monthlyReport" class="status"></div>
+</section>
+
 </main>
 
 <script type="module">
@@ -180,6 +206,10 @@ const closeMessage = document.getElementById("closeMessage");
 const todaySummary = document.getElementById("todaySummary");
 const loadSummariesButton = document.getElementById("loadSummaries");
 const summariesOutput = document.getElementById("summaries");
+
+const reportMonthInput = document.getElementById("reportMonth");
+const loadMonthlyReportButton = document.getElementById("loadMonthlyReport");
+const monthlyReportOutput = document.getElementById("monthlyReport");
 
 const statuses = [
   {value:"new",label:"🆕 جديد"},
@@ -310,6 +340,7 @@ logoutButton.onclick = async () => {
     authMsg.textContent = "تم تسجيل الخروج.";
     todaySummary.textContent = "سجّل الدخول لعرض حساب اليوم.";
     summariesOutput.replaceChildren();
+    monthlyReportOutput.replaceChildren();
   }catch(e){
     authMsg.textContent = "تعذر تسجيل الخروج.";
   }
@@ -852,6 +883,135 @@ async function loadSummaries(){
 }
 
 loadSummariesButton.onclick = loadSummaries;
+
+/* إعداد الشهر الحالي تلقائيًا */
+{
+  const now = new Date();
+
+  reportMonthInput.value =
+    now.getFullYear() + "-" +
+    String(now.getMonth() + 1).padStart(2, "0");
+}
+
+/* تقرير الحسابات الشهري من ملخصات الأيام المحفوظة */
+loadMonthlyReportButton.onclick = async () => {
+  if(!auth.currentUser){
+    monthlyReportOutput.textContent = "سجّل الدخول أولًا.";
+    return;
+  }
+
+  const selectedMonth = reportMonthInput.value;
+
+  if(!selectedMonth){
+    monthlyReportOutput.textContent = "اختر الشهر المطلوب أولًا.";
+    return;
+  }
+
+  loadMonthlyReportButton.disabled = true;
+  monthlyReportOutput.textContent = "جارٍ حساب التقرير الشهري...";
+
+  try{
+    const [year, month] = selectedMonth.split("-").map(Number);
+
+    const startDate =
+      year + "-" + String(month).padStart(2, "0") + "-01";
+
+    const nextMonth = new Date(year, month, 1);
+
+    const endDate =
+      nextMonth.getFullYear() + "-" +
+      String(nextMonth.getMonth() + 1).padStart(2, "0") +
+      "-01";
+
+    const summariesQuery = query(
+      collection(db, "daily_summaries"),
+      where("date", ">=", startDate),
+      where("date", "<", endDate),
+      orderBy("date", "asc")
+    );
+
+    const snapshot = await getDocs(summariesQuery);
+
+    monthlyReportOutput.replaceChildren();
+
+    if(snapshot.empty){
+      monthlyReportOutput.textContent =
+        "لا توجد ملخصات إغلاق محفوظة للشهر " + selectedMonth + ".";
+      return;
+    }
+
+    let totalSales = 0;
+    let totalOrders = 0;
+    let cancelledCount = 0;
+    let cancelledValue = 0;
+    let ordersWithoutAmount = 0;
+
+    const dailyCards = [];
+
+    snapshot.forEach(summaryDoc => {
+      const data = summaryDoc.data();
+
+      const sales = Number(data.totalSales) || 0;
+      const orders = Number(data.totalOrders) || 0;
+      const cancelled = Number(data.cancelledCount) || 0;
+      const cancelledAmount = Number(data.cancelledValue) || 0;
+      const missingAmounts = Number(data.ordersWithoutAmount) || 0;
+
+      totalSales += sales;
+      totalOrders += orders;
+      cancelledCount += cancelled;
+      cancelledValue += cancelledAmount;
+      ordersWithoutAmount += missingAmounts;
+
+      const card = document.createElement("div");
+      card.className = "reportDay";
+
+      card.textContent =
+        "📅 التاريخ: " + (data.date || summaryDoc.id) +
+        "\n💰 المبيعات غير الملغاة: " + money(sales) +
+        "\n📦 عدد الطلبات: " + orders +
+        "\n❌ الطلبات الملغاة: " + cancelled +
+        "\n💵 قيمة الطلبات الملغاة: " + money(cancelledAmount) +
+        (missingAmounts
+          ? "\n⚠️ طلبات بدون إجمالي مسجل: " + missingAmounts
+          : "");
+
+      dailyCards.push(card);
+    });
+
+    const totals = document.createElement("div");
+    totals.className = "reportTotals";
+
+    totals.textContent =
+      "📊 تقرير المرسي للأسماك — " + selectedMonth +
+      "\n💰 إجمالي المبيعات المسجلة: " + money(totalSales) +
+      "\n📦 إجمالي الطلبات في الأيام المغلقة: " + totalOrders +
+      "\n❌ إجمالي الطلبات الملغاة: " + cancelledCount +
+      "\n💵 قيمة الطلبات الملغاة: " + money(cancelledValue) +
+      "\n⚠️ طلبات بدون إجمالي مسجل: " + ordersWithoutAmount +
+      "\n🗓️ عدد أيام الإغلاق المسجلة: " + snapshot.size;
+
+    monthlyReportOutput.appendChild(totals);
+
+    const heading = document.createElement("h3");
+    heading.textContent = "تفاصيل المبيعات اليومية";
+    monthlyReportOutput.appendChild(heading);
+
+    dailyCards.forEach(card => {
+      monthlyReportOutput.appendChild(card);
+    });
+
+  }catch(e){
+    console.error("Monthly report error:", e);
+
+    monthlyReportOutput.textContent =
+      "تعذر تحميل التقرير الشهري.\n" +
+      "رمز الخطأ: " + (e.code || "غير معروف") +
+      "\nالتفاصيل: " + (e.message || "");
+  }finally{
+    loadMonthlyReportButton.disabled = false;
+  }
+};
 </script>
 </body>
 </html>
