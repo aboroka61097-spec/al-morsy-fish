@@ -7,94 +7,42 @@
 <title>طلب أوردر | المرسي للأسماك</title>
 
 <style>
-:root{
-  font-family:Tahoma,Arial,sans-serif;
-  color:#123047;
-  background:#f2f8fb
-}
+:root{font-family:Tahoma,Arial,sans-serif;color:#123047;background:#f2f8fb}
 *{box-sizing:border-box}
-body{
-  margin:0;padding:14px;
-  background:linear-gradient(160deg,#e0f2fe,#f8fafc 55%,#dbeafe);
-  min-height:100vh
-}
+body{margin:0;padding:14px;background:linear-gradient(160deg,#e0f2fe,#f8fafc 55%,#dbeafe);min-height:100vh}
 main{max-width:700px;margin:auto}
-.card{
-  background:#fff;border:1px solid #dbeafe;
-  border-radius:20px;padding:20px;
-  box-shadow:0 10px 30px #0c4a6e12
-}
+.card{background:#fff;border:1px solid #dbeafe;border-radius:20px;padding:20px;box-shadow:0 10px 30px #0c4a6e12}
 .brand{text-align:center;color:#075985}
 .brand h1{font-size:24px;margin:8px 0}
 .brand p{margin:6px 0 18px;color:#456579}
 label{display:block;font-weight:bold;margin:14px 0 7px}
-input,textarea,select{
-  width:100%;font:inherit;padding:12px;
-  border:1px solid #cbd5e1;border-radius:10px;
-  background:#fff
-}
+input,textarea,select{width:100%;font:inherit;padding:12px;border:1px solid #cbd5e1;border-radius:10px;background:#fff}
 textarea{min-height:75px;resize:vertical}
-button{
-  width:100%;border:0;border-radius:11px;
-  padding:13px;font:inherit;font-weight:bold;
-  cursor:pointer;margin-top:12px;
-  background:#075985;color:white
-}
+button{width:100%;border:0;border-radius:11px;padding:13px;font:inherit;font-weight:bold;cursor:pointer;margin-top:12px;background:#075985;color:white}
 button:disabled{opacity:.6}
-.section{
-  margin-top:20px;padding:14px;
-  border:1px solid #dbeafe;border-radius:14px;
-  background:#f8fcff
-}
+.section{margin-top:20px;padding:14px;border:1px solid #dbeafe;border-radius:14px;background:#f8fcff}
 .section h2{font-size:18px;margin:0 0 10px;color:#075985}
-.item{
-  background:#fff;border:1px solid #e2e8f0;
-  border-radius:11px;padding:12px;margin:9px 0
-}
-.item-head{
-  display:flex;justify-content:space-between;
-  align-items:center;gap:10px;flex-wrap:wrap
-}
+.item{background:#fff;border:1px solid #e2e8f0;border-radius:11px;padding:12px;margin:9px 0}
+.item-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .item-name{font-weight:bold}
 .price{color:#0369a1;font-size:14px;margin-top:5px}
-.qty-row{
-  display:grid;grid-template-columns:1fr 110px;
-  align-items:center;gap:10px;margin-top:10px
-}
+.qty-row{display:grid;grid-template-columns:1fr 110px;align-items:center;gap:10px;margin-top:10px}
 .qty-row label{margin:0;font-size:14px}
 .qty-row input{padding:9px}
-.check-row{
-  display:flex;align-items:center;gap:9px;
-  font-weight:normal;margin:8px 0
-}
+.check-row{display:flex;align-items:center;gap:9px;font-weight:normal;margin:8px 0}
 .check-row input{width:20px;height:20px;flex-shrink:0}
 .check-row label{margin:0;font-weight:normal}
 .muted{font-size:13px;color:#64748b;line-height:1.8}
-.total-box{
-  background:#ecfdf5;border:1px solid #a7f3d0;
-  border-radius:13px;padding:15px;margin-top:18px
-}
-.total-line{
-  display:flex;justify-content:space-between;
-  gap:10px;margin:9px 0
-}
-.grand-total{
-  font-size:21px;font-weight:bold;
-  border-top:1px solid #a7f3d0;padding-top:12px
-}
-.status{
-  display:none;margin-top:15px;padding:12px;
-  border-radius:10px;line-height:1.9;
-  white-space:pre-line;overflow-wrap:anywhere
-}
+.total-box{background:#ecfdf5;border:1px solid #a7f3d0;border-radius:13px;padding:15px;margin-top:18px}
+.total-line{display:flex;justify-content:space-between;gap:10px;margin:9px 0}
+.grand-total{font-size:21px;font-weight:bold;border-top:1px solid #a7f3d0;padding-top:12px}
+.status{display:none;margin-top:15px;padding:12px;border-radius:10px;line-height:1.9;white-space:pre-line;overflow-wrap:anywhere}
 .ok{display:block;background:#dcfce7;color:#166534}
 .err{display:block;background:#fee2e2;color:#991b1b}
+.track-link{display:block;text-align:center;background:#075985;color:#fff;padding:11px;border-radius:9px;text-decoration:none;margin-top:12px;font-weight:bold}
 .contact{text-align:center;margin-top:16px;color:#456579;font-size:14px}
 .empty{padding:10px;color:#64748b;text-align:center}
-@media(max-width:420px){
-  .card{padding:14px}
-  .qty-row{grid-template-columns:1fr 90px}
-}
+@media(max-width:420px){.card{padding:14px}.qty-row{grid-template-columns:1fr 90px}}
 </style>
 </head>
 
@@ -110,19 +58,13 @@ button:disabled{opacity:.6}
 <form id="orderForm">
 
 <label for="customerName">الاسم بالكامل *</label>
-<input id="customerName" name="customerName"
- autocomplete="name" required minlength="2" maxlength="100"
- placeholder="اكتب اسمك">
+<input id="customerName" name="customerName" autocomplete="name" required minlength="2" maxlength="100" placeholder="اكتب اسمك">
 
 <label for="phone">رقم الموبايل *</label>
-<input id="phone" name="phone" type="tel"
- inputmode="tel" autocomplete="tel" required maxlength="20"
- placeholder="رقم نقدر نتواصل معاك عليه">
+<input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required maxlength="20" placeholder="رقم نقدر نتواصل معاك عليه">
 
 <label for="address">عنوان التوصيل بالتفصيل *</label>
-<textarea id="address" name="address" autocomplete="street-address"
- required minlength="5" maxlength="500"
- placeholder="المنطقة والشارع وأقرب علامة مميزة"></textarea>
+<textarea id="address" name="address" autocomplete="street-address" required minlength="5" maxlength="500" placeholder="المنطقة والشارع وأقرب علامة مميزة"></textarea>
 
 <div class="section">
 <h2>🐟 اختار السمك والكميات</h2>
@@ -144,22 +86,11 @@ button:disabled{opacity:.6}
 
 <div class="total-box">
 <h2 style="margin:0 0 12px">🧾 حساب التكلفة التقديرية</h2>
-<div class="total-line">
-<span>إجمالي السمك</span><strong id="fishTotal">0 جنيه</strong>
-</div>
-<div class="total-line">
-<span>إجمالي تجهيز السمك</span><strong id="prepTotal">0 جنيه</strong>
-</div>
-<div class="total-line">
-<span>الإضافات ثابتة السعر</span><strong id="fixedTotal">0 جنيه</strong>
-</div>
-<div class="total-line grand-total">
-<span>الإجمالي التقديري</span><strong id="grandTotal">0 جنيه</strong>
-</div>
-<p class="muted">
-الحساب حسب الأسعار المسجلة حاليًا. سعر التوصيل، إن وجد، غير محسوب هنا.
-السعر النهائي والتوافر يؤكدهما فريق المرسي.
-</p>
+<div class="total-line"><span>إجمالي السمك</span><strong id="fishTotal">0 جنيه</strong></div>
+<div class="total-line"><span>إجمالي تجهيز السمك</span><strong id="prepTotal">0 جنيه</strong></div>
+<div class="total-line"><span>الإضافات ثابتة السعر</span><strong id="fixedTotal">0 جنيه</strong></div>
+<div class="total-line grand-total"><span>الإجمالي التقديري</span><strong id="grandTotal">0 جنيه</strong></div>
+<p class="muted">الحساب حسب الأسعار المسجلة حاليًا. سعر التوصيل، إن وجد، غير محسوب هنا. السعر النهائي والتوافر يؤكدهما فريق المرسي.</p>
 </div>
 
 <label for="delivery">طريقة الاستلام</label>
@@ -169,22 +100,15 @@ button:disabled{opacity:.6}
 </select>
 
 <label for="notes">ملاحظات إضافية (اختياري)</label>
-<textarea id="notes" name="notes" maxlength="1000"
- placeholder="أي تفاصيل إضافية عن الطلب"></textarea>
+<textarea id="notes" name="notes" maxlength="1000" placeholder="أي تفاصيل إضافية عن الطلب"></textarea>
 
-<p class="muted">
-راجع الأصناف والكميات والتكلفة قبل إرسال الطلب.
-</p>
-
+<p class="muted">راجع الأصناف والكميات والتكلفة قبل إرسال الطلب.</p>
 <button id="submitBtn" type="submit">إرسال الطلب</button>
 <div id="status" class="status" role="status" aria-live="polite"></div>
 
 </form>
 
-<div class="contact">
-المرسي للأسماك — الإسماعيلية، طريق البلاجات، سوق السمك
-</div>
-
+<div class="contact">المرسي للأسماك — الإسماعيلية، طريق البلاجات، سوق السمك</div>
 </section>
 </main>
 
@@ -197,6 +121,11 @@ import {
 } from
 "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
+import {
+  getAuth, signInAnonymously
+} from
+"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyCviWU0LzDbUn8M7ETIXorU_kNTSgnwjhc",
   authDomain: "al-morsy-fish.firebaseapp.com",
@@ -208,9 +137,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 const $ = id => document.getElementById(id);
-
 const form = $("orderForm");
 const btn = $("submitBtn");
 const statusBox = $("status");
@@ -253,11 +182,12 @@ function isAvailable(d) {
   if (typeof d.enabled === "boolean") return d.enabled;
 
   const state = String(d.status ?? d.state ?? "").toLowerCase();
-  if (["unavailable", "inactive", "disabled", "غير متاح", "متوقف"].includes(state)) {
+
+  if (["unavailable","inactive","disabled","غير متاح","متوقف"].includes(state)) {
     return false;
   }
 
-  if (["available", "active", "متاح", "متاح اليوم"].includes(state)) {
+  if (["available","active","متاح","متاح اليوم"].includes(state)) {
     return true;
   }
 
@@ -271,21 +201,31 @@ function isFixed(d) {
   ).toLowerCase();
 
   return [
-    "fixed", "perorder", "per_order", "flat",
-    "سعر ثابت", "سعر ثابت للطلب", "ثابت"
+    "fixed","perorder","per_order","flat",
+    "سعر ثابت","سعر ثابت للطلب","ثابت"
   ].includes(value.replace(/\s+/g, ""))
-    || ["fixed", "perorder", "per_order", "flat",
-        "سعر ثابت", "سعر ثابت للطلب", "ثابت"].includes(value);
+    || ["fixed","perorder","per_order","flat",
+        "سعر ثابت","سعر ثابت للطلب","ثابت"].includes(value);
 }
 
 function showError(message) {
   statusBox.className = "status err";
-  statusBox.textContent = message;
+  statusBox.replaceChildren(document.createTextNode(message));
 }
 
-function showSuccess(message) {
+function showSuccess(message, orderId) {
   statusBox.className = "status ok";
-  statusBox.textContent = message;
+  statusBox.replaceChildren(document.createTextNode(message));
+
+  const link = document.createElement("a");
+  link.className = "track-link";
+
+  // رابط المتابعة متوافق مع track-order.html
+  link.href = "track-order.html?id=" + encodeURIComponent(orderId);
+
+  link.textContent = "📦 متابعة حالة الطلب";
+  statusBox.appendChild(document.createElement("br"));
+  statusBox.appendChild(link);
 }
 
 function renderFish() {
@@ -310,8 +250,7 @@ function renderFish() {
       </div>
       <div class="qty-row">
         <label for="qty_${escapeHTML(item.id)}">الكمية بالكيلو</label>
-        <input
-          id="qty_${escapeHTML(item.id)}"
+        <input id="qty_${escapeHTML(item.id)}"
           type="number" min="0" max="500" step="0.25"
           value="0" inputmode="decimal"
           data-fish-id="${escapeHTML(item.id)}"
@@ -342,10 +281,8 @@ function renderPrep() {
     <div class="item">
       <label class="check-row">
         <input type="checkbox" data-prep-id="${escapeHTML(item.id)}">
-        <span>
-          <strong>${escapeHTML(item.name)}</strong>
-          <span class="price"> — ${money(item.price)} / كيلو</span>
-        </span>
+        <span><strong>${escapeHTML(item.name)}</strong>
+        <span class="price"> — ${money(item.price)} / كيلو</span></span>
       </label>
     </div>
   `).join("") : '<div class="empty">لا توجد تجهيزات متاحة لكل كيلو حاليًا.</div>';
@@ -354,10 +291,8 @@ function renderPrep() {
     <div class="item">
       <label class="check-row">
         <input type="checkbox" data-fixed-id="${escapeHTML(item.id)}">
-        <span>
-          <strong>${escapeHTML(item.name)}</strong>
-          <span class="price"> — ${money(item.price)} للطلب</span>
-        </span>
+        <span><strong>${escapeHTML(item.name)}</strong>
+        <span class="price"> — ${money(item.price)} للطلب</span></span>
       </label>
     </div>
   `).join("") : '<div class="empty">لا توجد إضافات ثابتة السعر مسجلة حاليًا.</div>';
@@ -377,8 +312,10 @@ function getQuantities() {
 
   document.querySelectorAll("[data-fish-id]").forEach(input => {
     const qty = Number(input.value);
+
     if (qty > 0) {
       const item = fishItems.find(x => x.id === input.dataset.fishId);
+
       if (item && isAvailable(item.data)) {
         result.push({
           id: item.id,
@@ -399,12 +336,9 @@ function getSelectedPreps() {
 
   document.querySelectorAll("[data-prep-id]:checked").forEach(input => {
     const item = prepItems.find(x => x.id === input.dataset.prepId);
+
     if (item && isAvailable(item.data) && !isFixed(item.data)) {
-      result.push({
-        id: item.id,
-        name: item.name,
-        price: item.price
-      });
+      result.push({id:item.id,name:item.name,price:item.price});
     }
   });
 
@@ -416,12 +350,9 @@ function getSelectedFixed() {
 
   document.querySelectorAll("[data-fixed-id]:checked").forEach(input => {
     const item = prepItems.find(x => x.id === input.dataset.fixedId);
+
     if (item && isAvailable(item.data) && isFixed(item.data)) {
-      result.push({
-        id: item.id,
-        name: item.name,
-        price: item.price
-      });
+      result.push({id:item.id,name:item.name,price:item.price});
     }
   });
 
@@ -433,20 +364,13 @@ function calculate() {
   const perKgPreps = getSelectedPreps();
   const fixed = getSelectedFixed();
 
-  const fishTotal = fish.reduce((sum, x) => sum + x.total, 0);
-  const totalKg = fish.reduce((sum, x) => sum + x.quantity, 0);
-
-  const prepTotal = perKgPreps.reduce(
-    (sum, x) => sum + x.price * totalKg, 0
-  );
-
-  const fixedTotal = fixed.reduce((sum, x) => sum + x.price, 0);
+  const fishTotal = fish.reduce((sum,x) => sum + x.total, 0);
+  const totalKg = fish.reduce((sum,x) => sum + x.quantity, 0);
+  const prepTotal = perKgPreps.reduce((sum,x) => sum + x.price * totalKg, 0);
+  const fixedTotal = fixed.reduce((sum,x) => sum + x.price, 0);
 
   return {
-    fish,
-    perKgPreps,
-    fixed,
-    totalKg,
+    fish, perKgPreps, fixed, totalKg,
     fishTotal: Math.round(fishTotal * 100) / 100,
     prepTotal: Math.round(prepTotal * 100) / 100,
     fixedTotal: Math.round(fixedTotal * 100) / 100,
@@ -456,7 +380,6 @@ function calculate() {
 
 function updateTotals() {
   const result = calculate();
-
   $("fishTotal").textContent = money(result.fishTotal);
   $("prepTotal").textContent = money(result.prepTotal);
   $("fixedTotal").textContent = money(result.fixedTotal);
@@ -544,10 +467,9 @@ form.addEventListener("submit", async event => {
   if (sending) return;
 
   statusBox.className = "status";
-  statusBox.textContent = "";
+  statusBox.replaceChildren();
 
   const data = new FormData(form);
-
   const customerName = String(data.get("customerName") || "").trim();
   const phone = String(data.get("phone") || "").trim();
   const address = String(data.get("address") || "").trim();
@@ -569,7 +491,7 @@ form.addEventListener("submit", async event => {
     return;
   }
 
-  if (!["delivery", "pickup"].includes(delivery)) {
+  if (!["delivery","pickup"].includes(delivery)) {
     showError("من فضلك اختار طريقة الاستلام.");
     return;
   }
@@ -600,6 +522,13 @@ form.addEventListener("submit", async event => {
   btn.textContent = "جارٍ إرسال الطلب...";
 
   try {
+    let currentUser = auth.currentUser;
+
+    if (!currentUser) {
+      const credential = await signInAnonymously(auth);
+      currentUser = credential.user;
+    }
+
     const order = {
       customerName,
       phone,
@@ -610,9 +539,9 @@ form.addEventListener("submit", async event => {
       notes,
       status: "new",
       source: "website",
+      ownerUid: currentUser.uid,
       createdAt: serverTimestamp(),
 
-      // لقطة أسعار محفوظة مع الطلب وقت إرساله
       fishDetails: JSON.stringify(result.fish),
       prepDetails: JSON.stringify(result.perKgPreps),
       fixedDetails: JSON.stringify(result.fixed),
@@ -625,6 +554,12 @@ form.addEventListener("submit", async event => {
 
     const docRef = await addDoc(collection(db, "orders"), order);
 
+    try {
+      localStorage.setItem("alMorsyLastOrderId", docRef.id);
+    } catch (storageError) {
+      console.warn("Could not save order ID locally:", storageError);
+    }
+
     showSuccess(
       "تم تسجيل طلبك بنجاح ❤️\n" +
       "رقم الطلب: " + docRef.id + "\n" +
@@ -634,7 +569,8 @@ form.addEventListener("submit", async event => {
       "إجمالي تجهيز السمك: " + money(result.prepTotal) + "\n" +
       "الإضافات: " + money(result.fixedTotal) + "\n" +
       "الإجمالي التقديري: " + money(result.totalAmount) + "\n" +
-      "فريق المرسي هيتواصل معاك لتأكيد التفاصيل."
+      "فريق المرسي هيتواصل معاك لتأكيد التفاصيل.",
+      docRef.id
     );
 
     form.reset();
@@ -642,11 +578,14 @@ form.addEventListener("submit", async event => {
 
   } catch (error) {
     console.error("Order submission failed:", error);
-    showError(
-      error?.code === "permission-denied"
-        ? "تعذر حفظ الطلب بسبب صلاحيات Firebase. لازم تحديث قواعد الطلبات قبل تجربة الإرسال."
-        : "حصلت مشكلة أثناء إرسال الطلب. حاول مرة أخرى."
-    );
+
+    if (error?.code === "permission-denied") {
+      showError("تعذر حفظ الطلب بسبب صلاحيات Firebase. لازم تحديث قواعد Firestore قبل تجربة الإرسال.");
+    } else if (error?.code === "auth/operation-not-allowed") {
+      showError("تسجيل العملاء كضيوف غير مفعّل في Firebase Authentication. راجع إعداد Anonymous.");
+    } else {
+      showError("حصلت مشكلة أثناء إرسال الطلب. تأكد من اتصال الإنترنت وحاول مرة أخرى.");
+    }
   } finally {
     sending = false;
     btn.disabled = false;
