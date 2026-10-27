@@ -8,80 +8,41 @@
 
 <style>
 *{box-sizing:border-box}
-body{
-  margin:0;padding:16px;
-  font-family:Tahoma,Arial,sans-serif;
-  background:#eef3f7;color:#10243a
-}
+body{margin:0;padding:16px;font-family:Tahoma,Arial,sans-serif;background:#eef3f7;color:#10243a}
 main{max-width:1000px;margin:auto}
-section{
-  background:#fff;border-radius:16px;
-  padding:18px;margin:12px 0;
-  box-shadow:0 5px 18px #0001
-}
+section{background:#fff;border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 5px 18px #0001}
 h1{color:#071d3a}
 label{display:block;margin:10px 0 5px;font-weight:bold}
-input,select{
-  width:100%;padding:11px;
-  border:1px solid #ccd5df;border-radius:9px;
-  font:inherit;background:#fff
-}
-button{
-  padding:11px 16px;border:0;border-radius:9px;
-  background:#0b7751;color:white;font:inherit;
-  font-weight:bold;margin:8px 5px 0 0;cursor:pointer
-}
+input,select{width:100%;padding:11px;border:1px solid #ccd5df;border-radius:9px;font:inherit;background:#fff}
+button{padding:11px 16px;border:0;border-radius:9px;background:#0b7751;color:white;font:inherit;font-weight:bold;margin:8px 5px 0 0;cursor:pointer}
 button:disabled{opacity:.6;cursor:wait}
 button.secondary{background:#34485d}
 button.danger{background:#b42318}
+button.warning{background:#a65b00}
 .status{white-space:pre-wrap;line-height:1.8;overflow-wrap:anywhere}
-.order{
-  border:1px solid #dce4ed;border-radius:12px;
-  padding:14px;margin:12px 0;background:#fff
-}
+.order{border:1px solid #dce4ed;border-radius:12px;padding:14px;margin:12px 0;background:#fff}
 .order h3{margin-top:0;overflow-wrap:anywhere}
 .order p{white-space:pre-wrap;line-height:1.9;overflow-wrap:anywhere}
 .meta{color:#586b7e;font-size:13px}
-.statusBox{
-  margin:12px 0;padding:9px;border-radius:8px;
-  background:#eef6ff;line-height:1.8
-}
-.statusMessage{
-  margin-top:8px;font-size:13px;
-  white-space:pre-wrap;overflow-wrap:anywhere
-}
+.statusBox{margin:12px 0;padding:9px;border-radius:8px;background:#eef6ff;line-height:1.8}
+.statusMessage{margin-top:8px;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}
 .contactButtons{display:flex;gap:8px;flex-wrap:wrap}
-.contactButtons a{
-  display:inline-block;text-decoration:none;color:white;
-  padding:11px 15px;border-radius:9px;
-  font-weight:bold;text-align:center;margin-top:8px
-}
+.contactButtons a{display:inline-block;text-decoration:none;color:white;padding:11px 15px;border-radius:9px;font-weight:bold;text-align:center;margin-top:8px}
 .callLink{background:#1769aa}
 .whatsappLink{background:#168a4a}
 .newOrder{border:2px solid #0b7751;background:#f1fff7}
 #liveStatus{font-weight:bold;color:#0b7751;line-height:1.8}
-.summaryCard{
-  background:#f1f8ff;border:1px solid #c8dff5;
-  border-radius:12px;padding:14px;margin:10px 0;
-  line-height:2;overflow-wrap:anywhere
-}
-.reportTotals{
-  background:#edf9f1;border:1px solid #b8e0c4;
-  border-radius:12px;padding:14px;margin:12px 0;
-  line-height:2.1;overflow-wrap:anywhere
-}
-.reportDay{
-  background:#fff;border:1px solid #dce4ed;
-  border-radius:10px;padding:12px;margin:9px 0;
-  line-height:1.9;overflow-wrap:anywhere
-}
-.deleteMessage{color:#b42318}
+.summaryCard{background:#f1f8ff;border:1px solid #c8dff5;border-radius:12px;padding:14px;margin:10px 0;line-height:2;overflow-wrap:anywhere}
+.reportTotals{background:#edf9f1;border:1px solid #b8e0c4;border-radius:12px;padding:14px;margin:12px 0;line-height:2.1;overflow-wrap:anywhere}
+.reportDay{background:#fff;border:1px solid #dce4ed;border-radius:10px;padding:12px;margin:9px 0;line-height:1.9;overflow-wrap:anywhere}
+.excludedOrder{opacity:.75;border:1px dashed #b42318;background:#fff8f7}
+.smallText{font-size:13px;color:#586b7e;line-height:1.8}
 @media(max-width:480px){
-  body{padding:9px}
-  section{padding:13px}
-  button{width:100%;margin:8px 0 0}
-  .contactButtons{display:grid;grid-template-columns:1fr 1fr}
-  .contactButtons a{font-size:14px;padding:12px 5px}
+ body{padding:9px}
+ section{padding:13px}
+ button{width:100%;margin:8px 0 0}
+ .contactButtons{display:grid;grid-template-columns:1fr 1fr}
+ .contactButtons a{font-size:14px;padding:12px 5px}
 }
 </style>
 </head>
@@ -92,13 +53,10 @@ button.danger{background:#b42318}
 
 <section>
 <h3>دخول الإدارة</h3>
-
 <label for="email">البريد الإلكتروني</label>
 <input id="email" type="email" autocomplete="username">
-
 <label for="password">كلمة المرور</label>
 <input id="password" type="password" autocomplete="current-password">
-
 <button id="login">دخول</button>
 <button id="logout" class="secondary">تسجيل خروج</button>
 <div id="authMsg" class="status"></div>
@@ -106,33 +64,18 @@ button.danger{background:#b42318}
 
 <section>
 <h3>إدارة الطلبات</h3>
-<p class="meta">
-تحديث تلقائي للطلبات مع تنبيه صوتي عند وصول طلب جديد،
-طالما اللوحة مفتوحة ومسجل الدخول.
-</p>
-
+<p class="meta">تحديث تلقائي للطلبات مع تنبيه صوتي عند وصول طلب جديد، طالما اللوحة مفتوحة ومسجل الدخول.</p>
 <p id="liveStatus">⚪ سجّل الدخول لتشغيل متابعة الطلبات.</p>
-
 <button id="enableSound" class="secondary">🔔 تفعيل صوت التنبيه</button>
 <button id="load">تحديث الطلبات الآن</button>
-
 <div id="orders" class="status"></div>
 </section>
 
 <section>
 <h3>🧾 إغلاق حساب اليوم</h3>
-
-<p class="meta">
-يحفظ ملخص مبيعات اليوم في Firebase، ثم يحذف طلبات اليوم
-بعد تأكيدك. الطلبات الملغاة لا تدخل في إجمالي المبيعات.
-</p>
-
-<div id="todaySummary" class="summaryCard">
-جارٍ حساب طلبات اليوم...
-</div>
-
+<p class="meta">يحفظ تفاصيل الأوردرات مع ملخص المبيعات، ثم يحذف الأوردرات من قائمة الطلبات المفتوحة. تقدر بعد كده تستبعد أوردر من مبيعات اليوم من الملخص.</p>
+<div id="todaySummary" class="summaryCard">جارٍ حساب طلبات اليوم...</div>
 <button id="closeDay" class="danger">🔒 إغلاق حساب اليوم وحفظ الملخص</button>
-
 <div id="closeMessage" class="status"></div>
 </section>
 
@@ -144,927 +87,701 @@ button.danger{background:#b42318}
 
 <section>
 <h3>📊 تقرير الحسابات الشهري</h3>
-
-<p class="meta">
-يعرض إجمالي المبيعات والطلبات والطلبات الملغاة
-من ملخصات الأيام التي تم إغلاقها وحفظها في Firebase.
-</p>
-
+<p class="meta">التقرير يجمع ملخصات الأيام المغلقة. استبعاد أي أوردر من ملخص يوم يحدّث إجمالي الشهر تلقائيًا.</p>
 <label for="reportMonth">اختر الشهر</label>
 <input type="month" id="reportMonth">
-
 <button id="loadMonthlyReport">عرض التقرير الشهري</button>
-
 <div id="monthlyReport" class="status"></div>
 </section>
-
 </main>
 
 <script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
-  initializeApp
-} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged
+  getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-
 import {
-  getFirestore,
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  limit,
-  where,
-  doc,
-  getDoc,
-  updateDoc,
-  deleteDoc,
-  onSnapshot,
-  Timestamp,
-  serverTimestamp,
-  writeBatch
+  getFirestore,collection,getDocs,query,limit,where,doc,getDoc,
+  updateDoc,onSnapshot,Timestamp,serverTimestamp,writeBatch
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import {firebaseConfig} from "./firebase-config.js";
 
-import { firebaseConfig } from "./firebase-config.js";
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const authMsg=document.getElementById("authMsg");
+const output=document.getElementById("orders");
+const loginButton=document.getElementById("login");
+const logoutButton=document.getElementById("logout");
+const loadButton=document.getElementById("load");
+const enableSoundButton=document.getElementById("enableSound");
+const liveStatus=document.getElementById("liveStatus");
+const closeDayButton=document.getElementById("closeDay");
+const closeMessage=document.getElementById("closeMessage");
+const todaySummary=document.getElementById("todaySummary");
+const loadSummariesButton=document.getElementById("loadSummaries");
+const summariesOutput=document.getElementById("summaries");
+const reportMonthInput=document.getElementById("reportMonth");
+const loadMonthlyReportButton=document.getElementById("loadMonthlyReport");
+const monthlyReportOutput=document.getElementById("monthlyReport");
 
-const authMsg = document.getElementById("authMsg");
-const output = document.getElementById("orders");
-const loginButton = document.getElementById("login");
-const logoutButton = document.getElementById("logout");
-const loadButton = document.getElementById("load");
-const enableSoundButton = document.getElementById("enableSound");
-const liveStatus = document.getElementById("liveStatus");
-const closeDayButton = document.getElementById("closeDay");
-const closeMessage = document.getElementById("closeMessage");
-const todaySummary = document.getElementById("todaySummary");
-const loadSummariesButton = document.getElementById("loadSummaries");
-const summariesOutput = document.getElementById("summaries");
-
-const reportMonthInput = document.getElementById("reportMonth");
-const loadMonthlyReportButton = document.getElementById("loadMonthlyReport");
-const monthlyReportOutput = document.getElementById("monthlyReport");
-
-const statuses = [
-  {value:"new",label:"🆕 جديد"},
-  {value:"contacted",label:"📞 تم التواصل مع العميل"},
-  {value:"preparing",label:"👨‍🍳 جارٍ التجهيز"},
-  {value:"out_for_delivery",label:"🚚 خرج للتوصيل"},
-  {value:"delivered",label:"✅ تم التسليم"},
-  {value:"cancelled",label:"❌ ملغي"}
+const statuses=[
+ {value:"new",label:"🆕 جديد"},
+ {value:"contacted",label:"📞 تم التواصل مع العميل"},
+ {value:"preparing",label:"👨‍🍳 جارٍ التجهيز"},
+ {value:"out_for_delivery",label:"🚚 خرج للتوصيل"},
+ {value:"delivered",label:"✅ تم التسليم"},
+ {value:"cancelled",label:"❌ ملغي"}
 ];
 
-let unsubscribeOrders = null;
-let knownOrderIds = null;
-let audioContext = null;
-let soundEnabled = false;
-let renderedOrders = new Map();
-let currentTodayOrders = [];
-let closingInProgress = false;
+let unsubscribeOrders=null;
+let knownOrderIds=null;
+let audioContext=null;
+let soundEnabled=false;
+let renderedOrders=new Map();
+let currentTodayOrders=[];
+let closingInProgress=false;
 
 function statusLabel(value){
-  const item = statuses.find(s => s.value === value);
-  return item ? item.label : (value || "غير محدد");
+ const item=statuses.find(s=>s.value===value);
+ return item?item.label:(value||"غير محدد");
 }
-
-function normalizeEgyptianPhone(value){
-  let phone = String(value || "").replace(/\D/g, "");
-
-  if(phone.startsWith("00")) phone = phone.slice(2);
-  if(phone.startsWith("20") && phone.length === 12) return phone;
-  if(phone.startsWith("0") && phone.length === 11) return "2" + phone;
-  if(phone.length === 10 && phone.startsWith("1")) return "20" + phone;
-
-  return phone;
-}
-
 function money(value){
-  return Number(value || 0).toLocaleString("ar-EG") + " جنيه";
+ return Number(value||0).toLocaleString("ar-EG")+" جنيه";
 }
-
+function normalizeEgyptianPhone(value){
+ let phone=String(value||"").replace(/\D/g,"");
+ if(phone.startsWith("00"))phone=phone.slice(2);
+ if(phone.startsWith("20")&&phone.length===12)return phone;
+ if(phone.startsWith("0")&&phone.length===11)return "2"+phone;
+ if(phone.length===10&&phone.startsWith("1"))return "20"+phone;
+ return phone;
+}
 function playAlert(){
-  if(!soundEnabled || !audioContext) return;
-
-  try{
-    if(audioContext.state === "suspended") audioContext.resume();
-
-    const now = audioContext.currentTime;
-
-    [0, 0.35, 0.7].forEach((delay, index) => {
-      const oscillator = audioContext.createOscillator();
-      const gain = audioContext.createGain();
-
-      oscillator.type = "sine";
-      oscillator.frequency.value = index === 1 ? 1100 : 880;
-
-      gain.gain.setValueAtTime(0.001, now + delay);
-      gain.gain.exponentialRampToValueAtTime(0.25, now + delay + 0.03);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.22);
-
-      oscillator.connect(gain);
-      gain.connect(audioContext.destination);
-
-      oscillator.start(now + delay);
-      oscillator.stop(now + delay + 0.24);
-    });
-  }catch(e){
-    console.warn("تعذر تشغيل الصوت:", e);
-  }
+ if(!soundEnabled||!audioContext)return;
+ try{
+  if(audioContext.state==="suspended")audioContext.resume();
+  const now=audioContext.currentTime;
+  [0,.35,.7].forEach((delay,index)=>{
+   const oscillator=audioContext.createOscillator();
+   const gain=audioContext.createGain();
+   oscillator.type="sine";
+   oscillator.frequency.value=index===1?1100:880;
+   gain.gain.setValueAtTime(.001,now+delay);
+   gain.gain.exponentialRampToValueAtTime(.25,now+delay+.03);
+   gain.gain.exponentialRampToValueAtTime(.001,now+delay+.22);
+   oscillator.connect(gain);
+   gain.connect(audioContext.destination);
+   oscillator.start(now+delay);
+   oscillator.stop(now+delay+.24);
+  });
+ }catch(e){console.warn(e);}
 }
 
-enableSoundButton.onclick = async () => {
-  try{
-    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-
-    if(!AudioContextClass){
-      liveStatus.textContent = "⚠️ المتصفح لا يدعم الصوت.";
-      return;
-    }
-
-    if(!audioContext) audioContext = new AudioContextClass();
-
-    await audioContext.resume();
-
-    soundEnabled = true;
-    playAlert();
-
-    enableSoundButton.textContent = "✅ صوت التنبيه مفعّل";
-    liveStatus.textContent =
-      "🔔 تم تفعيل الصوت. ستسمع تنبيهًا عند وصول طلب جديد واللوحة مفتوحة.";
-  }catch(e){
-    liveStatus.textContent = "⚠️ تعذر تفعيل الصوت.";
-  }
+enableSoundButton.onclick=async()=>{
+ try{
+  const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+  if(!AudioContextClass){liveStatus.textContent="⚠️ المتصفح لا يدعم الصوت.";return;}
+  if(!audioContext)audioContext=new AudioContextClass();
+  await audioContext.resume();
+  soundEnabled=true;
+  playAlert();
+  enableSoundButton.textContent="✅ صوت التنبيه مفعّل";
+  liveStatus.textContent="🔔 تم تفعيل الصوت.";
+ }catch(e){liveStatus.textContent="⚠️ تعذر تفعيل الصوت.";}
 };
 
-loginButton.onclick = async () => {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
-  if(!email || !password){
-    authMsg.textContent = "اكتب البريد الإلكتروني وكلمة المرور أولًا.";
-    return;
-  }
-
-  loginButton.disabled = true;
-
-  try{
-    await signInWithEmailAndPassword(auth, email, password);
-    authMsg.textContent = "تم تسجيل الدخول بنجاح.";
-  }catch(e){
-    console.error(e);
-    authMsg.textContent = "تعذر تسجيل الدخول. راجع البريد وكلمة المرور.";
-  }finally{
-    loginButton.disabled = false;
-  }
+loginButton.onclick=async()=>{
+ const email=document.getElementById("email").value.trim();
+ const password=document.getElementById("password").value;
+ if(!email||!password){authMsg.textContent="اكتب البريد الإلكتروني وكلمة المرور أولًا.";return;}
+ loginButton.disabled=true;
+ try{
+  await signInWithEmailAndPassword(auth,email,password);
+  authMsg.textContent="تم تسجيل الدخول بنجاح.";
+ }catch(e){
+  console.error(e);
+  authMsg.textContent="تعذر تسجيل الدخول. راجع البريد وكلمة المرور.";
+ }finally{loginButton.disabled=false;}
 };
 
-logoutButton.onclick = async () => {
-  try{
-    if(unsubscribeOrders) unsubscribeOrders();
-
-    unsubscribeOrders = null;
-    knownOrderIds = null;
-    renderedOrders.clear();
-    currentTodayOrders = [];
-
-    await signOut(auth);
-
-    output.replaceChildren();
-    liveStatus.textContent = "⚪ تم إيقاف متابعة الطلبات.";
-    authMsg.textContent = "تم تسجيل الخروج.";
-    todaySummary.textContent = "سجّل الدخول لعرض حساب اليوم.";
-    summariesOutput.replaceChildren();
-    monthlyReportOutput.replaceChildren();
-  }catch(e){
-    authMsg.textContent = "تعذر تسجيل الخروج.";
-  }
+logoutButton.onclick=async()=>{
+ try{
+  if(unsubscribeOrders)unsubscribeOrders();
+  unsubscribeOrders=null;knownOrderIds=null;renderedOrders.clear();currentTodayOrders=[];
+  await signOut(auth);
+  output.replaceChildren();
+  liveStatus.textContent="⚪ تم إيقاف متابعة الطلبات.";
+  authMsg.textContent="تم تسجيل الخروج.";
+  todaySummary.textContent="سجّل الدخول لعرض حساب اليوم.";
+  summariesOutput.replaceChildren();
+  monthlyReportOutput.replaceChildren();
+ }catch(e){authMsg.textContent="تعذر تسجيل الخروج.";}
 };
 
-onAuthStateChanged(auth, user => {
-  authMsg.textContent = user
-    ? "مسجل الدخول: " + user.email
-    : "لم يتم تسجيل الدخول.";
-
-  if(user){
-    startRealtimeOrders();
-    refreshTodaySummary();
-  }else{
-    if(unsubscribeOrders) unsubscribeOrders();
-
-    unsubscribeOrders = null;
-    knownOrderIds = null;
-    renderedOrders.clear();
-    currentTodayOrders = [];
-
-    output.replaceChildren();
-    liveStatus.textContent = "⚪ سجّل الدخول لتشغيل متابعة الطلبات.";
-  }
+onAuthStateChanged(auth,user=>{
+ authMsg.textContent=user?"مسجل الدخول: "+user.email:"لم يتم تسجيل الدخول.";
+ if(user){
+  startRealtimeOrders();
+  refreshTodaySummary();
+ }else{
+  if(unsubscribeOrders)unsubscribeOrders();
+  unsubscribeOrders=null;knownOrderIds=null;renderedOrders.clear();currentTodayOrders=[];
+  output.replaceChildren();
+  liveStatus.textContent="⚪ سجّل الدخول لتشغيل متابعة الطلبات.";
+ }
 });
 
-async function saveStatus(orderId, select, button, message){
-  if(!auth.currentUser){
-    message.textContent = "سجّل الدخول أولًا.";
-    return;
-  }
-
-  button.disabled = true;
-  select.disabled = true;
-  message.textContent = "جارٍ حفظ حالة الطلب...";
-
-  try{
-    await updateDoc(doc(db, "orders", orderId), {
-      status: select.value
-    });
-
-    message.textContent = "✅ تم حفظ الحالة: " + statusLabel(select.value);
-  }catch(e){
-    console.error(e);
-    message.textContent =
-      "تعذر حفظ الحالة.\n" + (e.code || e.message || "");
-  }finally{
-    button.disabled = false;
-    select.disabled = false;
-  }
-}
-
-/* حذف طلب فردي بعد تأكيد الإدارة */
-async function deleteOrder(orderId, button, message){
-  if(!auth.currentUser){
-    message.textContent = "سجّل الدخول أولًا.";
-    return;
-  }
-
-  const confirmed = window.confirm(
-    "هل أنت متأكد من حذف الأوردر رقم:\n" +
-    orderId +
-    "\n\nالحذف نهائي ولا يمكن التراجع عنه."
-  );
-
-  if(!confirmed) return;
-
-  button.disabled = true;
-  message.classList.add("deleteMessage");
-  message.textContent = "جارٍ حذف الأوردر...";
-
-  try{
-    await deleteDoc(doc(db, "orders", orderId));
-
-    message.textContent = "✅ تم حذف الأوردر بنجاح.";
-    message.classList.remove("deleteMessage");
-
-  }catch(e){
-    console.error("Delete order error:", e);
-
-    message.textContent =
-      "❌ تعذر حذف الأوردر.\n" +
-      "رمز الخطأ: " + (e.code || "غير معروف") +
-      "\nالتفاصيل: " + (e.message || "") +
-      "\nإذا ظهر permission-denied، فقواعد Firestore تمنع الحذف.";
-
-    button.disabled = false;
-  }
+async function saveStatus(orderId,select,button,message){
+ if(!auth.currentUser){message.textContent="سجّل الدخول أولًا.";return;}
+ button.disabled=true;select.disabled=true;message.textContent="جارٍ حفظ حالة الطلب...";
+ try{
+  await updateDoc(doc(db,"orders",orderId),{status:select.value});
+  message.textContent="✅ تم حفظ الحالة: "+statusLabel(select.value);
+ }catch(e){
+  console.error(e);
+  message.textContent="تعذر حفظ الحالة.\n"+(e.code||e.message||"");
+ }finally{button.disabled=false;select.disabled=false;}
 }
 
 function createContactButtons(phoneValue){
-  const container = document.createElement("div");
-  container.className = "contactButtons";
-
-  const phone = String(phoneValue || "").trim();
-
-  if(!phone){
-    container.textContent = "لا يوجد رقم موبايل مسجل لهذا الطلب.";
-    return container;
-  }
-
-  const safePhone = phone.replace(/[^\d+]/g, "");
-  const internationalPhone = normalizeEgyptianPhone(phone);
-
-  const callLink = document.createElement("a");
-  callLink.className = "callLink";
-  callLink.href = "tel:" + safePhone;
-  callLink.textContent = "📞 اتصال بالعميل";
-
-  const whatsappLink = document.createElement("a");
-  whatsappLink.className = "whatsappLink";
-  whatsappLink.href =
-    "https://wa.me/" + internationalPhone +
-    "?text=" + encodeURIComponent("أهلًا بحضرتك، معاك المرسي للأسماك بخصوص طلبك 🐟");
-
-  whatsappLink.target = "_blank";
-  whatsappLink.rel = "noopener noreferrer";
-  whatsappLink.textContent = "🟢 واتساب";
-
-  container.append(callLink, whatsappLink);
-  return container;
+ const container=document.createElement("div");
+ container.className="contactButtons";
+ const phone=String(phoneValue||"").trim();
+ if(!phone){container.textContent="لا يوجد رقم موبايل مسجل لهذا الطلب.";return container;}
+ const safePhone=phone.replace(/[^\d+]/g,"");
+ const internationalPhone=normalizeEgyptianPhone(phone);
+ const callLink=document.createElement("a");
+ callLink.className="callLink";callLink.href="tel:"+safePhone;callLink.textContent="📞 اتصال بالعميل";
+ const whatsappLink=document.createElement("a");
+ whatsappLink.className="whatsappLink";
+ whatsappLink.href="https://wa.me/"+internationalPhone+"?text="+encodeURIComponent("أهلًا بحضرتك، معاك المرسي للأسماك بخصوص طلبك 🐟");
+ whatsappLink.target="_blank";whatsappLink.rel="noopener noreferrer";whatsappLink.textContent="🟢 واتساب";
+ container.append(callLink,whatsappLink);
+ return container;
 }
 
-function renderOrder(orderId, x, isNew){
-  let card = renderedOrders.get(orderId);
-
-  if(!card){
-    card = document.createElement("div");
-    renderedOrders.set(orderId, card);
-  }
-
-  card.className = "order" + (isNew ? " newOrder" : "");
-
-  const title = document.createElement("h3");
-  title.textContent =
-    (isNew ? "🆕 طلب جديد — " : "طلب ") +
-    orderId + " — " + (x.customerName || x.name || "بدون اسم");
-
-  const body = document.createElement("p");
-  body.textContent =
-    "الموبايل: " + (x.phone || "—") +
-    "\nالحالة: " + statusLabel(x.status) +
-    "\nالعنوان: " + (x.address || "—") +
-    "\nالمطلوب: " + (x.items || "—") +
-    "\nالتجهيزات: " + (x.prep || "—") +
-    "\nطريقة الاستلام: " +
-    (x.delivery === "delivery" ? "توصيل" :
-     x.delivery === "pickup" ? "استلام من المحل" : "—") +
-    "\nملاحظات: " + (x.notes || "—") +
-    (typeof x.totalAmount === "number"
-      ? "\nالإجمالي التقديري: " + money(x.totalAmount)
-      : "");
-
-  const contacts = createContactButtons(x.phone);
-
-  const controls = document.createElement("div");
-  controls.className = "statusBox";
-
-  const label = document.createElement("label");
-  label.textContent = "تغيير حالة الطلب";
-
-  const select = document.createElement("select");
-  select.setAttribute("aria-label", "حالة الطلب " + orderId);
-
-  statuses.forEach(s => {
-    const option = document.createElement("option");
-    option.value = s.value;
-    option.textContent = s.label;
-    select.appendChild(option);
-  });
-
-  if(!statuses.some(s => s.value === x.status)){
-    const oldOption = document.createElement("option");
-    oldOption.value = x.status || "new";
-    oldOption.textContent = "الحالة الحالية: " + (x.status || "غير محدد");
-    select.appendChild(oldOption);
-  }
-
-  select.value = statuses.some(s => s.value === x.status)
-    ? x.status
-    : (x.status || "new");
-
-  const saveButton = document.createElement("button");
-  saveButton.textContent = "حفظ الحالة";
-
-  const message = document.createElement("div");
-  message.className = "statusMessage";
-
-  saveButton.onclick = () => saveStatus(orderId, select, saveButton, message);
-
-  controls.append(label, select, saveButton, message);
-
-  /* زر الحذف لكل طلب */
-  const deleteButton = document.createElement("button");
-  deleteButton.className = "danger";
-  deleteButton.textContent = "🗑️ حذف الأوردر";
-
-  const deleteMessage = document.createElement("div");
-  deleteMessage.className = "statusMessage";
-
-  deleteButton.onclick = () => {
-    deleteOrder(orderId, deleteButton, deleteMessage);
-  };
-
-  card.replaceChildren(
-    title,
-    body,
-    contacts,
-    controls,
-    deleteButton,
-    deleteMessage
-  );
-
-  return card;
+function renderOrder(orderId,x,isNew){
+ let card=renderedOrders.get(orderId);
+ if(!card){card=document.createElement("div");renderedOrders.set(orderId,card);}
+ card.className="order"+(isNew?" newOrder":"");
+ const title=document.createElement("h3");
+ title.textContent=(isNew?"🆕 طلب جديد — ":"طلب ")+orderId+" — "+(x.customerName||x.name||"بدون اسم");
+ const body=document.createElement("p");
+ body.textContent=
+  "الموبايل: "+(x.phone||"—")+
+  "\nالحالة: "+statusLabel(x.status)+
+  "\nالعنوان: "+(x.address||"—")+
+  "\nالمطلوب: "+(x.items||"—")+
+  "\nالتجهيزات: "+(x.prep||"—")+
+  "\nطريقة الاستلام: "+(x.delivery==="delivery"?"توصيل":x.delivery==="pickup"?"استلام من المحل":"—")+
+  "\nملاحظات: "+(x.notes||"—")+
+  (typeof x.totalAmount==="number"?"\nالإجمالي التقديري: "+money(x.totalAmount):"");
+ const contacts=createContactButtons(x.phone);
+ const controls=document.createElement("div");
+ controls.className="statusBox";
+ const label=document.createElement("label");
+ label.textContent="تغيير حالة الطلب";
+ const select=document.createElement("select");
+ select.setAttribute("aria-label","حالة الطلب "+orderId);
+ statuses.forEach(s=>{
+  const option=document.createElement("option");
+  option.value=s.value;option.textContent=s.label;select.appendChild(option);
+ });
+ if(!statuses.some(s=>s.value===x.status)){
+  const oldOption=document.createElement("option");
+  oldOption.value=x.status||"new";
+  oldOption.textContent="الحالة الحالية: "+(x.status||"غير محدد");
+  select.appendChild(oldOption);
+ }
+ select.value=statuses.some(s=>s.value===x.status)?x.status:(x.status||"new");
+ const saveButton=document.createElement("button");
+ saveButton.textContent="حفظ الحالة";
+ const message=document.createElement("div");
+ message.className="statusMessage";
+ saveButton.onclick=()=>saveStatus(orderId,select,saveButton,message);
+ controls.append(label,select,saveButton,message);
+ card.replaceChildren(title,body,contacts,controls);
+ return card;
 }
 
-function renderOrderedSnapshot(snapshot, newIds = new Set()){
-  const fragment = document.createDocumentFragment();
-  const currentIds = new Set();
-
-  snapshot.docs.forEach(orderDoc => {
-    currentIds.add(orderDoc.id);
-
-    fragment.appendChild(
-      renderOrder(
-        orderDoc.id,
-        orderDoc.data(),
-        newIds.has(orderDoc.id)
-      )
-    );
-  });
-
-  output.replaceChildren(fragment);
-
-  if(snapshot.empty){
-    output.textContent = "لا توجد طلبات مسجلة.";
-  }
-
-  [...renderedOrders.keys()].forEach(id => {
-    if(!currentIds.has(id)) renderedOrders.delete(id);
-  });
-
-  return currentIds;
+function renderOrderedSnapshot(snapshot,newIds=new Set()){
+ const fragment=document.createDocumentFragment();
+ const currentIds=new Set();
+ snapshot.docs.forEach(orderDoc=>{
+  currentIds.add(orderDoc.id);
+  fragment.appendChild(renderOrder(orderDoc.id,orderDoc.data(),newIds.has(orderDoc.id)));
+ });
+ output.replaceChildren(fragment);
+ if(snapshot.empty)output.textContent="لا توجد طلبات مسجلة.";
+ [...renderedOrders.keys()].forEach(id=>{if(!currentIds.has(id))renderedOrders.delete(id);});
+ return currentIds;
 }
 
 function startRealtimeOrders(){
-  if(!auth.currentUser || unsubscribeOrders) return;
-
-  liveStatus.textContent = "🟡 جارٍ الاتصال بقاعدة الطلبات...";
-
-  const ordersQuery = query(
-    collection(db, "orders"),
-    orderBy("createdAt", "desc"),
-    limit(100)
-  );
-
-  unsubscribeOrders = onSnapshot(ordersQuery, snapshot => {
-    const newIds = new Set();
-
-    if(knownOrderIds !== null){
-      snapshot.docChanges().forEach(change => {
-        if(
-          change.type === "added" &&
-          !knownOrderIds.has(change.doc.id)
-        ){
-          newIds.add(change.doc.id);
-        }
-      });
-    }
-
-    const currentIds = renderOrderedSnapshot(snapshot, newIds);
-
-    if(knownOrderIds === null){
-      knownOrderIds = currentIds;
-      liveStatus.textContent = "🟢 المتابعة التلقائية تعمل. الأحدث في الأعلى.";
-    }else{
-      let hasNew = false;
-
-      currentIds.forEach(id => {
-        if(!knownOrderIds.has(id)) hasNew = true;
-      });
-
-      knownOrderIds = currentIds;
-
-      if(hasNew || newIds.size){
-        liveStatus.textContent = "🔔 وصل طلب جديد!";
-        playAlert();
-      }else{
-        liveStatus.textContent = "🟢 المتابعة التلقائية تعمل. الأحدث في الأعلى.";
-      }
-    }
-
-    refreshTodaySummary();
-  }, error => {
-    console.error(error);
-
-    liveStatus.textContent =
-      "🔴 تعذر تحديث الطلبات: " + (error.code || error.message || "");
-
-    unsubscribeOrders = null;
-  });
+ if(!auth.currentUser||unsubscribeOrders)return;
+ liveStatus.textContent="🟡 جارٍ الاتصال بقاعدة الطلبات...";
+ const ordersQuery=query(collection(db,"orders"),limit(100));
+ unsubscribeOrders=onSnapshot(ordersQuery,snapshot=>{
+  const newIds=new Set();
+  if(knownOrderIds!==null){
+   snapshot.docChanges().forEach(change=>{
+    if(change.type==="added"&&!knownOrderIds.has(change.doc.id))newIds.add(change.doc.id);
+   });
+  }
+  const currentIds=renderOrderedSnapshot(snapshot,newIds);
+  if(knownOrderIds===null){
+   knownOrderIds=currentIds;
+   liveStatus.textContent="🟢 المتابعة التلقائية تعمل.";
+  }else{
+   let hasNew=false;
+   currentIds.forEach(id=>{if(!knownOrderIds.has(id))hasNew=true;});
+   knownOrderIds=currentIds;
+   if(hasNew||newIds.size){liveStatus.textContent="🔔 وصل طلب جديد!";playAlert();}
+   else liveStatus.textContent="🟢 المتابعة التلقائية تعمل.";
+  }
+  refreshTodaySummary();
+ },error=>{
+  console.error(error);
+  liveStatus.textContent="🔴 تعذر تحديث الطلبات: "+(error.code||error.message||"");
+  unsubscribeOrders=null;
+ });
 }
 
-loadButton.onclick = async () => {
-  if(!auth.currentUser){
-    output.textContent = "سجّل الدخول أولًا.";
-    return;
-  }
-
-  loadButton.disabled = true;
-
-  try{
-    const q = query(
-      collection(db, "orders"),
-      orderBy("createdAt", "desc"),
-      limit(100)
-    );
-
-    const snap = await getDocs(q);
-    renderOrderedSnapshot(snap);
-
-    liveStatus.textContent = "🟢 تم تحديث الطلبات. الأحدث في الأعلى.";
-    await refreshTodaySummary();
-  }catch(e){
-    console.error(e);
-    output.textContent = "تعذر تحميل الطلبات: " + (e.code || e.message || "");
-  }finally{
-    loadButton.disabled = false;
-  }
+loadButton.onclick=async()=>{
+ if(!auth.currentUser){output.textContent="سجّل الدخول أولًا.";return;}
+ loadButton.disabled=true;
+ try{
+  const snap=await getDocs(query(collection(db,"orders"),limit(100)));
+  renderOrderedSnapshot(snap);
+  liveStatus.textContent="🟢 تم تحديث الطلبات.";
+  await refreshTodaySummary();
+ }catch(e){
+  console.error(e);
+  output.textContent="تعذر تحميل الطلبات: "+(e.code||e.message||"");
+ }finally{loadButton.disabled=false;}
 };
 
-/* بداية اليوم ونهايته حسب توقيت الجهاز المحلي */
 function getTodayRange(){
-  const start = new Date();
-  start.setHours(0, 0, 0, 0);
-
-  const end = new Date(start);
-  end.setDate(end.getDate() + 1);
-
-  const dateId =
-    start.getFullYear() + "-" +
-    String(start.getMonth() + 1).padStart(2, "0") + "-" +
-    String(start.getDate()).padStart(2, "0");
-
-  return {
-    start: Timestamp.fromDate(start),
-    end: Timestamp.fromDate(end),
-    dateId
-  };
+ const start=new Date();start.setHours(0,0,0,0);
+ const end=new Date(start);end.setDate(end.getDate()+1);
+ const dateId=start.getFullYear()+"-"+String(start.getMonth()+1).padStart(2,"0")+"-"+String(start.getDate()).padStart(2,"0");
+ return {start:Timestamp.fromDate(start),end:Timestamp.fromDate(end),dateId};
 }
 
-/* جلب جميع طلبات اليوم */
 async function getOrdersForToday(){
-  const range = getTodayRange();
+ const range=getTodayRange();
+ const q=query(collection(db,"orders"),where("createdAt",">=",range.start),where("createdAt","<",range.end));
+ const snap=await getDocs(q);
+ return {range,docs:snap.docs};
+}
 
-  const q = query(
-    collection(db, "orders"),
-    where("createdAt", ">=", range.start),
-    where("createdAt", "<", range.end),
-    orderBy("createdAt", "asc")
-  );
+function makeOrderArchive(orderDoc){
+ const d=orderDoc.data();
+ const amount=Number(d.totalAmount);
+ const hasAmount=Number.isFinite(amount);
+ const included=d.status!=="cancelled";
+ return {
+  id:orderDoc.id,
+  customerName:d.customerName||d.name||"بدون اسم",
+  phone:d.phone||"",
+  address:d.address||"",
+  items:d.items||"",
+  prep:d.prep||"",
+  delivery:d.delivery||"",
+  notes:d.notes||"",
+  status:d.status||"new",
+  totalAmount:hasAmount?amount:null,
+  hasAmount,
+  includedInSales:included&&hasAmount,
+  excludedReason:""
+ };
+}
 
-  const snap = await getDocs(q);
-
-  return {
-    range,
-    docs: snap.docs
-  };
+function calculateArchive(orders){
+ let totalSales=0, includedCount=0, cancelledCount=0, cancelledValue=0, withoutAmount=0;
+ orders.forEach(o=>{
+  if(o.status==="cancelled"){
+   cancelledCount++;
+   if(o.hasAmount)cancelledValue+=Number(o.totalAmount)||0;
+  }
+  if(!o.hasAmount)withoutAmount++;
+  if(o.includedInSales&&o.hasAmount){
+   totalSales+=Number(o.totalAmount)||0;
+   includedCount++;
+  }
+ });
+ return {
+  totalOrders:includedCount,
+  allOrders:orders.length,
+  totalSales,
+  cancelledCount,
+  cancelledValue,
+  ordersWithoutAmount:withoutAmount
+ };
 }
 
 function calculateSummary(orderDocs){
-  let totalSales = 0;
-  let cancelledCount = 0;
-  let cancelledValue = 0;
-  let ordersWithoutAmount = 0;
-
-  orderDocs.forEach(orderDoc => {
-    const data = orderDoc.data();
-    const amount = Number(data.totalAmount);
-
-    if(!Number.isFinite(amount)){
-      ordersWithoutAmount++;
-    }
-
-    if(data.status === "cancelled"){
-      cancelledCount++;
-
-      if(Number.isFinite(amount)){
-        cancelledValue += amount;
-      }
-    }else if(Number.isFinite(amount)){
-      totalSales += amount;
-    }
-  });
-
-  return {
-    totalOrders: orderDocs.length,
-    totalSales,
-    cancelledCount,
-    cancelledValue,
-    ordersWithoutAmount
-  };
+ return calculateArchive(orderDocs.map(makeOrderArchive));
 }
 
 async function refreshTodaySummary(){
-  if(!auth.currentUser) return;
-
-  try{
-    const result = await getOrdersForToday();
-    currentTodayOrders = result.docs;
-
-    const summary = calculateSummary(result.docs);
-
-    todaySummary.textContent =
-      "📅 التاريخ: " + result.range.dateId +
-      "\n📦 عدد أوردرات اليوم: " + summary.totalOrders +
-      "\n💰 إجمالي الطلبات غير الملغاة: " + money(summary.totalSales) +
-      "\n❌ عدد الأوردرات الملغاة: " + summary.cancelledCount +
-      (summary.ordersWithoutAmount
-        ? "\n⚠️ أوردرات بدون إجمالي مسجل: " + summary.ordersWithoutAmount
-        : "");
-
-    closeDayButton.disabled = summary.totalOrders === 0 || closingInProgress;
-
-  }catch(e){
-    console.error("Today summary error:", e);
-
-    todaySummary.textContent =
-      "تعذر حساب أوردرات اليوم: " + (e.code || e.message || "");
-
-    closeDayButton.disabled = true;
-  }
+ if(!auth.currentUser)return;
+ try{
+  const result=await getOrdersForToday();
+  currentTodayOrders=result.docs;
+  const summary=calculateSummary(result.docs);
+  todaySummary.textContent=
+   "📅 التاريخ: "+result.range.dateId+
+   "\n📦 عدد الأوردرات المسجلة: "+summary.allOrders+
+   "\n🧾 الأوردرات المحتسبة في المبيعات: "+summary.totalOrders+
+   "\n💰 إجمالي الطلبات غير الملغاة ذات السعر: "+money(summary.totalSales)+
+   "\n❌ عدد الأوردرات الملغاة: "+summary.cancelledCount+
+   (summary.ordersWithoutAmount?"\n⚠️ أوردرات بدون إجمالي مسجل: "+summary.ordersWithoutAmount:"");
+  closeDayButton.disabled=summary.allOrders===0||closingInProgress;
+ }catch(e){
+  console.error(e);
+  todaySummary.textContent="تعذر حساب أوردرات اليوم: "+(e.code||e.message||"");
+  closeDayButton.disabled=true;
+ }
 }
 
-/* إغلاق اليوم: حفظ الملخص وحذف طلبات اليوم داخل دفعة واحدة */
-closeDayButton.onclick = async () => {
-  if(!auth.currentUser){
-    closeMessage.textContent = "سجّل الدخول أولًا.";
-    return;
+/* إغلاق اليوم وحفظ تفاصيل كل أوردر داخل ملخص اليوم */
+closeDayButton.onclick=async()=>{
+ if(!auth.currentUser){closeMessage.textContent="سجّل الدخول أولًا.";return;}
+ if(closingInProgress)return;
+ closingInProgress=true;closeDayButton.disabled=true;
+ closeMessage.textContent="جارٍ مراجعة طلبات اليوم...";
+ try{
+  const result=await getOrdersForToday();
+  const orderDocs=result.docs;
+  const orders=orderDocs.map(makeOrderArchive);
+  const summary=calculateArchive(orders);
+  const dateId=result.range.dateId;
+  if(orderDocs.length===0){closeMessage.textContent="لا توجد أوردرات اليوم لحذفها.";return;}
+  const summaryRef=doc(db,"daily_summaries",dateId);
+  const existing=await getDoc(summaryRef);
+  if(existing.exists()){
+   closeMessage.textContent="⚠️ يوجد ملخص محفوظ لهذا التاريخ بالفعل. لم يتم حذف أي طلب.";
+   return;
   }
-
-  if(closingInProgress) return;
-
-  closingInProgress = true;
-  closeDayButton.disabled = true;
-  closeMessage.textContent = "جارٍ مراجعة طلبات اليوم...";
-
-  try{
-    const result = await getOrdersForToday();
-    const orderDocs = result.docs;
-    const summary = calculateSummary(orderDocs);
-    const dateId = result.range.dateId;
-
-    if(orderDocs.length === 0){
-      closeMessage.textContent = "لا توجد أوردرات اليوم لحذفها.";
-      return;
-    }
-
-    const summaryRef = doc(db, "daily_summaries", dateId);
-    const existingSummary = await getDoc(summaryRef);
-
-    if(existingSummary.exists()){
-      closeMessage.textContent =
-        "⚠️ يوجد ملخص محفوظ لهذا التاريخ بالفعل.\n" +
-        "لن يتم الحذف مرة أخرى حتى لا يتكرر حساب المبيعات.";
-      return;
-    }
-
-    if(orderDocs.length > 499){
-      closeMessage.textContent =
-        "⚠️ عدد الطلبات اليوم أكبر من الحد الآمن لعملية الإغلاق الواحدة.\n" +
-        "لم يتم حفظ الملخص أو حذف أي طلب.";
-      return;
-    }
-
-    const report =
-      "إغلاق حساب المرسي للأسماك\n" +
-      "التاريخ: " + dateId + "\n" +
-      "عدد الطلبات: " + summary.totalOrders + "\n" +
-      "إجمالي المبيعات غير الملغاة: " + money(summary.totalSales) + "\n" +
-      "عدد الطلبات الملغاة: " + summary.cancelledCount + "\n" +
-      "قيمة الطلبات الملغاة: " + money(summary.cancelledValue) + "\n" +
-      "طلبات بدون إجمالي مسجل: " + summary.ordersWithoutAmount;
-
-    const confirmed = window.confirm(
-      report + "\n\nهل تؤكد حفظ الملخص وحذف أوردرات اليوم؟\n" +
-      "الحذف نهائي ولا يمكن التراجع عنه من لوحة الإدارة."
-    );
-
-    if(!confirmed){
-      closeMessage.textContent = "تم إلغاء الإغلاق. لم يتم حذف أي طلب.";
-      return;
-    }
-
-    const batch = writeBatch(db);
-
-    batch.set(summaryRef, {
-      date: dateId,
-      totalOrders: summary.totalOrders,
-      totalSales: summary.totalSales,
-      cancelledCount: summary.cancelledCount,
-      cancelledValue: summary.cancelledValue,
-      ordersWithoutAmount: summary.ordersWithoutAmount,
-      closedBy: auth.currentUser.email || "",
-      closedAt: serverTimestamp()
-    });
-
-    orderDocs.forEach(orderDoc => {
-      batch.delete(orderDoc.ref);
-    });
-
-    await batch.commit();
-
-    closeMessage.textContent =
-      "✅ تم إغلاق حساب اليوم بنجاح.\n" +
-      "📅 التاريخ: " + dateId +
-      "\n📦 عدد الأوردرات المحذوفة: " + summary.totalOrders +
-      "\n💰 إجمالي المبيعات المحفوظ: " + money(summary.totalSales) +
-      "\n🧾 تم حفظ الملخص في Firebase.";
-
-    await loadSummaries();
-    await refreshTodaySummary();
-
-  }catch(e){
-    console.error("Close day error:", e);
-
-    closeMessage.textContent =
-      "❌ تعذر إغلاق اليوم.\n" +
-      "لم يتم تأكيد نجاح العملية.\n" +
-      "رمز الخطأ: " + (e.code || "غير معروف") +
-      "\nالتفاصيل: " + (e.message || "");
-
-  }finally{
-    closingInProgress = false;
-
-    if(auth.currentUser){
-      await refreshTodaySummary();
-    }
-
-    closeDayButton.disabled =
-      !auth.currentUser || currentTodayOrders.length === 0;
+  if(orderDocs.length>450){
+   closeMessage.textContent="⚠️ عدد الطلبات كبير جدًا للإغلاق الآمن في عملية واحدة. لم يتم حذف أي طلب.";
+   return;
   }
+  const confirmed=window.confirm(
+   "إغلاق حساب يوم "+dateId+
+   "\nالأوردرات المسجلة: "+summary.allOrders+
+   "\nالأوردرات المحتسبة في المبيعات: "+summary.totalOrders+
+   "\nإجمالي المبيعات: "+money(summary.totalSales)+
+   "\n\nسيتم حفظ تفاصيل الأوردرات داخل ملخص اليوم، ثم حذفها من قائمة الطلبات المفتوحة. هل تؤكد؟"
+  );
+  if(!confirmed){closeMessage.textContent="تم إلغاء الإغلاق.";return;}
+
+  const batch=writeBatch(db);
+  batch.set(summaryRef,{
+   date:dateId,
+   totalOrders:summary.totalOrders,
+   allOrders:summary.allOrders,
+   totalSales:summary.totalSales,
+   cancelledCount:summary.cancelledCount,
+   cancelledValue:summary.cancelledValue,
+   ordersWithoutAmount:summary.ordersWithoutAmount,
+   orders:orders,
+   closedBy:auth.currentUser.email||"",
+   closedAt:serverTimestamp(),
+   archiveVersion:2
+  });
+  orderDocs.forEach(orderDoc=>batch.delete(orderDoc.ref));
+  await batch.commit();
+
+  closeMessage.textContent=
+   "✅ تم إغلاق حساب اليوم وحفظ تفاصيل الأوردرات.\n"+
+   "📅 التاريخ: "+dateId+
+   "\n📦 الأوردرات المحفوظة: "+summary.allOrders+
+   "\n💰 المبيعات المحتسبة: "+money(summary.totalSales);
+
+  await loadSummaries();
+  await refreshTodaySummary();
+ }catch(e){
+  console.error("Close day error:",e);
+  closeMessage.textContent="❌ تعذر إغلاق اليوم.\nرمز الخطأ: "+(e.code||"غير معروف")+"\nالتفاصيل: "+(e.message||"");
+ }finally{
+  closingInProgress=false;
+  if(auth.currentUser)await refreshTodaySummary();
+ }
 };
 
-/* عرض ملخصات الأيام السابقة */
+/* استبعاد أوردر أو إعادته للمبيعات من تفاصيل الملخص */
+async function setOrderSalesStatus(dateId,orderId,includeAgain){
+ if(!auth.currentUser){alert("سجّل الدخول أولًا.");return;}
+ const summaryRef=doc(db,"daily_summaries",dateId);
+ try{
+  const snap=await getDoc(summaryRef);
+  if(!snap.exists()){alert("ملخص اليوم غير موجود.");return;}
+  const data=snap.data();
+  if(!Array.isArray(data.orders)){
+   alert("هذا ملخص قديم لا يحتوي على تفاصيل الأوردرات. لا يمكن استبعاد أوردر بعينه منه.");
+   return;
+  }
+
+  const orders=data.orders.map(o=>({...o}));
+  const index=orders.findIndex(o=>o.id===orderId);
+  if(index<0){alert("الأوردر غير موجود داخل الملخص.");return;}
+
+  const order=orders[index];
+  if(!order.hasAmount||typeof order.totalAmount!=="number"){
+   alert("هذا الأوردر لا يحتوي على إجمالي رقمي محفوظ، لذلك لا يمكن تعديل المبيعات بدقة.");
+   return;
+  }
+  if(order.status==="cancelled"&&!includeAgain){
+   alert("الأوردر الملغي غير محتسب في المبيعات أصلًا.");
+   return;
+  }
+  if(order.includedInSales===includeAgain){
+   alert(includeAgain?"الأوردر محتسب بالفعل في المبيعات.":"الأوردر مستبعد بالفعل من المبيعات.");
+   return;
+  }
+
+  const actionText=includeAgain?"إعادة الأوردر إلى المبيعات":"استبعاد الأوردر من المبيعات";
+  const confirmed=window.confirm(
+   actionText+
+   "\nرقم الأوردر: "+order.id+
+   "\nالعميل: "+(order.customerName||"بدون اسم")+
+   "\nقيمة الأوردر: "+money(order.totalAmount)+
+   "\n\nهل تؤكد العملية؟"
+  );
+  if(!confirmed)return;
+
+  order.includedInSales=includeAgain;
+  order.excludedReason=includeAgain?"": "استبعاد يدوي من المبيعات";
+  const updated=calculateArchive(orders);
+
+  await updateDoc(summaryRef,{
+   orders:orders,
+   totalOrders:updated.totalOrders,
+   allOrders:updated.allOrders,
+   totalSales:updated.totalSales,
+   cancelledCount:updated.cancelledCount,
+   cancelledValue:updated.cancelledValue,
+   ordersWithoutAmount:updated.ordersWithoutAmount,
+   lastSalesAdjustmentAt:serverTimestamp(),
+   lastSalesAdjustmentBy:auth.currentUser.email||""
+  });
+
+  alert(includeAgain?"✅ تمت إعادة الأوردر للمبيعات.":"✅ تم استبعاد الأوردر من المبيعات مع الاحتفاظ بتفاصيله.");
+  await loadSummaries();
+  if(reportMonthInput.value)await loadMonthlyReport();
+ }catch(e){
+  console.error(e);
+  alert("تعذر تحديث المبيعات.\n"+(e.code||"")+"\n"+(e.message||""));
+ }
+}
+
+/* عرض تفاصيل أوردرات اليوم المحفوظة */
+function showSummaryOrders(dateId,data,container){
+ const old=container.querySelector(".detailsArea");
+ if(old){old.remove();return;}
+
+ const area=document.createElement("div");
+ area.className="detailsArea";
+ area.style.marginTop="12px";
+
+ if(!Array.isArray(data.orders)){
+  area.textContent="⚠️ هذا ملخص قديم محفوظ بالإجماليات فقط، ولا يحتوي على تفاصيل كل أوردر.";
+  container.appendChild(area);
+  return;
+ }
+
+ if(data.orders.length===0){
+  area.textContent="لا توجد تفاصيل أوردرات محفوظة في هذا الملخص.";
+  container.appendChild(area);
+  return;
+ }
+
+ data.orders.forEach(order=>{
+  const card=document.createElement("div");
+  card.className="reportDay"+(order.includedInSales?"":" excludedOrder");
+
+  const title=document.createElement("strong");
+  title.textContent=(order.includedInSales?"✅ محتسب في المبيعات":"🚫 مستبعد من المبيعات")+" — "+(order.customerName||"بدون اسم");
+
+  const details=document.createElement("div");
+  details.style.whiteSpace="pre-wrap";
+  details.style.overflowWrap="anywhere";
+  details.textContent=
+   "\nرقم الأوردر: "+order.id+
+   "\nالموبايل: "+(order.phone||"—")+
+   "\nالعنوان: "+(order.address||"—")+
+   "\nالطلب: "+(order.items||"—")+
+   "\nالتجهيزات: "+(order.prep||"—")+
+   "\nالحالة وقت الإغلاق: "+statusLabel(order.status)+
+   "\nقيمة الأوردر: "+(order.hasAmount?money(order.totalAmount):"غير مسجلة");
+
+  card.append(title,details);
+
+  if(order.status==="cancelled"){
+   const note=document.createElement("div");
+   note.className="smallText";
+   note.textContent="\nالأوردر ملغي وغير محتسب في المبيعات.";
+   card.appendChild(note);
+  }else if(!order.hasAmount||typeof order.totalAmount!=="number"){
+   const note=document.createElement("div");
+   note.className="smallText";
+   note.textContent="\nلا يمكن تعديل المبيعات لهذا الأوردر لعدم وجود إجمالي رقمي محفوظ.";
+   card.appendChild(note);
+  }else{
+   const button=document.createElement("button");
+   button.className=order.includedInSales?"warning":"secondary";
+   button.textContent=order.includedInSales?"➖ استبعاد من المبيعات":"↩️ إعادة إلى المبيعات";
+   button.onclick=async()=>{
+    button.disabled=true;
+    await setOrderSalesStatus(dateId,order.id,!order.includedInSales);
+    button.disabled=false;
+   };
+   card.appendChild(button);
+  }
+  area.appendChild(card);
+ });
+
+ container.appendChild(area);
+}
+
+/* ملخصات الأيام */
 async function loadSummaries(){
-  if(!auth.currentUser){
-    summariesOutput.textContent = "سجّل الدخول أولًا.";
-    return;
-  }
+ if(!auth.currentUser){summariesOutput.textContent="سجّل الدخول أولًا.";return;}
+ summariesOutput.textContent="جارٍ تحميل ملخصات المبيعات...";
+ try{
+  const snap=await getDocs(query(collection(db,"daily_summaries"),limit(100)));
+  summariesOutput.replaceChildren();
+  const docs=snap.docs.slice().sort((a,b)=>String(b.data().date||b.id).localeCompare(String(a.data().date||a.id)));
+  if(!docs.length){summariesOutput.textContent="لا توجد ملخصات محفوظة حتى الآن.";return;}
 
-  summariesOutput.textContent = "جارٍ تحميل ملخصات المبيعات...";
-
-  try{
-    const q = query(
-      collection(db, "daily_summaries"),
-      orderBy("date", "desc"),
-      limit(100)
-    );
-
-    const snap = await getDocs(q);
-    summariesOutput.replaceChildren();
-
-    if(snap.empty){
-      summariesOutput.textContent = "لا توجد ملخصات محفوظة حتى الآن.";
-      return;
-    }
-
-    snap.forEach(summaryDoc => {
-      const data = summaryDoc.data();
-      const card = document.createElement("div");
-      card.className = "summaryCard";
-
-      card.textContent =
-        "📅 التاريخ: " + (data.date || summaryDoc.id) +
-        "\n📦 عدد الأوردرات: " + (data.totalOrders ?? 0) +
-        "\n💰 إجمالي المبيعات: " + money(data.totalSales) +
-        "\n❌ الأوردرات الملغاة: " + (data.cancelledCount ?? 0) +
-        "\n💵 قيمة الطلبات الملغاة: " + money(data.cancelledValue) +
-        "\n⚠️ طلبات بدون إجمالي: " + (data.ordersWithoutAmount ?? 0);
-
-      summariesOutput.appendChild(card);
-    });
-
-  }catch(e){
-    console.error("Load summaries error:", e);
-
-    summariesOutput.textContent =
-      "تعذر تحميل الملخصات: " + (e.code || e.message || "");
-  }
+  docs.forEach(summaryDoc=>{
+   const data=summaryDoc.data();
+   const card=document.createElement("div");
+   card.className="summaryCard";
+   const text=document.createElement("div");
+   text.textContent=
+    "📅 التاريخ: "+(data.date||summaryDoc.id)+
+    "\n💰 إجمالي المبيعات المحتسبة: "+money(data.totalSales)+
+    "\n🧾 عدد الأوردرات المحتسبة: "+(data.totalOrders??0)+
+    "\n📦 إجمالي الأوردرات المحفوظة: "+(data.allOrders??data.totalOrders??0)+
+    "\n❌ الأوردرات الملغاة: "+(data.cancelledCount??0)+
+    "\n💵 قيمة الطلبات الملغاة: "+money(data.cancelledValue)+
+    "\n⚠️ طلبات بدون إجمالي: "+(data.ordersWithoutAmount??0);
+   const detailsButton=document.createElement("button");
+   detailsButton.className="secondary";
+   detailsButton.textContent="📋 عرض أوردرات اليوم وتعديل المبيعات";
+   detailsButton.onclick=()=>showSummaryOrders(summaryDoc.id,data,card);
+   card.append(text,detailsButton);
+   summariesOutput.appendChild(card);
+  });
+ }catch(e){
+  console.error(e);
+  summariesOutput.textContent="تعذر تحميل الملخصات: "+(e.code||e.message||"");
+ }
 }
+loadSummariesButton.onclick=loadSummaries;
 
-loadSummariesButton.onclick = loadSummaries;
-
-/* إعداد الشهر الحالي تلقائيًا */
+/* التقرير الشهري */
 {
-  const now = new Date();
-
-  reportMonthInput.value =
-    now.getFullYear() + "-" +
-    String(now.getMonth() + 1).padStart(2, "0");
+ const now=new Date();
+ reportMonthInput.value=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0");
 }
 
-/* تقرير الحسابات الشهري */
-loadMonthlyReportButton.onclick = async () => {
-  if(!auth.currentUser){
-    monthlyReportOutput.textContent = "سجّل الدخول أولًا.";
-    return;
+async function loadMonthlyReport(){
+ if(!auth.currentUser){monthlyReportOutput.textContent="سجّل الدخول أولًا.";return;}
+ const selectedMonth=reportMonthInput.value;
+ if(!selectedMonth){monthlyReportOutput.textContent="اختر الشهر المطلوب أولًا.";return;}
+
+ loadMonthlyReportButton.disabled=true;
+ monthlyReportOutput.textContent="جارٍ حساب التقرير الشهري...";
+ try{
+  const [year,month]=selectedMonth.split("-").map(Number);
+  const startDate=year+"-"+String(month).padStart(2,"0")+"-01";
+  const nextMonth=new Date(year,month,1);
+  const endDate=nextMonth.getFullYear()+"-"+String(nextMonth.getMonth()+1).padStart(2,"0")+"-01";
+
+  const snap=await getDocs(query(
+   collection(db,"daily_summaries"),
+   where("date",">=",startDate),
+   where("date","<",endDate)
+  ));
+
+  monthlyReportOutput.replaceChildren();
+  if(snap.empty){
+   monthlyReportOutput.textContent="لا توجد ملخصات إغلاق محفوظة للشهر "+selectedMonth+".";
+   return;
   }
 
-  const selectedMonth = reportMonthInput.value;
+  let totalSales=0,totalOrders=0,allOrders=0,cancelledCount=0,cancelledValue=0,ordersWithoutAmount=0;
+  const dayCards=[];
+  const docs=snap.docs.slice().sort((a,b)=>String(a.data().date||a.id).localeCompare(String(b.data().date||b.id)));
 
-  if(!selectedMonth){
-    monthlyReportOutput.textContent = "اختر الشهر المطلوب أولًا.";
-    return;
-  }
+  docs.forEach(summaryDoc=>{
+   const data=summaryDoc.data();
+   const sales=Number(data.totalSales)||0;
+   const orders=Number(data.totalOrders)||0;
+   const all=Number(data.allOrders??data.totalOrders)||0;
+   const cancelled=Number(data.cancelledCount)||0;
+   const cancelledAmount=Number(data.cancelledValue)||0;
+   const missing=Number(data.ordersWithoutAmount)||0;
 
-  loadMonthlyReportButton.disabled = true;
-  monthlyReportOutput.textContent = "جارٍ حساب التقرير الشهري...";
+   totalSales+=sales;totalOrders+=orders;allOrders+=all;
+   cancelledCount+=cancelled;cancelledValue+=cancelledAmount;ordersWithoutAmount+=missing;
 
-  try{
-    const [year, month] = selectedMonth.split("-").map(Number);
+   const card=document.createElement("div");
+   card.className="reportDay";
+   card.textContent=
+    "📅 التاريخ: "+(data.date||summaryDoc.id)+
+    "\n💰 المبيعات المحتسبة: "+money(sales)+
+    "\n🧾 الأوردرات المحتسبة: "+orders+
+    "\n📦 الأوردرات المسجلة: "+all+
+    "\n❌ الأوردرات الملغاة: "+cancelled+
+    "\n💵 قيمة الطلبات الملغاة: "+money(cancelledAmount)+
+    (missing?"\n⚠️ طلبات بدون إجمالي مسجل: "+missing:"");
 
-    const startDate =
-      year + "-" + String(month).padStart(2, "0") + "-01";
+   if(Array.isArray(data.orders)){
+    const detailsButton=document.createElement("button");
+    detailsButton.className="secondary";
+    detailsButton.textContent="📋 عرض أوردرات اليوم";
+    detailsButton.onclick=()=>showSummaryOrders(summaryDoc.id,data,card);
+    card.appendChild(detailsButton);
+   }else{
+    const note=document.createElement("div");
+    note.className="smallText";
+    note.textContent="ملخص قديم: تفاصيل الأوردرات غير محفوظة.";
+    card.appendChild(note);
+   }
+   dayCards.push(card);
+  });
 
-    const nextMonth = new Date(year, month, 1);
+  const totals=document.createElement("div");
+  totals.className="reportTotals";
+  totals.textContent=
+   "📊 تقرير المرسي للأسماك — "+selectedMonth+
+   "\n💰 إجمالي المبيعات المحتسبة: "+money(totalSales)+
+   "\n🧾 عدد الأوردرات المحتسبة: "+totalOrders+
+   "\n📦 إجمالي الأوردرات المسجلة: "+allOrders+
+   "\n❌ إجمالي الطلبات الملغاة: "+cancelledCount+
+   "\n💵 قيمة الطلبات الملغاة: "+money(cancelledValue)+
+   "\n⚠️ طلبات بدون إجمالي مسجل: "+ordersWithoutAmount+
+   "\n🗓️ عدد أيام الإغلاق المسجلة: "+snap.size;
 
-    const endDate =
-      nextMonth.getFullYear() + "-" +
-      String(nextMonth.getMonth() + 1).padStart(2, "0") +
-      "-01";
+  monthlyReportOutput.appendChild(totals);
+  const heading=document.createElement("h3");
+  heading.textContent="تفاصيل المبيعات اليومية";
+  monthlyReportOutput.appendChild(heading);
+  dayCards.forEach(card=>monthlyReportOutput.appendChild(card));
 
-    const summariesQuery = query(
-      collection(db, "daily_summaries"),
-      where("date", ">=", startDate),
-      where("date", "<", endDate),
-      orderBy("date", "asc")
-    );
-
-    const snapshot = await getDocs(summariesQuery);
-
-    monthlyReportOutput.replaceChildren();
-
-    if(snapshot.empty){
-      monthlyReportOutput.textContent =
-        "لا توجد ملخصات إغلاق محفوظة للشهر " + selectedMonth + ".";
-      return;
-    }
-
-    let totalSales = 0;
-    let totalOrders = 0;
-    let cancelledCount = 0;
-    let cancelledValue = 0;
-    let ordersWithoutAmount = 0;
-
-    const dailyCards = [];
-
-    snapshot.forEach(summaryDoc => {
-      const data = summaryDoc.data();
-
-      const sales = Number(data.totalSales) || 0;
-      const orders = Number(data.totalOrders) || 0;
-      const cancelled = Number(data.cancelledCount) || 0;
-      const cancelledAmount = Number(data.cancelledValue) || 0;
-      const missingAmounts = Number(data.ordersWithoutAmount) || 0;
-
-      totalSales += sales;
-      totalOrders += orders;
-      cancelledCount += cancelled;
-      cancelledValue += cancelledAmount;
-      ordersWithoutAmount += missingAmounts;
-
-      const card = document.createElement("div");
-      card.className = "reportDay";
-
-      card.textContent =
-        "📅 التاريخ: " + (data.date || summaryDoc.id) +
-        "\n💰 المبيعات غير الملغاة: " + money(sales) +
-        "\n📦 عدد الطلبات: " + orders +
-        "\n❌ الطلبات الملغاة: " + cancelled +
-        "\n💵 قيمة الطلبات الملغاة: " + money(cancelledAmount) +
-        (missingAmounts
-          ? "\n⚠️ طلبات بدون إجمالي مسجل: " + missingAmounts
-          : "");
-
-      dailyCards.push(card);
-    });
-
-    const totals = document.createElement("div");
-    totals.className = "reportTotals";
-
-    totals.textContent =
-      "📊 تقرير المرسي للأسماك — " + selectedMonth +
-      "\n💰 إجمالي المبيعات المسجلة: " + money(totalSales) +
-      "\n📦 إجمالي الطلبات في الأيام المغلقة: " + totalOrders +
-      "\n❌ إجمالي الطلبات الملغاة: " + cancelledCount +
-      "\n💵 قيمة الطلبات الملغاة: " + money(cancelledValue) +
-      "\n⚠️ طلبات بدون إجمالي مسجل: " + ordersWithoutAmount +
-      "\n🗓️ عدد أيام الإغلاق المسجلة: " + snapshot.size;
-
-    monthlyReportOutput.appendChild(totals);
-
-    const heading = document.createElement("h3");
-    heading.textContent = "تفاصيل المبيعات اليومية";
-    monthlyReportOutput.appendChild(heading);
-
-    dailyCards.forEach(card => {
-      monthlyReportOutput.appendChild(card);
-    });
-
-  }catch(e){
-    console.error("Monthly report error:", e);
-
-    monthlyReportOutput.textContent =
-      "تعذر تحميل التقرير الشهري.\n" +
-      "رمز الخطأ: " + (e.code || "غير معروف") +
-      "\nالتفاصيل: " + (e.message || "");
-  }finally{
-    loadMonthlyReportButton.disabled = false;
-  }
-};
+ }catch(e){
+  console.error(e);
+  monthlyReportOutput.textContent="تعذر تحميل التقرير الشهري.\nرمز الخطأ: "+(e.code||"غير معروف")+"\nالتفاصيل: "+(e.message||"");
+ }finally{loadMonthlyReportButton.disabled=false;}
+}
+loadMonthlyReportButton.onclick=loadMonthlyReport;
 </script>
 </body>
 </html>
