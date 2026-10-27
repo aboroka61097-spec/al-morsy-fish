@@ -55,12 +55,23 @@ a{color:#075985}
 </div>
 
 <script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
-  getFirestore, doc, getDoc, onSnapshot
+  initializeApp,
+  getApps
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
 import {
-  getAuth, signInAnonymously, setPersistence, browserLocalPersistence
+  getAuth,
+  signInAnonymously,
+  setPersistence,
+  browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
 const firebaseConfig = {
@@ -72,21 +83,22 @@ const firebaseConfig = {
   appId: "1:826154741509:web:9cb852e4a7bbe5aaacd16c"
 };
 
-// اسم منفصل لهوية العميل، ويجب استخدامه أيضًا في orders.html
+/* مهم: نفس اسم تطبيق العميل المستخدم في orders.html */
 const appName = "customerApp";
 const existingApp = getApps().find(item => item.name === appName);
 const app = existingApp || initializeApp(firebaseConfig, appName);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const form = document.getElementById("trackForm");
-const orderInput = document.getElementById("orderId");
-const button = document.getElementById("trackBtn");
-const message = document.getElementById("message");
-const result = document.getElementById("result");
-const shownId = document.getElementById("shownId");
-const statusBox = document.getElementById("status");
-const updated = document.getElementById("updated");
+const $ = id => document.getElementById(id);
+const form = $("trackForm");
+const orderInput = $("orderId");
+const button = $("trackBtn");
+const message = $("message");
+const result = $("result");
+const shownId = $("shownId");
+const statusBox = $("status");
+const updated = $("updated");
 
 let unsubscribe = null;
 
@@ -108,33 +120,65 @@ function showMessage(text, type = "success") {
 }
 
 function errorDetails(error) {
-  const code = error?.code || "unknown";
-  const detail = error?.message || "لا توجد تفاصيل إضافية";
-  return "كود الخطأ: " + code + "\nالتفاصيل: " + detail;
+  return "كود الخطأ: " + (error?.code || "unknown") +
+    "\nالتفاصيل: " + (error?.message || "لا توجد تفاصيل إضافية");
 }
 
 async function ensureLogin() {
   await setPersistence(auth, browserLocalPersistence);
-  if (auth.currentUser) return auth.currentUser;
+
+  if (auth.currentUser) {
+    return auth.currentUser;
+  }
+
   const credential = await signInAnonymously(auth);
   return credential.user;
 }
 
-async function trackOrder(orderId) {
+function stopListening() {
   if (unsubscribe) {
     unsubscribe();
     unsubscribe = null;
   }
+}
 
+function renderStatus(order) {
+  statusBox.textContent =
+    labels[order.status] ||
+    ("حالة الطلب: " + (order.status || "قيد المراجعة"));
+
+  updated.textContent =
+    "الحالة تتحدث تلقائيًا عند تعديلها من إدارة المرسي للأسماك.";
+}
+
+async function trackOrder(orderId) {
+  stopListening();
   result.style.display = "none";
   updated.textContent = "";
-  showMessage("جارٍ التحقق من الطلب...");
   button.disabled = true;
+  showMessage("جارٍ التحقق من الطلب...");
 
   try {
     const user = await ensureLogin();
     const orderRef = doc(db, "orders", orderId);
-    const snap = await getDoc(orderRef);
+
+    let snap;
+
+    try {
+      snap = await getDoc(orderRef);
+    } catch (error) {
+      if (error?.code === "permission-denied") {
+        showMessage(
+          "Firebase رفض قراءة الطلب بسبب الصلاحيات.\n\n" +
+          "تأكد أن صفحة orders.html تستخدم تطبيق Firebase باسم customerApp أيضًا.\n" +
+          "إذا أُنشئ هذا الطلب قبل توحيد الهوية، فقد لا تستطيع الهوية الحالية قراءته.\n\n" +
+          "لا تغيّر قواعد Firestore ولا تجعل قراءة الطلبات عامة.",
+          "error"
+        );
+        return;
+      }
+      throw error;
+    }
 
     if (!snap.exists()) {
       showMessage("الطلب غير موجود. راجع رقم الطلب.", "error");
@@ -145,44 +189,37 @@ async function trackOrder(orderId) {
 
     if (!order.ownerUid || order.ownerUid !== user.uid) {
       showMessage(
-        "الطلب موجود، لكن هوية العميل الحالية مختلفة عن الهوية التي أرسلت الطلب.\nتأكد أن orders.html يستخدم تطبيق Firebase باسم customerApp أيضًا. الطلبات القديمة قد تحتاج معالجة منفصلة.",
+        "الطلب مسجل بهوية عميل مختلفة عن الهوية الحالية.\n" +
+        "جرّب طلبًا جديدًا بعد توحيد تطبيق العميل في صفحة الطلب والمتابعة.",
         "error"
       );
       return;
     }
 
-    result.style.display = "block";
     shownId.textContent = orderId;
-    showMessage("تم العثور على طلبك.", "success");
-
-    function renderStatus(liveOrder) {
-      statusBox.textContent =
-        labels[liveOrder.status] ||
-        ("حالة الطلب: " + (liveOrder.status || "قيد المراجعة"));
-      updated.textContent = "تتحدث الحالة تلقائيًا عند تعديلها من الإدارة.";
-    }
-
+    result.style.display = "block";
     renderStatus(order);
+    showMessage("تم العثور على طلبك بنجاح.", "success");
 
     unsubscribe = onSnapshot(
       orderRef,
       liveSnap => {
         if (!liveSnap.exists()) {
-          showMessage("لم يعد الطلب متاحًا.", "error");
           result.style.display = "none";
+          showMessage("لم يعد الطلب متاحًا.", "error");
+          stopListening();
           return;
         }
 
         const liveOrder = liveSnap.data();
+
         if (liveOrder.ownerUid !== user.uid) {
-          showMessage("تعذر التحقق من ملكية الطلب.", "error");
           result.style.display = "none";
-          if (unsubscribe) {
-            unsubscribe();
-            unsubscribe = null;
-          }
+          showMessage("تعذر التحقق من ملكية الطلب.", "error");
+          stopListening();
           return;
         }
+
         renderStatus(liveOrder);
       },
       error => {
@@ -193,9 +230,20 @@ async function trackOrder(orderId) {
         );
       }
     );
+
   } catch (error) {
     console.error("Tracking error:", error);
-    showMessage("تعذر فتح الطلب.\n" + errorDetails(error), "error");
+
+    if (error?.code === "auth/operation-not-allowed") {
+      showMessage(
+        "تسجيل الدخول المجهول غير مفعّل في Firebase Authentication.",
+        "error"
+      );
+    } else if (error?.code === "auth/network-request-failed") {
+      showMessage("تعذر الاتصال بالإنترنت. حاول مرة أخرى.", "error");
+    } else {
+      showMessage("تعذر فتح الطلب.\n" + errorDetails(error), "error");
+    }
   } finally {
     button.disabled = false;
   }
@@ -203,6 +251,7 @@ async function trackOrder(orderId) {
 
 form.addEventListener("submit", async event => {
   event.preventDefault();
+
   const id = orderInput.value.trim();
 
   if (!id || id.length > 150 || id.includes("/")) {
