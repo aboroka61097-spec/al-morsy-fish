@@ -75,6 +75,7 @@ button.danger{background:#b42318}
   border-radius:10px;padding:12px;margin:9px 0;
   line-height:1.9;overflow-wrap:anywhere
 }
+.deleteMessage{color:#b42318}
 @media(max-width:480px){
   body{padding:9px}
   section{padding:13px}
@@ -182,6 +183,7 @@ import {
   doc,
   getDoc,
   updateDoc,
+  deleteDoc,
   onSnapshot,
   Timestamp,
   serverTimestamp,
@@ -393,6 +395,44 @@ async function saveStatus(orderId, select, button, message){
   }
 }
 
+/* حذف طلب فردي بعد تأكيد الإدارة */
+async function deleteOrder(orderId, button, message){
+  if(!auth.currentUser){
+    message.textContent = "سجّل الدخول أولًا.";
+    return;
+  }
+
+  const confirmed = window.confirm(
+    "هل أنت متأكد من حذف الأوردر رقم:\n" +
+    orderId +
+    "\n\nالحذف نهائي ولا يمكن التراجع عنه."
+  );
+
+  if(!confirmed) return;
+
+  button.disabled = true;
+  message.classList.add("deleteMessage");
+  message.textContent = "جارٍ حذف الأوردر...";
+
+  try{
+    await deleteDoc(doc(db, "orders", orderId));
+
+    message.textContent = "✅ تم حذف الأوردر بنجاح.";
+    message.classList.remove("deleteMessage");
+
+  }catch(e){
+    console.error("Delete order error:", e);
+
+    message.textContent =
+      "❌ تعذر حذف الأوردر.\n" +
+      "رمز الخطأ: " + (e.code || "غير معروف") +
+      "\nالتفاصيل: " + (e.message || "") +
+      "\nإذا ظهر permission-denied، فقواعد Firestore تمنع الحذف.";
+
+    button.disabled = false;
+  }
+}
+
 function createContactButtons(phoneValue){
   const container = document.createElement("div");
   container.className = "contactButtons";
@@ -494,7 +534,27 @@ function renderOrder(orderId, x, isNew){
   saveButton.onclick = () => saveStatus(orderId, select, saveButton, message);
 
   controls.append(label, select, saveButton, message);
-  card.replaceChildren(title, body, contacts, controls);
+
+  /* زر الحذف لكل طلب */
+  const deleteButton = document.createElement("button");
+  deleteButton.className = "danger";
+  deleteButton.textContent = "🗑️ حذف الأوردر";
+
+  const deleteMessage = document.createElement("div");
+  deleteMessage.className = "statusMessage";
+
+  deleteButton.onclick = () => {
+    deleteOrder(orderId, deleteButton, deleteMessage);
+  };
+
+  card.replaceChildren(
+    title,
+    body,
+    contacts,
+    controls,
+    deleteButton,
+    deleteMessage
+  );
 
   return card;
 }
@@ -634,7 +694,7 @@ function getTodayRange(){
   };
 }
 
-/* جلب جميع طلبات اليوم، وليس آخر 100 طلب فقط */
+/* جلب جميع طلبات اليوم */
 async function getOrdersForToday(){
   const range = getTodayRange();
 
@@ -717,7 +777,7 @@ async function refreshTodaySummary(){
   }
 }
 
-/* إغلاق اليوم: حفظ الملخص وحذف الطلبات داخل دفعة ذرية واحدة */
+/* إغلاق اليوم: حفظ الملخص وحذف طلبات اليوم داخل دفعة واحدة */
 closeDayButton.onclick = async () => {
   if(!auth.currentUser){
     closeMessage.textContent = "سجّل الدخول أولًا.";
@@ -751,14 +811,10 @@ closeDayButton.onclick = async () => {
       return;
     }
 
-    /*
-      Firestore batch له حد 500 عملية.
-      نترك عملية لحفظ الملخص، لذلك نسمح بحد أقصى 499 طلبًا.
-    */
     if(orderDocs.length > 499){
       closeMessage.textContent =
         "⚠️ عدد الطلبات اليوم أكبر من الحد الآمن لعملية الإغلاق الواحدة.\n" +
-        "لم يتم حفظ الملخص أو حذف أي طلب. يلزم تنفيذ الإغلاق على دفعات آمنة.";
+        "لم يتم حفظ الملخص أو حذف أي طلب.";
       return;
     }
 
@@ -781,10 +837,6 @@ closeDayButton.onclick = async () => {
       return;
     }
 
-    /*
-      نستخدم دفعة واحدة حتى يتم حفظ الملخص والحذف معًا:
-      إما تنجح العمليتان معًا أو لا تنفذ أي منهما.
-    */
     const batch = writeBatch(db);
 
     batch.set(summaryRef, {
@@ -830,7 +882,8 @@ closeDayButton.onclick = async () => {
       await refreshTodaySummary();
     }
 
-    closeDayButton.disabled = !auth.currentUser || currentTodayOrders.length === 0;
+    closeDayButton.disabled =
+      !auth.currentUser || currentTodayOrders.length === 0;
   }
 };
 
@@ -893,7 +946,7 @@ loadSummariesButton.onclick = loadSummaries;
     String(now.getMonth() + 1).padStart(2, "0");
 }
 
-/* تقرير الحسابات الشهري من ملخصات الأيام المحفوظة */
+/* تقرير الحسابات الشهري */
 loadMonthlyReportButton.onclick = async () => {
   if(!auth.currentUser){
     monthlyReportOutput.textContent = "سجّل الدخول أولًا.";
