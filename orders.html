@@ -4,633 +4,531 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#071d3a">
-<title>إدارة المرسي للأسماك</title>
+<title>طلب أوردر | المرسي للأسماك</title>
+
 <style>
+:root{font-family:Tahoma,Arial,sans-serif;color:#123047;background:#f2f8fb}
 *{box-sizing:border-box}
-body{margin:0;padding:12px;font-family:Tahoma,Arial,sans-serif;background:#eef3f7;color:#10243a}
-main{max-width:1000px;margin:auto}
-section{background:#fff;border-radius:15px;padding:16px;margin:12px 0;box-shadow:0 4px 15px #0001}
-h1,h2,h3{color:#071d3a}
-label{display:block;margin:10px 0 5px;font-weight:bold}
-input,select{width:100%;padding:11px;border:1px solid #ccd5df;border-radius:9px;font:inherit;background:#fff}
-button{padding:11px 14px;border:0;border-radius:9px;background:#0b7751;color:#fff;font:inherit;font-weight:bold;margin:6px 4px 0 0;cursor:pointer}
-button:disabled{opacity:.6}
-.secondary{background:#34485d}
-.danger{background:#b42318}
-.edit{background:#1769aa}
-.status{white-space:pre-wrap;line-height:1.8;overflow-wrap:anywhere}
-.meta{color:#586b7e;font-size:13px;line-height:1.8}
-.order,.itemCard,.summaryCard,.reportDay{border:1px solid #dce4ed;border-radius:11px;padding:13px;margin:10px 0;overflow-wrap:anywhere}
-.order p{white-space:pre-wrap;line-height:1.9}
-.statusBox{margin-top:10px;padding:10px;background:#eef6ff;border-radius:8px}
-.statusMessage{white-space:pre-wrap;line-height:1.8;font-size:13px}
-.contactButtons{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.contactButtons a{padding:10px;border-radius:8px;color:#fff;text-decoration:none;font-weight:bold}
-.callLink{background:#1769aa}.whatsappLink{background:#168a4a}
-.row{display:grid;grid-template-columns:2fr 1fr;gap:8px}
-.itemActions{display:flex;flex-wrap:wrap;gap:5px}
-.itemActions button{flex:1}
-.activeTag{color:#0b7751;font-weight:bold}
-.inactiveTag{color:#b42318;font-weight:bold}
-.summaryCard{background:#f1f8ff;line-height:2}
-.reportTotals{background:#edf9f1;border:1px solid #b8e0c4;border-radius:10px;padding:13px;line-height:2}
-@media(max-width:520px){
- body{padding:7px}section{padding:12px}
- button{margin:6px 0;width:100%}
- .row{grid-template-columns:1fr}
- .contactButtons{display:grid;grid-template-columns:1fr 1fr}
- .itemActions{display:grid;grid-template-columns:1fr 1fr}
-}
+body{margin:0;padding:14px}
+.wrap{max-width:650px;margin:auto}
+.card{background:#fff;border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 4px 18px #12304712}
+h1{font-size:24px;color:#071d3a;margin:0 0 8px}
+h2{font-size:19px;margin:0 0 14px;color:#075985}
+p{line-height:1.8}
+label{display:block;font-weight:bold;margin:13px 0 6px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font:inherit;background:white}
+textarea{min-height:75px;resize:vertical}
+button{border:0;border-radius:10px;padding:12px 15px;font:inherit;font-weight:bold;cursor:pointer}
+.primary{background:#075985;color:white;width:100%;margin-top:15px}
+.secondary{background:#e0f2fe;color:#075985}
+.danger{background:#fee2e2;color:#991b1b}
+.fishrow{border:1px solid #dbe7ef;border-radius:12px;padding:12px;margin:12px 0}
+.fishhead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.fishhead strong{color:#075985}
+.price{font-size:14px;color:#475569;margin:8px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.totalbox{background:#eff6ff;border-radius:12px;padding:15px;margin-top:14px}
+.totalrow{display:flex;justify-content:space-between;gap:12px;margin:8px 0}
+.grand{font-size:21px;font-weight:bold;color:#075985;border-top:1px solid #bfdbfe;padding-top:12px}
+.muted{color:#64748b;font-size:13px;line-height:1.8}
+.message{padding:12px;border-radius:10px;margin-top:12px;line-height:1.8;display:none}
+.error{background:#fee2e2;color:#991b1b}
+.success{background:#dcfce7;color:#166534}
+a{color:#075985;overflow-wrap:anywhere}
+button:disabled{opacity:.6;cursor:wait}
+@media(max-width:420px){.grid{grid-template-columns:1fr}.card{padding:14px}}
 </style>
 </head>
+
 <body>
-<main>
-<h1>🐟 لوحة إدارة المرسي للأسماك</h1>
+<div class="wrap">
+  <div class="card">
+    <h1>🐟 المرسي للأسماك</h1>
+    <p>من البحر لحد عندك ❤️</p>
+    <p class="muted">اطلب سمكك الطازة، اختار الكمية والتجهيز، وشوف حساب طلبك قبل الإرسال.</p>
+    <div id="loadMessage" class="muted">جاري تحميل قائمة الأسماك والأسعار...</div>
+  </div>
 
-<section>
-<h3>🔐 دخول الإدارة</h3>
-<label for="email">البريد الإلكتروني</label>
-<input id="email" type="email" autocomplete="username">
-<label for="password">كلمة المرور</label>
-<input id="password" type="password" autocomplete="current-password">
-<button id="login">دخول</button>
-<button id="logout" class="secondary">تسجيل خروج</button>
-<div id="authMsg" class="status"></div>
-</section>
+  <form id="orderForm">
+    <div class="card">
+      <h2>بيانات العميل</h2>
 
-<section>
-<h2>🐟 إدارة أصناف وأسعار اليوم</h2>
-<p class="meta">أضف السمك المتاح اليوم وسعر الكيلو. الأصناف المفعّلة فقط ستظهر للعميل.</p>
-<form id="fishForm">
-<input id="fishId" type="hidden">
-<label for="fishName">اسم السمك</label>
-<input id="fishName" required maxlength="80" placeholder="مثال: شبار وسط">
-<label for="fishPrice">سعر الكيلو بالجنيه</label>
-<input id="fishPrice" type="number" min="1" step="0.01" required placeholder="مثال: 150">
-<button id="saveFish" type="submit">➕ إضافة صنف السمك</button>
-<button id="cancelFishEdit" class="secondary" type="button" hidden>إلغاء التعديل</button>
-</form>
-<div id="fishMessage" class="status"></div>
-<hr>
-<h3>الأصناف المسجلة</h3>
-<div id="fishList" class="status">سجّل الدخول لعرض الأصناف.</div>
-</section>
+      <label for="customerName">الاسم بالكامل *</label>
+      <input id="customerName" maxlength="100" required minlength="2" autocomplete="name">
 
-<section>
-<h2>🍳 إدارة أسعار التجهيزات</h2>
-<p class="meta">تقدر تضيف تجهيزًا أو تعدّل سعره. اختار «بالكيلو» لو السعر لكل كيلو، أو «سعر ثابت» لو بيتحسب مرة واحدة.</p>
-<form id="prepForm">
-<input id="prepId" type="hidden">
-<label for="prepName">اسم التجهيز</label>
-<input id="prepName" required maxlength="80" placeholder="مثال: شوي زيت وليمون">
-<label for="prepPrice">السعر بالجنيه</label>
-<input id="prepPrice" type="number" min="0" step="0.01" required placeholder="مثال: 25">
-<label for="prepMode">طريقة حساب السعر</label>
-<select id="prepMode">
-<option value="per_kg">بالكيلو</option>
-<option value="fixed">سعر ثابت للطلب</option>
-</select>
-<button id="savePrep" type="submit">➕ إضافة تجهيز</button>
-<button id="cancelPrepEdit" class="secondary" type="button" hidden>إلغاء التعديل</button>
-</form>
-<div id="prepMessage" class="status"></div>
-<hr>
-<h3>التجهيزات المسجلة</h3>
-<div id="prepList" class="status">سجّل الدخول لعرض التجهيزات.</div>
-</section>
+      <label for="phone">رقم الموبايل *</label>
+      <input id="phone" type="tel" maxlength="20" required minlength="8" autocomplete="tel">
 
-<section>
-<h2>📦 إدارة الطلبات</h2>
-<p id="liveStatus" class="meta">سجّل الدخول لتشغيل متابعة الطلبات.</p>
-<button id="enableSound" class="secondary">🔔 تفعيل صوت التنبيه</button>
-<button id="load">تحديث الطلبات الآن</button>
-<div id="orders" class="status"></div>
-</section>
+      <label for="address">العنوان بالتفصيل *</label>
+      <textarea id="address" maxlength="500" required minlength="5" autocomplete="street-address" placeholder="المنطقة والشارع ورقم العقار وأي علامة مميزة"></textarea>
 
-<section>
-<h2>🧾 إغلاق حساب اليوم</h2>
-<p class="meta">يحفظ ملخص اليوم ثم يحذف طلبات اليوم بعد تأكيدك. لا تضغط الإغلاق مرتين.</p>
-<div id="todaySummary" class="summaryCard">سجّل الدخول لعرض حساب اليوم.</div>
-<button id="closeDay" class="danger">🔒 إغلاق حساب اليوم وحفظ الملخص</button>
-<div id="closeMessage" class="status"></div>
-</section>
+      <label for="delivery">طريقة الاستلام *</label>
+      <select id="delivery" required>
+        <option value="delivery">توصيل لحد باب البيت</option>
+        <option value="pickup">استلام من المحل</option>
+      </select>
+    </div>
 
-<section>
-<h2>📚 ملخصات الأيام السابقة</h2>
-<button id="loadSummaries" class="secondary">عرض ملخصات المبيعات</button>
-<div id="summaries" class="status"></div>
-</section>
+    <div class="card">
+      <h2>اختار السمك والكمية</h2>
+      <p class="muted">الأسعار للكيلو. اختار نوع السمك وحدد عدد الكيلوجرامات.</p>
+      <div id="fishRows"></div>
+      <button type="button" class="secondary" id="addFish">+ إضافة نوع سمك</button>
+    </div>
 
-<section>
-<h2>📊 تقرير الحسابات الشهري</h2>
-<label for="reportMonth">اختر الشهر</label>
-<input type="month" id="reportMonth">
-<button id="loadMonthlyReport">عرض التقرير الشهري</button>
-<div id="monthlyReport" class="status"></div>
-</section>
-</main>
+    <div class="card">
+      <h2>التجهيزات</h2>
+      <label for="prep">اختار التجهيز *</label>
+      <select id="prep" required>
+        <option value="">جاري تحميل التجهيزات...</option>
+      </select>
+      <p class="muted">سعر التجهيز يُحسب حسب الأسعار المسجلة بالمحل، وقد يكون بالكيلو أو للطلب كله.</p>
+
+      <label for="notes">ملاحظات إضافية (اختياري)</label>
+      <textarea id="notes" maxlength="1000" placeholder="أي تفاصيل تحب تبلغنا بيها"></textarea>
+
+      <div class="totalbox">
+        <div class="totalrow"><span>إجمالي وزن السمك</span><strong id="totalKg">0 كجم</strong></div>
+        <div class="totalrow"><span>إجمالي السمك</span><strong id="fishTotal">0 جنيه</strong></div>
+        <div class="totalrow"><span>إجمالي التجهيز</span><strong id="prepTotal">0 جنيه</strong></div>
+        <div class="totalrow grand"><span>الإجمالي التقديري</span><strong id="grandTotal">0 جنيه</strong></div>
+        <p class="muted">الإجمالي لا يشمل رسوم التوصيل إن وُجدت. تأكيد الطلب النهائي بيكون مع المحل.</p>
+      </div>
+
+      <button type="submit" class="primary" id="submitBtn">إرسال الطلب</button>
+      <div id="message" class="message"></div>
+    </div>
+  </form>
+
+  <div class="card">
+    <strong>المرسي للأسماك — الإسماعيلية</strong>
+    <p class="muted">طريق البلاجات — سوق السمك</p>
+  </div>
+</div>
 
 <script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
- getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged
+  getAuth,
+  signInAnonymously,
+  setPersistence,
+  browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import {
- getFirestore,collection,addDoc,getDocs,query,orderBy,limit,where,
- doc,getDoc,setDoc,updateDoc,deleteDoc,onSnapshot,Timestamp,
- serverTimestamp,writeBatch
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-import {firebaseConfig} from "./firebase-config.js";
 
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getFirestore(app);
-const $=id=>document.getElementById(id);
-
-let unsubscribeOrders=null;
-let knownOrderIds=null;
-let soundEnabled=false;
-let audioContext=null;
-let currentTodayOrders=[];
-let closingInProgress=false;
-
-const statuses=[
- {value:"new",label:"🆕 جديد"},
- {value:"contacted",label:"📞 تم التواصل مع العميل"},
- {value:"preparing",label:"👨‍🍳 جارٍ التجهيز"},
- {value:"out_for_delivery",label:"🚚 خرج للتوصيل"},
- {value:"delivered",label:"✅ تم التسليم"},
- {value:"cancelled",label:"❌ ملغي"}
-];
-
-function money(value){
- return Number(value||0).toLocaleString("ar-EG",{maximumFractionDigits:2})+" جنيه";
-}
-function statusLabel(value){
- return statuses.find(s=>s.value===value)?.label||value||"غير محدد";
-}
-function showError(el,message){
- $(el).textContent=message;
-}
-function requireAdmin(){
- if(!auth.currentUser){
-  alert("سجّل الدخول بحساب الإدارة أولًا.");
-  return false;
- }
- return true;
-}
-function normalizePhone(value){
- let p=String(value||"").replace(/\D/g,"");
- if(p.startsWith("00"))p=p.slice(2);
- if(p.startsWith("20")&&p.length===12)return p;
- if(p.startsWith("0")&&p.length===11)return "2"+p;
- if(p.length===10&&p.startsWith("1"))return "20"+p;
- return p;
-}
-
-/* تسجيل الدخول */
-$("login").onclick=async()=>{
- const email=$("email").value.trim();
- const password=$("password").value;
- if(!email||!password){showError("authMsg","اكتب البريد وكلمة المرور.");return;}
- $("login").disabled=true;
- try{
-  await signInWithEmailAndPassword(auth,email,password);
-  showError("authMsg","تم تسجيل الدخول.");
- }catch(e){
-  showError("authMsg","تعذر تسجيل الدخول: "+(e.code||e.message));
- }finally{$("login").disabled=false;}
+const firebaseConfig = {
+  apiKey: "AIzaSyCviWU0LzDbUn8M7ETIXORu_KnTSgnwjhc",
+  authDomain: "al-morsy-fish.firebaseapp.com",
+  projectId: "al-morsy-fish",
+  storageBucket: "al-morsy-fish.firebasestorage.app",
+  messagingSenderId: "826154741509",
+  appId: "1:826154741509:web:9cb852e4a7bbe5aaacd16c"
 };
 
-$("logout").onclick=async()=>{
- if(unsubscribeOrders)unsubscribeOrders();
- unsubscribeOrders=null;knownOrderIds=null;
- try{await signOut(auth);}catch(e){showError("authMsg",e.message);}
-};
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-onAuthStateChanged(auth,user=>{
- showError("authMsg",user?"مسجل الدخول: "+(user.email||"حساب الإدارة"):"لم يتم تسجيل الدخول.");
- if(user){
-  startRealtimeOrders();
-  loadFish();
-  loadPreparations();
-  refreshTodaySummary();
- }else{
-  if(unsubscribeOrders)unsubscribeOrders();
-  unsubscribeOrders=null;knownOrderIds=null;
-  $("orders").replaceChildren();
-  $("fishList").textContent="سجّل الدخول لعرض الأصناف.";
-  $("prepList").textContent="سجّل الدخول لعرض التجهيزات.";
-  $("todaySummary").textContent="سجّل الدخول لعرض حساب اليوم.";
- }
+const $ = id => document.getElementById(id);
+const money = n => (Number(n) || 0).toLocaleString("ar-EG", {
+  maximumFractionDigits: 2
+}) + " جنيه";
+
+let fishCatalog = [];
+let preparations = [];
+let rowCounter = 0;
+let sending = false;
+
+function showMessage(text, type = "error") {
+  const box = $("message");
+  box.textContent = text;
+  box.className = "message " + type;
+  box.style.display = "block";
+}
+
+function hideMessage() {
+  $("message").style.display = "none";
+}
+
+function safeNumber(value) {
+  const n = Number(value);
+  return Number.isFinite(n) && n >= 0 ? n : 0;
+}
+
+async function ensureAuth() {
+  await setPersistence(auth, browserLocalPersistence);
+  if (!auth.currentUser) {
+    await signInAnonymously(auth);
+  }
+  return auth.currentUser;
+}
+
+async function loadCatalog() {
+  const [fishSnap, prepSnap] = await Promise.all([
+    getDocs(collection(db, "daily_catalog")),
+    getDocs(collection(db, "prep_prices"))
+  ]);
+
+  fishCatalog = fishSnap.docs
+    .map(d => ({ id: d.id, ...d.data() }))
+    .filter(x => x.active !== false && x.name && Number.isFinite(Number(x.price)))
+    .sort((a, b) => String(a.name).localeCompare(String(b.name), "ar"));
+
+  preparations = prepSnap.docs
+    .map(d => ({ id: d.id, ...d.data() }))
+    .filter(x => x.active !== false && x.name && Number.isFinite(Number(x.price)))
+    .sort((a, b) => String(a.name).localeCompare(String(b.name), "ar"));
+
+  renderPreparationOptions();
+
+  $("fishRows").innerHTML = "";
+  rowCounter = 0;
+
+  if (fishCatalog.length) {
+    addFishRow();
+  } else {
+    $("fishRows").innerHTML =
+      '<p class="muted">قائمة الأسماك فارغة حاليًا. يرجى التواصل مع المحل.</p>';
+  }
+
+  $("loadMessage").textContent = fishCatalog.length
+    ? "تم تحميل قائمة الأسماك والأسعار."
+    : "لم تتم إضافة أصناف أسماك متاحة حتى الآن.";
+
+  calculateTotals();
+}
+
+function renderPreparationOptions() {
+  const select = $("prep");
+  select.innerHTML = "";
+
+  const first = document.createElement("option");
+  first.value = "";
+  first.textContent = preparations.length
+    ? "اختار التجهيز"
+    : "لا توجد تجهيزات مسجلة حاليًا";
+  select.appendChild(first);
+
+  preparations.forEach(p => {
+    const option = document.createElement("option");
+    option.value = p.id;
+    option.textContent = `${p.name} — ${money(p.price)}${p.mode === "per_kg" ? " / كجم" : " / الطلب"}`;
+    select.appendChild(option);
+  });
+
+  select.addEventListener("change", calculateTotals);
+}
+
+function addFishRow() {
+  if (!fishCatalog.length) {
+    showMessage("لا توجد أسماك متاحة للاختيار حاليًا.");
+    return;
+  }
+
+  const id = ++rowCounter;
+  const row = document.createElement("div");
+  row.className = "fishrow";
+  row.dataset.rowId = String(id);
+
+  const head = document.createElement("div");
+  head.className = "fishhead";
+
+  const title = document.createElement("strong");
+  title.textContent = `نوع السمك ${id}`;
+  head.appendChild(title);
+
+  const remove = document.createElement("button");
+  remove.type = "button";
+  remove.className = "danger";
+  remove.textContent = "حذف";
+  remove.addEventListener("click", () => {
+    row.remove();
+    calculateTotals();
+  });
+  head.appendChild(remove);
+  row.appendChild(head);
+
+  const labelFish = document.createElement("label");
+  labelFish.textContent = "نوع السمك";
+  row.appendChild(labelFish);
+
+  const select = document.createElement("select");
+  select.className = "fish-select";
+  select.required = true;
+
+  const first = document.createElement("option");
+  first.value = "";
+  first.textContent = "اختار نوع السمك";
+  select.appendChild(first);
+
+  fishCatalog.forEach(f => {
+    const option = document.createElement("option");
+    option.value = f.id;
+    option.textContent = `${f.name} — ${money(f.price)} / كجم`;
+    select.appendChild(option);
+  });
+  row.appendChild(select);
+
+  const price = document.createElement("div");
+  price.className = "price";
+  price.textContent = "سعر الكيلو: اختار نوع السمك";
+  row.appendChild(price);
+
+  const labelKg = document.createElement("label");
+  labelKg.textContent = "الكمية بالكيلو";
+  row.appendChild(labelKg);
+
+  const kg = document.createElement("input");
+  kg.className = "fish-kg";
+  kg.type = "number";
+  kg.min = "0.25";
+  kg.max = "500";
+  kg.step = "0.25";
+  kg.value = "1";
+  kg.required = true;
+  kg.inputMode = "decimal";
+  row.appendChild(kg);
+
+  const subtotal = document.createElement("div");
+  subtotal.className = "price";
+  subtotal.textContent = "إجمالي الصنف: —";
+  row.appendChild(subtotal);
+
+  select.addEventListener("change", () => {
+    const fish = fishCatalog.find(f => f.id === select.value);
+    price.textContent = fish
+      ? `سعر الكيلو: ${money(fish.price)}`
+      : "سعر الكيلو: اختار نوع السمك";
+    calculateTotals();
+  });
+
+  kg.addEventListener("input", calculateTotals);
+  $("fishRows").appendChild(row);
+  calculateTotals();
+}
+
+function getSelectedFish() {
+  const result = [];
+
+  document.querySelectorAll(".fishrow").forEach(row => {
+    const id = row.querySelector(".fish-select").value;
+    const kg = safeNumber(row.querySelector(".fish-kg").value);
+    const fish = fishCatalog.find(f => f.id === id);
+
+    if (fish && kg > 0) {
+      const price = safeNumber(fish.price);
+      result.push({
+        id: fish.id,
+        name: String(fish.name),
+        price,
+        kg,
+        subtotal: Math.round(price * kg * 100) / 100
+      });
+    }
+  });
+
+  return result;
+}
+
+function calculateTotals() {
+  const fish = getSelectedFish();
+  const totalKg = fish.reduce((sum, f) => sum + f.kg, 0);
+  const fishTotal = fish.reduce((sum, f) => sum + f.subtotal, 0);
+
+  document.querySelectorAll(".fishrow").forEach(row => {
+    const id = row.querySelector(".fish-select").value;
+    const kg = safeNumber(row.querySelector(".fish-kg").value);
+    const item = fishCatalog.find(f => f.id === id);
+    const subtotal = row.querySelector(".fishrow .price:last-child");
+    if (subtotal) {
+      subtotal.textContent = item && kg > 0
+        ? `إجمالي الصنف: ${money(safeNumber(item.price) * kg)}`
+        : "إجمالي الصنف: —";
+    }
+  });
+
+  const selectedPrep = preparations.find(p => p.id === $("prep").value);
+  const prepPrice = selectedPrep ? safeNumber(selectedPrep.price) : 0;
+  const prepTotal = selectedPrep
+    ? (selectedPrep.mode === "per_kg" ? prepPrice * totalKg : prepPrice)
+    : 0;
+
+  const grand = fishTotal + prepTotal;
+
+  $("totalKg").textContent =
+    totalKg.toLocaleString("ar-EG", { maximumFractionDigits: 2 }) + " كجم";
+  $("fishTotal").textContent = money(fishTotal);
+  $("prepTotal").textContent = money(prepTotal);
+  $("grandTotal").textContent = money(grand);
+
+  return {
+    fish,
+    totalKg: Math.round(totalKg * 100) / 100,
+    fishTotal: Math.round(fishTotal * 100) / 100,
+    prepTotal: Math.round(prepTotal * 100) / 100,
+    totalAmount: Math.round(grand * 100) / 100,
+    selectedPrep
+  };
+}
+
+$("addFish").addEventListener("click", addFishRow);
+
+$("orderForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  if (sending) return;
+  hideMessage();
+
+  const customerName = $("customerName").value.trim();
+  const phone = $("phone").value.trim();
+  const address = $("address").value.trim();
+  const delivery = $("delivery").value;
+  const notes = $("notes").value.trim();
+
+  const totals = calculateTotals();
+
+  if (customerName.length < 2) {
+    showMessage("اكتب الاسم بالكامل.");
+    return;
+  }
+  if (phone.length < 8) {
+    showMessage("راجع رقم الموبايل.");
+    return;
+  }
+  if (address.length < 5) {
+    showMessage("اكتب العنوان بالتفصيل.");
+    return;
+  }
+  if (!totals.fish.length) {
+    showMessage("اختار نوع سمك واحد على الأقل وحدد الكمية.");
+    return;
+  }
+  if (!totals.selectedPrep) {
+    showMessage("اختار التجهيز المطلوب.");
+    return;
+  }
+  if (totals.totalKg <= 0) {
+    showMessage("تأكد من الكميات المطلوبة.");
+    return;
+  }
+
+  const items = totals.fish.map(f =>
+    `${f.name} — ${f.kg} كجم × ${f.price} جنيه = ${f.subtotal} جنيه`
+  ).join("\n");
+
+  const prepName = String(totals.selectedPrep.name);
+  const prepDetails = [{
+    name: prepName,
+    price: safeNumber(totals.selectedPrep.price),
+    mode: totals.selectedPrep.mode === "per_kg" ? "per_kg" : "fixed",
+    total: Math.round(totals.prepTotal * 100) / 100
+  }];
+
+  sending = true;
+  $("submitBtn").disabled = true;
+  $("submitBtn").textContent = "جاري إرسال الطلب...";
+
+  try {
+    const user = await ensureAuth();
+
+    const orderData = {
+      customerName,
+      phone,
+      address,
+      items,
+      delivery,
+      prep: prepName,
+      notes,
+      status: "new",
+      source: "website",
+      ownerUid: user.uid,
+      createdAt: serverTimestamp(),
+      fishDetails: totals.fish.map(f => ({
+        name: f.name,
+        price: f.price,
+        kg: f.kg,
+        subtotal: f.subtotal
+      })),
+      prepDetails,
+      fixedDetails: [],
+      fishTotal: totals.fishTotal,
+      prepTotal: totals.prepTotal,
+      fixedTotal: 0,
+      totalAmount: totals.totalAmount,
+      totalKg: totals.totalKg
+    };
+
+    const docRef = await addDoc(collection(db, "orders"), orderData);
+
+    try {
+      localStorage.setItem("alMorsyLastOrderId", docRef.id);
+    } catch (_) {}
+
+    const trackingUrl = new URL("track-order.html", window.location.href);
+    trackingUrl.searchParams.set("id", docRef.id);
+
+    const box = $("message");
+    box.className = "message success";
+    box.style.display = "block";
+    box.replaceChildren();
+
+    const heading = document.createElement("strong");
+    heading.textContent = "تم إرسال طلبك بنجاح ✅";
+    box.appendChild(heading);
+
+    const p = document.createElement("p");
+    p.textContent = `رقم الطلب: ${docRef.id}`;
+    box.appendChild(p);
+
+    const totalP = document.createElement("p");
+    totalP.textContent = `الإجمالي التقديري: ${money(totals.totalAmount)} — بدون رسوم التوصيل إن وجدت.`;
+    box.appendChild(totalP);
+
+    const link = document.createElement("a");
+    link.href = trackingUrl.href;
+    link.textContent = "اضغط هنا لمتابعة حالة طلبك";
+    link.style.fontWeight = "bold";
+    box.appendChild(link);
+
+    $("submitBtn").textContent = "تم إرسال الطلب";
+    box.scrollIntoView({ behavior: "smooth", block: "center" });
+
+  } catch (error) {
+    console.error("Order submission error:", error);
+    let details = error?.message || "خطأ غير معروف";
+    if (error?.code === "permission-denied") {
+      details = "قاعدة البيانات رفضت الطلب. راجع قواعد Firestore وبيانات الطلب.";
+    } else if (error?.code === "auth/operation-not-allowed") {
+      details = "تسجيل الدخول المجهول غير مفعّل في Firebase Authentication.";
+    } else if (error?.code === "auth/network-request-failed") {
+      details = "تعذر الاتصال. تأكد من الإنترنت وحاول مرة أخرى.";
+    }
+    showMessage("لم يتم إرسال الطلب. " + details);
+    $("submitBtn").disabled = false;
+    $("submitBtn").textContent = "إعادة إرسال الطلب";
+  } finally {
+    sending = false;
+  }
 });
 
-/* إدارة أصناف السمك */
-$("fishForm").addEventListener("submit",async e=>{
- e.preventDefault();
- if(!requireAdmin())return;
- const id=$("fishId").value;
- const name=$("fishName").value.trim();
- const price=Number($("fishPrice").value);
- if(!name||!Number.isFinite(price)||price<=0){
-  showError("fishMessage","راجع اسم الصنف والسعر.");return;
- }
- $("saveFish").disabled=true;
- try{
-  const data={name,price,active:true,updatedAt:serverTimestamp()};
-  if(id){
-   await updateDoc(doc(db,"daily_catalog",id),data);
-   showError("fishMessage","✅ تم تعديل الصنف والسعر.");
-  }else{
-   await addDoc(collection(db,"daily_catalog"),{...data,createdAt:serverTimestamp()});
-   showError("fishMessage","✅ تمت إضافة الصنف.");
-  }
-  resetFishForm();
-  await loadFish();
- }catch(err){
-  showError("fishMessage","تعذر حفظ الصنف: "+(err.code||err.message));
- }finally{$("saveFish").disabled=false;}
-});
+$("loadMessage").textContent = "جاري الاتصال وتحميل الأصناف...";
 
-function resetFishForm(){
- $("fishForm").reset();$("fishId").value="";
- $("saveFish").textContent="➕ إضافة صنف السمك";
- $("cancelFishEdit").hidden=true;
+try {
+  await ensureAuth();
+  await loadCatalog();
+} catch (error) {
+  console.error("Catalog loading error:", error);
+  $("loadMessage").textContent =
+    "تعذر تحميل الأصناف. تأكد من اتصال الإنترنت وصلاحيات قراءة قائمة الأسماك والتجهيزات.";
+  $("fishRows").innerHTML =
+    '<p class="muted">لم يتم تحميل قائمة الأسماك. حاول تحديث الصفحة بعد قليل.</p>';
+  $("prep").innerHTML = '<option value="">تعذر تحميل التجهيزات</option>';
 }
-$("cancelFishEdit").onclick=resetFishForm;
-
-async function loadFish(){
- if(!auth.currentUser)return;
- const box=$("fishList");box.textContent="جارٍ تحميل الأصناف...";
- try{
-  const snap=await getDocs(query(collection(db,"daily_catalog"),orderBy("name")));
-  box.replaceChildren();
-  if(snap.empty){box.textContent="لسه مفيش أصناف. أضف أول صنف من النموذج بالأعلى.";return;}
-  snap.forEach(d=>{
-   const x=d.data(),card=document.createElement("div");
-   card.className="itemCard";
-   const title=document.createElement("strong");
-   title.textContent=x.name||"صنف بدون اسم";
-   const price=document.createElement("p");
-   price.textContent="السعر: "+money(x.price)+" / كيلو";
-   const active=document.createElement("p");
-   active.className=x.active===false?"inactiveTag":"activeTag";
-   active.textContent=x.active===false?"⛔ غير ظاهر للعميل":"✅ ظاهر للعميل";
-   const actions=document.createElement("div");actions.className="itemActions";
-   const edit=document.createElement("button");edit.className="edit";edit.textContent="✏️ تعديل";
-   edit.onclick=()=>{
-    $("fishId").value=d.id;$("fishName").value=x.name||"";
-    $("fishPrice").value=x.price??"";
-    $("saveFish").textContent="💾 حفظ التعديل";
-    $("cancelFishEdit").hidden=false;
-    window.scrollTo({top:0,behavior:"smooth"});
-   };
-   const toggle=document.createElement("button");toggle.className="secondary";
-   toggle.textContent=x.active===false?"إظهار للعميل":"إخفاء من العميل";
-   toggle.onclick=async()=>{
-    try{await updateDoc(doc(db,"daily_catalog",d.id),{active:x.active===false,updatedAt:serverTimestamp()});await loadFish();}
-    catch(err){alert("تعذر تغيير ظهور الصنف: "+(err.code||err.message));}
-   };
-   const del=document.createElement("button");del.className="danger";del.textContent="🗑️ حذف الصنف";
-   del.onclick=async()=>{
-    if(!confirm("تأكيد حذف صنف «"+(x.name||"")+"» نهائيًا؟"))return;
-    try{await deleteDoc(doc(db,"daily_catalog",d.id));await loadFish();showError("fishMessage","تم حذف الصنف.");}
-    catch(err){alert("تعذر حذف الصنف: "+(err.code||err.message));}
-   };
-   actions.append(edit,toggle,del);card.append(title,price,active,actions);box.append(card);
-  });
- }catch(e){box.textContent="تعذر تحميل الأصناف: "+(e.code||e.message);}
-}
-
-/* إدارة التجهيزات */
-$("prepForm").addEventListener("submit",async e=>{
- e.preventDefault();
- if(!requireAdmin())return;
- const id=$("prepId").value;
- const name=$("prepName").value.trim();
- const price=Number($("prepPrice").value);
- const mode=$("prepMode").value;
- if(!name||!Number.isFinite(price)||price<0){showError("prepMessage","راجع الاسم والسعر.");return;}
- $("savePrep").disabled=true;
- try{
-  const data={name,price,mode,active:true,updatedAt:serverTimestamp()};
-  if(id){
-   await updateDoc(doc(db,"prep_prices",id),data);
-   showError("prepMessage","تم تعديل التجهيز.");
-  }else{
-   await addDoc(collection(db,"prep_prices"),{...data,createdAt:serverTimestamp()});
-   showError("prepMessage","تمت إضافة التجهيز.");
-  }
-  resetPrepForm();await loadPreparations();
- }catch(err){showError("prepMessage","تعذر حفظ التجهيز: "+(err.code||err.message));}
- finally{$("savePrep").disabled=false;}
-});
-function resetPrepForm(){
- $("prepForm").reset();$("prepId").value="";
- $("savePrep").textContent="➕ إضافة تجهيز";
- $("cancelPrepEdit").hidden=true;
-}
-$("cancelPrepEdit").onclick=resetPrepForm;
-
-async function loadPreparations(){
- if(!auth.currentUser)return;
- const box=$("prepList");box.textContent="جارٍ تحميل التجهيزات...";
- try{
-  const snap=await getDocs(query(collection(db,"prep_prices"),orderBy("name")));
-  box.replaceChildren();
-  if(snap.empty){box.textContent="لا توجد تجهيزات مسجلة حتى الآن.";return;}
-  snap.forEach(d=>{
-   const x=d.data(),card=document.createElement("div");card.className="itemCard";
-   const title=document.createElement("strong");title.textContent=x.name||"تجهيز";
-   const price=document.createElement("p");
-   price.textContent="السعر: "+money(x.price)+(x.mode==="fixed"?" (سعر ثابت)":" / كيلو");
-   const active=document.createElement("p");
-   active.className=x.active===false?"inactiveTag":"activeTag";
-   active.textContent=x.active===false?"⛔ غير ظاهر للعميل":"✅ ظاهر للعميل";
-   const actions=document.createElement("div");actions.className="itemActions";
-   const edit=document.createElement("button");edit.className="edit";edit.textContent="✏️ تعديل";
-   edit.onclick=()=>{
-    $("prepId").value=d.id;$("prepName").value=x.name||"";
-    $("prepPrice").value=x.price??0;$("prepMode").value=x.mode||"per_kg";
-    $("savePrep").textContent="💾 حفظ التعديل";$("cancelPrepEdit").hidden=false;
-    window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
-   };
-   const toggle=document.createElement("button");toggle.className="secondary";
-   toggle.textContent=x.active===false?"إظهار للعميل":"إخفاء من العميل";
-   toggle.onclick=async()=>{
-    try{await updateDoc(doc(db,"prep_prices",d.id),{active:x.active===false,updatedAt:serverTimestamp()});await loadPreparations();}
-    catch(err){alert("تعذر تغيير الظهور: "+(err.code||err.message));}
-   };
-   const del=document.createElement("button");del.className="danger";del.textContent="🗑️ حذف";
-   del.onclick=async()=>{
-    if(!confirm("تأكيد حذف التجهيز «"+(x.name||"")+"»؟"))return;
-    try{await deleteDoc(doc(db,"prep_prices",d.id));await loadPreparations();}
-    catch(err){alert("تعذر الحذف: "+(err.code||err.message));}
-   };
-   actions.append(edit,toggle,del);card.append(title,price,active,actions);box.append(card);
-  });
- }catch(e){box.textContent="تعذر تحميل التجهيزات: "+(e.code||e.message);}
-}
-
-/* اتصال العميل */
-function contactButtons(phoneValue){
- const box=document.createElement("div");box.className="contactButtons";
- const phone=String(phoneValue||"").trim();
- if(!phone){box.textContent="لا يوجد رقم موبايل مسجل.";return box;}
- const call=document.createElement("a");call.className="callLink";
- call.href="tel:"+phone.replace(/[^\d+]/g,"");call.textContent="📞 اتصال بالعميل";
- const wa=document.createElement("a");wa.className="whatsappLink";
- wa.href="https://wa.me/"+normalizePhone(phone)+"?text="+encodeURIComponent("أهلًا بحضرتك، معاك المرسي للأسماك بخصوص طلبك 🐟");
- wa.target="_blank";wa.rel="noopener";wa.textContent="🟢 واتساب";
- box.append(call,wa);return box;
-}
-
-/* حذف الطلب أو تغيير حالته */
-async function saveOrderStatus(id,select,button,msg){
- button.disabled=true;
- try{
-  await updateDoc(doc(db,"orders",id),{status:select.value});
-  msg.textContent="✅ تم حفظ الحالة.";
- }catch(e){msg.textContent="تعذر حفظ الحالة: "+(e.code||e.message);}
- finally{button.disabled=false;}
-}
-async function deleteOrder(id,button){
- if(!requireAdmin())return;
- if(!confirm("هل أنت متأكد من حذف هذا الأوردر نهائيًا؟ لا يمكن التراجع عن الحذف."))return;
- button.disabled=true;
- try{
-  await deleteDoc(doc(db,"orders",id));
-  await refreshTodaySummary();
- }catch(e){
-  alert("تعذر حذف الأوردر: "+(e.code||e.message));
-  button.disabled=false;
- }
-}
-function renderOrder(id,x,isNew){
- const card=document.createElement("div");card.className="order";
- const title=document.createElement("h3");
- title.textContent=(isNew?"🆕 طلب جديد — ":"طلب — ")+
-  (x.customerName||x.name||"بدون اسم")+" — "+id;
- const body=document.createElement("p");
- body.textContent=
-  "الموبايل: "+(x.phone||"—")+
-  "\nالحالة: "+statusLabel(x.status)+
-  "\nالعنوان: "+(x.address||"—")+
-  "\nالأصناف والكميات: "+(x.items||"—")+
-  "\nالتجهيزات: "+(x.prep||"—")+
-  "\nطريقة الاستلام: "+(x.delivery==="delivery"?"توصيل":x.delivery==="pickup"?"استلام من المحل":"—")+
-  "\nملاحظات: "+(x.notes||"—")+
-  (typeof x.totalAmount==="number"?"\nالإجمالي التقديري: "+money(x.totalAmount):"");
- const controls=document.createElement("div");controls.className="statusBox";
- const label=document.createElement("label");label.textContent="تغيير حالة الطلب";
- const select=document.createElement("select");
- statuses.forEach(s=>{const o=document.createElement("option");o.value=s.value;o.textContent=s.label;select.append(o);});
- select.value=statuses.some(s=>s.value===x.status)?x.status:"new";
- const save=document.createElement("button");save.textContent="حفظ الحالة";
- const msg=document.createElement("div");msg.className="statusMessage";
- save.onclick=()=>saveOrderStatus(id,select,save,msg);
- const del=document.createElement("button");del.className="danger";del.textContent="🗑️ حذف الأوردر";
- del.onclick=()=>deleteOrder(id,del);
- controls.append(label,select,save,del,msg);
- card.append(title,body,contactButtons(x.phone),controls);
- return card;
-}
-function startRealtimeOrders(){
- if(!auth.currentUser||unsubscribeOrders)return;
- $("liveStatus").textContent="جارٍ الاتصال بالطلبات...";
- const q=query(collection(db,"orders"),orderBy("createdAt","desc"),limit(100));
- unsubscribeOrders=onSnapshot(q,snap=>{
-  const box=$("orders");box.replaceChildren();
-  if(snap.empty)box.textContent="لا توجد طلبات مسجلة.";
-  else snap.forEach(d=>box.append(renderOrder(d.id,d.data(),false)));
-  $("liveStatus").textContent="🟢 المتابعة التلقائية تعمل. الأحدث في الأعلى.";
-  refreshTodaySummary();
- },err=>{
-  $("liveStatus").textContent="تعذر تحديث الطلبات: "+(err.code||err.message);
-  unsubscribeOrders=null;
- });
-}
-$("load").onclick=async()=>{
- if(!requireAdmin())return;
- $("load").disabled=true;
- try{
-  const snap=await getDocs(query(collection(db,"orders"),orderBy("createdAt","desc"),limit(100)));
-  const box=$("orders");box.replaceChildren();
-  if(snap.empty)box.textContent="لا توجد طلبات مسجلة.";
-  snap.forEach(d=>box.append(renderOrder(d.id,d.data(),false)));
-  $("liveStatus").textContent="تم تحديث الطلبات.";
-  await refreshTodaySummary();
- }catch(e){$("orders").textContent="تعذر تحميل الطلبات: "+(e.code||e.message);}
- finally{$("load").disabled=false;}
-};
-
-/* تنبيه صوتي عند الطلبات الجديدة */
-$("enableSound").onclick=async()=>{
- try{
-  const AC=window.AudioContext||window.webkitAudioContext;
-  if(!AC){$("liveStatus").textContent="المتصفح لا يدعم الصوت.";return;}
-  if(!audioContext)audioContext=new AC();
-  await audioContext.resume();soundEnabled=true;
-  $("enableSound").textContent="✅ صوت التنبيه مفعّل";
-  $("liveStatus").textContent="سيعمل التنبيه عند وصول طلب جديد واللوحة مفتوحة.";
- }catch(e){$("liveStatus").textContent="تعذر تفعيل الصوت.";}
-};
-function playAlert(){
- if(!soundEnabled||!audioContext)return;
- try{
-  [0,.3,.6].forEach((delay,i)=>{
-   const osc=audioContext.createOscillator(),gain=audioContext.createGain();
-   osc.frequency.value=i===1?1100:880;
-   gain.gain.setValueAtTime(.001,audioContext.currentTime+delay);
-   gain.gain.exponentialRampToValueAtTime(.2,audioContext.currentTime+delay+.03);
-   gain.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+delay+.2);
-   osc.connect(gain);gain.connect(audioContext.destination);
-   osc.start(audioContext.currentTime+delay);osc.stop(audioContext.currentTime+delay+.22);
-  });
- }catch(e){}
-}
-
-/* حساب اليوم */
-function todayRange(){
- const start=new Date();start.setHours(0,0,0,0);
- const end=new Date(start);end.setDate(end.getDate()+1);
- const dateId=start.getFullYear()+"-"+String(start.getMonth()+1).padStart(2,"0")+"-"+String(start.getDate()).padStart(2,"0");
- return {start:Timestamp.fromDate(start),end:Timestamp.fromDate(end),dateId};
-}
-async function getOrdersForToday(){
- const r=todayRange();
- const snap=await getDocs(query(collection(db,"orders"),where("createdAt",">=",r.start),where("createdAt","<",r.end),orderBy("createdAt","asc")));
- return {range:r,docs:snap.docs};
-}
-function calculateSummary(docs){
- let totalSales=0,cancelledCount=0,cancelledValue=0,ordersWithoutAmount=0;
- docs.forEach(d=>{
-  const x=d.data(),amount=Number(x.totalAmount);
-  if(!Number.isFinite(amount))ordersWithoutAmount++;
-  if(x.status==="cancelled"){cancelledCount++;if(Number.isFinite(amount))cancelledValue+=amount;}
-  else if(Number.isFinite(amount))totalSales+=amount;
- });
- return {totalOrders:docs.length,totalSales,cancelledCount,cancelledValue,ordersWithoutAmount};
-}
-async function refreshTodaySummary(){
- if(!auth.currentUser)return;
- try{
-  const result=await getOrdersForToday();currentTodayOrders=result.docs;
-  const s=calculateSummary(result.docs);
-  $("todaySummary").textContent=
-   "📅 التاريخ: "+result.range.dateId+
-   "\n📦 عدد الأوردرات: "+s.totalOrders+
-   "\n💰 إجمالي الطلبات غير الملغاة: "+money(s.totalSales)+
-   "\n❌ عدد الأوردرات الملغاة: "+s.cancelledCount+
-   (s.ordersWithoutAmount?"\n⚠️ أوردرات بدون إجمالي مسجل: "+s.ordersWithoutAmount:"");
-  $("closeDay").disabled=s.totalOrders===0||closingInProgress;
- }catch(e){
-  $("todaySummary").textContent="تعذر حساب اليوم: "+(e.code||e.message);
-  $("closeDay").disabled=true;
- }
-}
-
-$("closeDay").onclick=async()=>{
- if(!requireAdmin()||closingInProgress)return;
- closingInProgress=true;$("closeDay").disabled=true;
- $("closeMessage").textContent="جارٍ مراجعة طلبات اليوم...";
- try{
-  const result=await getOrdersForToday(),docs=result.docs,s=calculateSummary(docs),date=result.range.dateId;
-  if(!docs.length){$("closeMessage").textContent="لا توجد طلبات اليوم.";return;}
-  const summaryRef=doc(db,"daily_summaries",date);
-  if((await getDoc(summaryRef)).exists()){
-   $("closeMessage").textContent="يوجد ملخص محفوظ لهذا التاريخ بالفعل. لم يتم حذف أي طلب.";
-   return;
-  }
-  if(docs.length>499){$("closeMessage").textContent="عدد الطلبات أكبر من الحد الآمن للإغلاق دفعة واحدة. لم يتم الحذف.";return;}
-  const report="التاريخ: "+date+"\nعدد الطلبات: "+s.totalOrders+"\nإجمالي المبيعات غير الملغاة: "+money(s.totalSales)+"\nالطلبات الملغاة: "+s.cancelledCount;
-  if(!confirm(report+"\n\nهل تؤكد حفظ الملخص وحذف كل طلبات اليوم؟"))return;
-  const batch=writeBatch(db);
-  batch.set(summaryRef,{
-   date,totalOrders:s.totalOrders,totalSales:s.totalSales,
-   cancelledCount:s.cancelledCount,cancelledValue:s.cancelledValue,
-   ordersWithoutAmount:s.ordersWithoutAmount,
-   closedBy:auth.currentUser.email||"",closedAt:serverTimestamp()
-  });
-  docs.forEach(d=>batch.delete(d.ref));
-  await batch.commit();
-  $("closeMessage").textContent="✅ تم إغلاق حساب اليوم وحفظ الملخص وحذف "+s.totalOrders+" طلب.";
-  await loadSummaries();
- }catch(e){
-  $("closeMessage").textContent="تعذر إغلاق اليوم: "+(e.code||e.message);
- }finally{
-  closingInProgress=false;
-  if(auth.currentUser)await refreshTodaySummary();
- }
-};
-
-/* ملخصات الأيام السابقة */
-async function loadSummaries(){
- if(!requireAdmin())return;
- const box=$("summaries");box.textContent="جارٍ تحميل الملخصات...";
- try{
-  const snap=await getDocs(query(collection(db,"daily_summaries"),orderBy("date","desc"),limit(100)));
-  box.replaceChildren();
-  if(snap.empty){box.textContent="لا توجد ملخصات محفوظة.";return;}
-  snap.forEach(d=>{
-   const x=d.data(),card=document.createElement("div");card.className="summaryCard";
-   card.textContent="📅 التاريخ: "+(x.date||d.id)+
-    "\n📦 عدد الطلبات: "+(x.totalOrders??0)+
-    "\n💰 المبيعات: "+money(x.totalSales)+
-    "\n❌ الطلبات الملغاة: "+(x.cancelledCount??0)+
-    "\n💵 قيمة الملغاة: "+money(x.cancelledValue)+
-    "\n⚠️ بدون إجمالي: "+(x.ordersWithoutAmount??0);
-   box.append(card);
-  });
- }catch(e){box.textContent="تعذر تحميل الملخصات: "+(e.code||e.message);}
-}
-$("loadSummaries").onclick=loadSummaries;
-
-/* التقرير الشهري */
-{
- const n=new Date();
- $("reportMonth").value=n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0");
-}
-$("loadMonthlyReport").onclick=async()=>{
- if(!requireAdmin())return;
- const selected=$("reportMonth").value;
- if(!selected){$("monthlyReport").textContent="اختر الشهر أولًا.";return;}
- const btn=$("loadMonthlyReport");btn.disabled=true;
- const box=$("monthlyReport");box.textContent="جارٍ حساب التقرير...";
- try{
-  const [year,month]=selected.split("-").map(Number);
-  const start=year+"-"+String(month).padStart(2,"0")+"-01";
-  const next=new Date(year,month,1);
-  const end=next.getFullYear()+"-"+String(next.getMonth()+1).padStart(2,"0")+"-01";
-  const snap=await getDocs(query(collection(db,"daily_summaries"),where("date",">=",start),where("date","<",end),orderBy("date","asc")));
-  box.replaceChildren();
-  if(snap.empty){box.textContent="لا توجد ملخصات محفوظة للشهر "+selected+".";return;}
-  let sales=0,orders=0,cancelled=0,cancelledValue=0,missing=0;
-  const days=[];
-  snap.forEach(d=>{
-   const x=d.data();
-   sales+=Number(x.totalSales)||0;orders+=Number(x.totalOrders)||0;
-   cancelled+=Number(x.cancelledCount)||0;cancelledValue+=Number(x.cancelledValue)||0;
-   missing+=Number(x.ordersWithoutAmount)||0;
-   const card=document.createElement("div");card.className="reportDay";
-   card.textContent="📅 "+(x.date||d.id)+"\n💰 المبيعات: "+money(x.totalSales)+
-    "\n📦 الطلبات: "+(x.totalOrders||0)+"\n❌ الملغاة: "+(x.cancelledCount||0);
-   days.push(card);
-  });
-  const totals=document.createElement("div");totals.className="reportTotals";
-  totals.textContent="📊 تقرير المرسي للأسماك — "+selected+
-   "\n💰 إجمالي المبيعات المسجلة: "+money(sales)+
-   "\n📦 إجمالي الطلبات: "+orders+
-   "\n❌ إجمالي الطلبات الملغاة: "+cancelled+
-   "\n💵 قيمة الطلبات الملغاة: "+money(cancelledValue)+
-   "\n⚠️ طلبات بدون إجمالي: "+missing+
-   "\n🗓️ أيام الإغلاق: "+snap.size;
-  box.append(totals);
-  const heading=document.createElement("h3");heading.textContent="تفاصيل الأيام";
-  box.append(heading,...days);
- }catch(e){box.textContent="تعذر تحميل التقرير: "+(e.code||e.message);}
- finally{btn.disabled=false;}
-};
 </script>
 </body>
 </html>
