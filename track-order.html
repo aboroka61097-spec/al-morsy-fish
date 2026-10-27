@@ -27,40 +27,40 @@ a{color:#075985}
 </head>
 <body>
 <div class="wrap">
- <main class="card">
-  <h1>🐟 متابعة طلبك</h1>
-  <p>المرسي للأسماك — من البحر لحد عندك</p>
-  <p>اكتب رقم الطلب لمتابعة حالته. لو الطلب اتعمل من نفس الجهاز والمتصفح، هنحاول نجيب رقمه تلقائيًا.</p>
+<main class="card">
+<h1>🐟 متابعة طلبك</h1>
+<p>المرسي للأسماك — من البحر لحد عندك</p>
+<p>اكتب رقم الطلب لمتابعة حالته. استخدم نفس المتصفح الذي أرسلت منه الطلب.</p>
 
-  <form id="trackForm">
-   <label for="orderId">رقم الطلب</label>
-   <input id="orderId" autocomplete="off" placeholder="الصق رقم الطلب هنا" required>
-   <button id="trackBtn" type="submit">متابعة الطلب</button>
-  </form>
+<form id="trackForm">
+<label for="orderId">رقم الطلب</label>
+<input id="orderId" autocomplete="off" placeholder="الصق رقم الطلب هنا" required>
+<button id="trackBtn" type="submit">متابعة الطلب</button>
+</form>
 
-  <div id="message" class="message" role="status" aria-live="polite"></div>
+<div id="message" class="message" role="status" aria-live="polite"></div>
 
-  <section id="result" class="result">
-   <h2>تفاصيل المتابعة</h2>
-   <p>رقم الطلب:</p>
-   <div id="shownId" class="small"></div>
-   <p>حالة الطلب:</p>
-   <div id="status" class="status">جارٍ التحميل...</div>
-   <p id="updated"></p>
-  </section>
+<section id="result" class="result">
+<h2>تفاصيل المتابعة</h2>
+<p>رقم الطلب:</p>
+<div id="shownId" class="small"></div>
+<p>حالة الطلب:</p>
+<div id="status" class="status">جارٍ التحميل...</div>
+<p id="updated"></p>
+</section>
 
-  <p class="small">متابعة الطلب متاحة من نفس الجهاز والمتصفح الذي أُرسل منه الطلب، ما لم تتوفر وسيلة تحقق أخرى.</p>
-  <p><a href="./orders.html">الرجوع لصفحة طلب السمك</a></p>
- </main>
+<p class="small">متابعة الطلب متاحة لصاحب الطلب فقط.</p>
+<p><a href="./orders.html">الرجوع لصفحة طلب السمك</a></p>
+</main>
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getFirestore, doc, getDoc, onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import {
-  getAuth, signInAnonymously
+  getAuth, signInAnonymously, setPersistence, browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
 const firebaseConfig = {
@@ -72,9 +72,12 @@ const firebaseConfig = {
   appId: "1:826154741509:web:9cb852e4a7bbe5aaacd16c"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// اسم منفصل لهوية العميل، ويجب استخدامه أيضًا في orders.html
+const appName = "customerApp";
+const existingApp = getApps().find(item => item.name === appName);
+const app = existingApp || initializeApp(firebaseConfig, appName);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 const form = document.getElementById("trackForm");
 const orderInput = document.getElementById("orderId");
@@ -89,10 +92,12 @@ let unsubscribe = null;
 
 const labels = {
   new: "تم استلام الطلب",
+  contacted: "تم التواصل مع العميل",
   confirmed: "تم تأكيد الطلب",
   preparing: "جاري تجهيز الطلب",
   ready: "الطلب جاهز",
   out_for_delivery: "الطلب خرج للتوصيل",
+  delivered: "تم تسليم الطلب",
   completed: "تم تسليم الطلب",
   cancelled: "تم إلغاء الطلب"
 };
@@ -105,24 +110,11 @@ function showMessage(text, type = "success") {
 function errorDetails(error) {
   const code = error?.code || "unknown";
   const detail = error?.message || "لا توجد تفاصيل إضافية";
-
-  const hints = {
-    "auth/api-key-not-valid.-please-pass-a-valid-api-key":
-      "مفتاح Firebase API غير مقبول. يلزم مراجعة المفتاح وقيوده.",
-    "auth/operation-not-allowed":
-      "تسجيل الدخول المجهول غير مفعّل في Firebase Authentication.",
-    "permission-denied":
-      "قواعد Firestore لا تسمح بقراءة هذا الطلب للحساب الحالي.",
-    "unauthenticated":
-      "الحساب الحالي غير مسجل الدخول. حاول تحديث الصفحة."
-  };
-
-  return "كود الخطأ: " + code +
-    "\nالتفاصيل: " + detail +
-    (hints[code] ? "\nالسبب المحتمل: " + hints[code] : "");
+  return "كود الخطأ: " + code + "\nالتفاصيل: " + detail;
 }
 
 async function ensureLogin() {
+  await setPersistence(auth, browserLocalPersistence);
   if (auth.currentUser) return auth.currentUser;
   const credential = await signInAnonymously(auth);
   return credential.user;
@@ -145,10 +137,7 @@ async function trackOrder(orderId) {
     const snap = await getDoc(orderRef);
 
     if (!snap.exists()) {
-      showMessage(
-        "الطلب غير موجود في قاعدة البيانات.\nتأكد من رقم الطلب. إذا لم يظهر نجاح الإرسال سابقًا، فقد لا يكون الطلب قد سُجّل.",
-        "error"
-      );
+      showMessage("الطلب غير موجود. راجع رقم الطلب.", "error");
       return;
     }
 
@@ -156,7 +145,7 @@ async function trackOrder(orderId) {
 
     if (!order.ownerUid || order.ownerUid !== user.uid) {
       showMessage(
-        "الطلب موجود، لكن الحساب الحالي لا يملك صلاحية متابعته.\nافتح رابط المتابعة من نفس الجهاز والمتصفح اللذين استخدمتهما عند إرسال الطلب.",
+        "الطلب موجود، لكن هوية العميل الحالية مختلفة عن الهوية التي أرسلت الطلب.\nتأكد أن orders.html يستخدم تطبيق Firebase باسم customerApp أيضًا. الطلبات القديمة قد تحتاج معالجة منفصلة.",
         "error"
       );
       return;
@@ -170,28 +159,21 @@ async function trackOrder(orderId) {
       statusBox.textContent =
         labels[liveOrder.status] ||
         ("حالة الطلب: " + (liveOrder.status || "قيد المراجعة"));
-
-      updated.textContent =
-        "تتحدث الحالة تلقائيًا عند تعديلها من الإدارة.";
+      updated.textContent = "تتحدث الحالة تلقائيًا عند تعديلها من الإدارة.";
     }
 
     renderStatus(order);
 
     unsubscribe = onSnapshot(
       orderRef,
-      (liveSnap) => {
+      liveSnap => {
         if (!liveSnap.exists()) {
           showMessage("لم يعد الطلب متاحًا.", "error");
           result.style.display = "none";
-          if (unsubscribe) {
-            unsubscribe();
-            unsubscribe = null;
-          }
           return;
         }
 
         const liveOrder = liveSnap.data();
-
         if (liveOrder.ownerUid !== user.uid) {
           showMessage("تعذر التحقق من ملكية الطلب.", "error");
           result.style.display = "none";
@@ -201,10 +183,9 @@ async function trackOrder(orderId) {
           }
           return;
         }
-
         renderStatus(liveOrder);
       },
-      (error) => {
+      error => {
         console.error("Tracking listener error:", error);
         showMessage(
           "تعذر تحديث حالة الطلب.\n" + errorDetails(error),
@@ -212,19 +193,15 @@ async function trackOrder(orderId) {
         );
       }
     );
-
   } catch (error) {
     console.error("Tracking error:", error);
-    showMessage(
-      "تعذر فتح الطلب.\n" + errorDetails(error),
-      "error"
-    );
+    showMessage("تعذر فتح الطلب.\n" + errorDetails(error), "error");
   } finally {
     button.disabled = false;
   }
 }
 
-form.addEventListener("submit", async (event) => {
+form.addEventListener("submit", async event => {
   event.preventDefault();
   const id = orderInput.value.trim();
 
