@@ -36,7 +36,7 @@ button:disabled{opacity:.6}
 .total-box{background:#ecfdf5;border:1px solid #a7f3d0;border-radius:13px;padding:15px;margin-top:18px}
 .total-line{display:flex;justify-content:space-between;gap:10px;margin:9px 0}
 .grand-total{font-size:21px;font-weight:bold;border-top:1px solid #a7f3d0;padding-top:12px}
-.status{display:none;margin-top:15px;padding:12px;border-radius:10px;line-height:1.9;white-space:pre-line;overflow-wrap:anywhere}
+.status{display:none;margin-top:15px;padding:12px;border-radius:10px;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere}
 .ok{display:block;background:#dcfce7;color:#166534}
 .err{display:block;background:#fee2e2;color:#991b1b}
 .track-link{display:block;text-align:center;background:#075985;color:#fff;padding:11px;border-radius:9px;text-decoration:none;margin-top:12px;font-weight:bold}
@@ -74,13 +74,13 @@ button:disabled{opacity:.6}
 
 <div class="section">
 <h2>🍳 تجهيزات السمك</h2>
-<p class="muted">اختار التجهيز المناسب لكل صنف. سعر التجهيز لكل كيلو بيتحسب حسب كمية السمك المختارة.</p>
+<p class="muted">اختار التجهيز المناسب. سعر التجهيز لكل كيلو بيتحسب حسب كمية السمك المختارة.</p>
 <div id="prepList" class="empty">جاري تحميل التجهيزات...</div>
 </div>
 
 <div class="section">
 <h2>🍚 إضافات بسعر ثابت للطلب</h2>
-<p class="muted">الأرز والشوربة والسلطة والطحينة، وأي تجهيز مسجل بسعر ثابت، بيتحسب مرة واحدة لكل طلب.</p>
+<p class="muted">الإضافات المسجلة بسعر ثابت بتتحسب مرة واحدة لكل طلب.</p>
 <div id="fixedList" class="empty">جاري تحميل الإضافات...</div>
 </div>
 
@@ -113,18 +113,15 @@ button:disabled{opacity:.6}
 </main>
 
 <script type="module">
-import { initializeApp } from
-"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 
 import {
   getFirestore, collection, addDoc, serverTimestamp, onSnapshot
-} from
-"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 import {
   getAuth, signInAnonymously
-} from
-"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCviWU0LzDbUn8M7ETIXorU_kNTSgnwjhc",
@@ -183,13 +180,8 @@ function isAvailable(d) {
 
   const state = String(d.status ?? d.state ?? "").toLowerCase();
 
-  if (["unavailable","inactive","disabled","غير متاح","متوقف"].includes(state)) {
-    return false;
-  }
-
-  if (["available","active","متاح","متاح اليوم"].includes(state)) {
-    return true;
-  }
+  if (["unavailable","inactive","disabled","غير متاح","متوقف"].includes(state)) return false;
+  if (["available","active","متاح","متاح اليوم"].includes(state)) return true;
 
   return true;
 }
@@ -198,14 +190,12 @@ function isFixed(d) {
   const value = String(
     d.calcType ?? d.calculationType ?? d.pricingType ??
     d.type ?? d.mode ?? ""
-  ).toLowerCase();
+  ).toLowerCase().replace(/\s+/g, "");
 
   return [
     "fixed","perorder","per_order","flat",
-    "سعر ثابت","سعر ثابت للطلب","ثابت"
-  ].includes(value.replace(/\s+/g, ""))
-    || ["fixed","perorder","per_order","flat",
-        "سعر ثابت","سعر ثابت للطلب","ثابت"].includes(value);
+    "سعرثابت","سعرثابتللطلب","ثابت"
+  ].includes(value);
 }
 
 function showError(message) {
@@ -219,11 +209,9 @@ function showSuccess(message, orderId) {
 
   const link = document.createElement("a");
   link.className = "track-link";
-
-  // رابط المتابعة متوافق مع track-order.html
   link.href = "track-order.html?id=" + encodeURIComponent(orderId);
-
   link.textContent = "📦 متابعة حالة الطلب";
+
   statusBox.appendChild(document.createElement("br"));
   statusBox.appendChild(link);
 }
@@ -267,17 +255,10 @@ function renderFish() {
 }
 
 function renderPrep() {
-  const perKg = prepItems.filter(x =>
-    isAvailable(x.data) && !isFixed(x.data)
-  );
-  const fixed = prepItems.filter(x =>
-    isAvailable(x.data) && isFixed(x.data)
-  );
+  const perKg = prepItems.filter(x => isAvailable(x.data) && !isFixed(x.data));
+  const fixed = prepItems.filter(x => isAvailable(x.data) && isFixed(x.data));
 
-  const prepBox = $("prepList");
-  const fixedBox = $("fixedList");
-
-  prepBox.innerHTML = perKg.length ? perKg.map(item => `
+  $("prepList").innerHTML = perKg.length ? perKg.map(item => `
     <div class="item">
       <label class="check-row">
         <input type="checkbox" data-prep-id="${escapeHTML(item.id)}">
@@ -287,7 +268,7 @@ function renderPrep() {
     </div>
   `).join("") : '<div class="empty">لا توجد تجهيزات متاحة لكل كيلو حاليًا.</div>';
 
-  fixedBox.innerHTML = fixed.length ? fixed.map(item => `
+  $("fixedList").innerHTML = fixed.length ? fixed.map(item => `
     <div class="item">
       <label class="check-row">
         <input type="checkbox" data-fixed-id="${escapeHTML(item.id)}">
@@ -297,12 +278,8 @@ function renderPrep() {
     </div>
   `).join("") : '<div class="empty">لا توجد إضافات ثابتة السعر مسجلة حاليًا.</div>';
 
-  prepBox.querySelectorAll("input").forEach(el =>
-    el.addEventListener("change", updateTotals)
-  );
-  fixedBox.querySelectorAll("input").forEach(el =>
-    el.addEventListener("change", updateTotals)
-  );
+  $("prepList").querySelectorAll("input").forEach(el => el.addEventListener("change", updateTotals));
+  $("fixedList").querySelectorAll("input").forEach(el => el.addEventListener("change", updateTotals));
 
   updateTotals();
 }
@@ -336,7 +313,6 @@ function getSelectedPreps() {
 
   document.querySelectorAll("[data-prep-id]:checked").forEach(input => {
     const item = prepItems.find(x => x.id === input.dataset.prepId);
-
     if (item && isAvailable(item.data) && !isFixed(item.data)) {
       result.push({id:item.id,name:item.name,price:item.price});
     }
@@ -350,7 +326,6 @@ function getSelectedFixed() {
 
   document.querySelectorAll("[data-fixed-id]:checked").forEach(input => {
     const item = prepItems.find(x => x.id === input.dataset.fixedId);
-
     if (item && isAvailable(item.data) && isFixed(item.data)) {
       result.push({id:item.id,name:item.name,price:item.price});
     }
@@ -393,12 +368,11 @@ function makeItemsText(result) {
 }
 
 function makePrepText(result) {
-  const names = result.perKgPreps.map(x => x.name);
-  const fixedNames = result.fixed.map(x => x.name);
-  return [...names, ...fixedNames].join("، ") || "بدون تجهيز";
+  return [...result.perKgPreps.map(x => x.name), ...result.fixed.map(x => x.name)]
+    .join("، ") || "بدون تجهيز";
 }
 
-function catalogSnapshotIsValid(result) {
+function validateOrder(result) {
   if (!catalogLoaded || !prepLoaded) {
     showError("لسه بنحمّل الأسعار. استنى لحظة وجرب تاني.");
     return false;
@@ -409,14 +383,12 @@ function catalogSnapshotIsValid(result) {
     return false;
   }
 
-  if (result.fish.some(x =>
-    !Number.isFinite(x.quantity) || x.quantity <= 0 || x.quantity > 500
-  )) {
+  if (result.fish.some(x => !Number.isFinite(x.quantity) || x.quantity <= 0 || x.quantity > 500)) {
     showError("راجع كميات السمك. الكمية لازم تكون أكبر من صفر.");
     return false;
   }
 
-  if (result.totalAmount < 0 || !Number.isFinite(result.totalAmount)) {
+  if (!Number.isFinite(result.totalAmount) || result.totalAmount < 0) {
     showError("حصل خطأ في حساب الإجمالي. راجع الكميات والأسعار.");
     return false;
   }
@@ -427,12 +399,7 @@ function catalogSnapshotIsValid(result) {
 onSnapshot(collection(db, "daily_catalog"), snapshot => {
   fishItems = snapshot.docs.map(docSnap => {
     const data = docSnap.data();
-    return {
-      id: docSnap.id,
-      data,
-      name: readName(data),
-      price: readPrice(data)
-    };
+    return {id:docSnap.id,data,name:readName(data),price:readPrice(data)};
   }).filter(x => x.name && Number.isFinite(x.price));
 
   catalogLoaded = true;
@@ -440,25 +407,20 @@ onSnapshot(collection(db, "daily_catalog"), snapshot => {
 }, error => {
   console.error("Catalog loading error:", error);
   $("fishList").className = "empty";
-  $("fishList").textContent = "تعذر تحميل أصناف السمك. حاول تحديث الصفحة.";
+  $("fishList").textContent = "تعذر تحميل أصناف السمك: " + (error.code || error.message);
 });
 
 onSnapshot(collection(db, "prep_prices"), snapshot => {
   prepItems = snapshot.docs.map(docSnap => {
     const data = docSnap.data();
-    return {
-      id: docSnap.id,
-      data,
-      name: readName(data),
-      price: readPrice(data)
-    };
+    return {id:docSnap.id,data,name:readName(data),price:readPrice(data)};
   }).filter(x => x.name && Number.isFinite(x.price));
 
   prepLoaded = true;
   renderPrep();
 }, error => {
   console.error("Preparation loading error:", error);
-  $("prepList").textContent = "تعذر تحميل التجهيزات.";
+  $("prepList").textContent = "تعذر تحميل التجهيزات: " + (error.code || error.message);
   $("fixedList").textContent = "تعذر تحميل الإضافات.";
 });
 
@@ -502,18 +464,13 @@ form.addEventListener("submit", async event => {
   }
 
   const result = calculate();
-  if (!catalogSnapshotIsValid(result)) return;
+  if (!validateOrder(result)) return;
 
   const items = makeItemsText(result);
   const prep = makePrepText(result);
 
-  if (items.length < 2 || items.length > 1500) {
-    showError("تفاصيل الأصناف طويلة جدًا. قلل عدد الأصناف أو راجع الكميات.");
-    return;
-  }
-
-  if (prep.length > 100) {
-    showError("تفاصيل التجهيزات طويلة جدًا. قلل عدد التجهيزات المختارة.");
+  if (items.length > 1500 || prep.length > 100) {
+    showError("تفاصيل الأصناف أو التجهيزات طويلة جدًا. قلل الاختيارات.");
     return;
   }
 
@@ -541,7 +498,6 @@ form.addEventListener("submit", async event => {
       source: "website",
       ownerUid: currentUser.uid,
       createdAt: serverTimestamp(),
-
       fishDetails: JSON.stringify(result.fish),
       prepDetails: JSON.stringify(result.perKgPreps),
       fixedDetails: JSON.stringify(result.fixed),
@@ -579,13 +535,12 @@ form.addEventListener("submit", async event => {
   } catch (error) {
     console.error("Order submission failed:", error);
 
-    if (error?.code === "permission-denied") {
-      showError("تعذر حفظ الطلب بسبب صلاحيات Firebase. لازم تحديث قواعد Firestore قبل تجربة الإرسال.");
-    } else if (error?.code === "auth/operation-not-allowed") {
-      showError("تسجيل العملاء كضيوف غير مفعّل في Firebase Authentication. راجع إعداد Anonymous.");
-    } else {
-      showError("حصلت مشكلة أثناء إرسال الطلب. تأكد من اتصال الإنترنت وحاول مرة أخرى.");
-    }
+    showError(
+      "فشل إرسال الطلب.\n" +
+      "كود الخطأ: " + (error?.code || "غير معروف") + "\n" +
+      "التفاصيل: " + (error?.message || "لا توجد تفاصيل")
+    );
+
   } finally {
     sending = false;
     btn.disabled = false;
