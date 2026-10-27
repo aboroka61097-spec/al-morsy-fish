@@ -18,8 +18,11 @@ button{width:100%;padding:14px;border:0;border-radius:10px;background:#075985;co
 button:disabled{opacity:.6}
 .result{display:none;margin-top:20px;padding:16px;background:#f0f9ff;border-radius:12px}
 .status{font-size:21px;font-weight:bold;color:#075985}
-.small{font-size:13px;color:#64748b;word-break:break-word}
+.small{font-size:13px;color:#64748b;overflow-wrap:anywhere}
 a{color:#075985}
+.message{display:none;margin-top:16px;padding:12px;border-radius:10px;line-height:1.8;white-space:pre-line;overflow-wrap:anywhere}
+.error{display:block;background:#fee2e2;color:#991b1b}
+.success{display:block;background:#dcfce7;color:#166534}
 </style>
 </head>
 <body>
@@ -27,7 +30,7 @@ a{color:#075985}
  <main class="card">
   <h1>🐟 متابعة طلبك</h1>
   <p>المرسي للأسماك — من البحر لحد عندك</p>
-  <p>اكتب رقم الطلب لمتابعة حالته. لو الطلب اتعمل من نفس الجهاز، هنحاول نجيب رقمه تلقائيًا.</p>
+  <p>اكتب رقم الطلب لمتابعة حالته. لو الطلب اتعمل من نفس الجهاز والمتصفح، هنحاول نجيب رقمه تلقائيًا.</p>
 
   <form id="trackForm">
    <label for="orderId">رقم الطلب</label>
@@ -35,7 +38,7 @@ a{color:#075985}
    <button id="trackBtn" type="submit">متابعة الطلب</button>
   </form>
 
-  <div id="message" role="status" aria-live="polite"></div>
+  <div id="message" class="message" role="status" aria-live="polite"></div>
 
   <section id="result" class="result">
    <h2>تفاصيل المتابعة</h2>
@@ -46,7 +49,7 @@ a{color:#075985}
    <p id="updated"></p>
   </section>
 
-  <p class="small">لو فتحت الصفحة من جهاز مختلف، قد تحتاج إلى نفس الجهاز والمتصفح الذي أرسلت منه الطلب.</p>
+  <p class="small">متابعة الطلب متاحة من نفس الجهاز والمتصفح الذي أُرسل منه الطلب، ما لم تتوفر وسيلة تحقق أخرى.</p>
   <p><a href="./orders.html">الرجوع لصفحة طلب السمك</a></p>
  </main>
 </div>
@@ -61,7 +64,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCviWU0LzDbUn8M7ETIXorU_kNTSgnwjhc",
+  apiKey: "AIzaSyCviWU0LzDbUn8M7ETIXORu_KnTSgnwjhc",
   authDomain: "al-morsy-fish.firebaseapp.com",
   projectId: "al-morsy-fish",
   storageBucket: "al-morsy-fish.firebasestorage.app",
@@ -94,15 +97,35 @@ const labels = {
   cancelled: "تم إلغاء الطلب"
 };
 
-function showMessage(text, error = false) {
+function showMessage(text, type = "success") {
+  message.className = "message " + type;
   message.textContent = text;
-  message.style.color = error ? "#b91c1c" : "#166534";
+}
+
+function errorDetails(error) {
+  const code = error?.code || "unknown";
+  const detail = error?.message || "لا توجد تفاصيل إضافية";
+
+  const hints = {
+    "auth/api-key-not-valid.-please-pass-a-valid-api-key":
+      "مفتاح Firebase API غير مقبول. يلزم مراجعة المفتاح وقيوده.",
+    "auth/operation-not-allowed":
+      "تسجيل الدخول المجهول غير مفعّل في Firebase Authentication.",
+    "permission-denied":
+      "قواعد Firestore لا تسمح بقراءة هذا الطلب للحساب الحالي.",
+    "unauthenticated":
+      "الحساب الحالي غير مسجل الدخول. حاول تحديث الصفحة."
+  };
+
+  return "كود الخطأ: " + code +
+    "\nالتفاصيل: " + detail +
+    (hints[code] ? "\nالسبب المحتمل: " + hints[code] : "");
 }
 
 async function ensureLogin() {
-  if (!auth.currentUser) {
-    await signInAnonymously(auth);
-  }
+  if (auth.currentUser) return auth.currentUser;
+  const credential = await signInAnonymously(auth);
+  return credential.user;
 }
 
 async function trackOrder(orderId) {
@@ -112,62 +135,90 @@ async function trackOrder(orderId) {
   }
 
   result.style.display = "none";
+  updated.textContent = "";
   showMessage("جارٍ التحقق من الطلب...");
   button.disabled = true;
 
   try {
-    await ensureLogin();
-
+    const user = await ensureLogin();
     const orderRef = doc(db, "orders", orderId);
     const snap = await getDoc(orderRef);
 
     if (!snap.exists()) {
-      showMessage("الطلب غير موجود. راجع رقم الطلب وحاول مرة أخرى.", true);
+      showMessage(
+        "الطلب غير موجود في قاعدة البيانات.\nتأكد من رقم الطلب. إذا لم يظهر نجاح الإرسال سابقًا، فقد لا يكون الطلب قد سُجّل.",
+        "error"
+      );
       return;
     }
 
     const order = snap.data();
 
-    if (!auth.currentUser || order.ownerUid !== auth.currentUser.uid) {
+    if (!order.ownerUid || order.ownerUid !== user.uid) {
       showMessage(
-        "لا يمكن عرض هذا الطلب من الحساب الحالي. افتح المتابعة من نفس الجهاز والمتصفح الذي أرسلت منه الطلب.",
-        true
+        "الطلب موجود، لكن الحساب الحالي لا يملك صلاحية متابعته.\nافتح رابط المتابعة من نفس الجهاز والمتصفح اللذين استخدمتهما عند إرسال الطلب.",
+        "error"
       );
       return;
     }
 
     result.style.display = "block";
     shownId.textContent = orderId;
-    showMessage("تم العثور على طلبك. سيتم تحديث الحالة تلقائيًا.");
+    showMessage("تم العثور على طلبك.", "success");
 
-    unsubscribe = onSnapshot(orderRef, (liveSnap) => {
-      if (!liveSnap.exists()) {
-        showMessage("لم يعد الطلب متاحًا.", true);
-        result.style.display = "none";
-        return;
-      }
-
-      const liveOrder = liveSnap.data();
-
-      if (liveOrder.ownerUid !== auth.currentUser.uid) {
-        showMessage("تعذر التحقق من ملكية الطلب.", true);
-        result.style.display = "none";
-        if (unsubscribe) unsubscribe();
-        return;
-      }
-
+    function renderStatus(liveOrder) {
       statusBox.textContent =
-        labels[liveOrder.status] || "حالة الطلب: " + (liveOrder.status || "قيد المراجعة");
+        labels[liveOrder.status] ||
+        ("حالة الطلب: " + (liveOrder.status || "قيد المراجعة"));
 
-      updated.textContent = "يتم تحديث الحالة تلقائيًا عند تغييرها من الإدارة.";
-    }, (error) => {
-      console.error(error);
-      showMessage("تعذر تحديث حالة الطلب. حاول تحديث الصفحة.", true);
-    });
+      updated.textContent =
+        "تتحدث الحالة تلقائيًا عند تعديلها من الإدارة.";
+    }
+
+    renderStatus(order);
+
+    unsubscribe = onSnapshot(
+      orderRef,
+      (liveSnap) => {
+        if (!liveSnap.exists()) {
+          showMessage("لم يعد الطلب متاحًا.", "error");
+          result.style.display = "none";
+          if (unsubscribe) {
+            unsubscribe();
+            unsubscribe = null;
+          }
+          return;
+        }
+
+        const liveOrder = liveSnap.data();
+
+        if (liveOrder.ownerUid !== user.uid) {
+          showMessage("تعذر التحقق من ملكية الطلب.", "error");
+          result.style.display = "none";
+          if (unsubscribe) {
+            unsubscribe();
+            unsubscribe = null;
+          }
+          return;
+        }
+
+        renderStatus(liveOrder);
+      },
+      (error) => {
+        console.error("Tracking listener error:", error);
+        showMessage(
+          "تعذر تحديث حالة الطلب.\n" + errorDetails(error),
+          "error"
+        );
+      }
+    );
 
   } catch (error) {
-    console.error(error);
-    showMessage("تعذر الاتصال. تأكد من الإنترنت وإعدادات Firebase ثم حاول مرة أخرى.", true);
+    console.error("Tracking error:", error);
+    showMessage(
+      "تعذر فتح الطلب.\n" + errorDetails(error),
+      "error"
+    );
   } finally {
     button.disabled = false;
   }
@@ -177,8 +228,8 @@ form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const id = orderInput.value.trim();
 
-  if (!id || id.length > 150) {
-    showMessage("اكتب رقم الطلب بشكل صحيح.", true);
+  if (!id || id.length > 150 || id.includes("/")) {
+    showMessage("اكتب رقم الطلب بشكل صحيح.", "error");
     return;
   }
 
@@ -186,9 +237,15 @@ form.addEventListener("submit", async (event) => {
 });
 
 const params = new URLSearchParams(location.search);
-const queryId = params.get("id");
-const savedId = localStorage.getItem("alMorsyLastOrderId");
-const initialId = queryId || savedId;
+let savedId = "";
+
+try {
+  savedId = localStorage.getItem("alMorsyLastOrderId") || "";
+} catch (error) {
+  console.warn("Local storage unavailable:", error);
+}
+
+const initialId = (params.get("id") || "").trim() || savedId.trim();
 
 if (initialId) {
   orderInput.value = initialId;
